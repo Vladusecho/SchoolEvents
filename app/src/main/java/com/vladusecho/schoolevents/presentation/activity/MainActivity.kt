@@ -9,8 +9,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import com.vladusecho.schoolevents.presentation.screen.MainScreen
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,7 +21,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             SchoolEventsTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Box(modifier = Modifier.padding(innerPadding))
+                    Box(modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                    ) {
+                        MainScreen()
+                    }
                 }
             }
         }

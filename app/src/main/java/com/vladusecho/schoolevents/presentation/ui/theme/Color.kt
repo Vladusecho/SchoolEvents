@@ -1,4 +1,4 @@
-package com.vladusecho.schoolevents.ui.theme
+package com.vladusecho.schoolevents.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

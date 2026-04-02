@@ -1,4 +1,4 @@
-package com.vladusecho.schoolevents
+package com.vladusecho.schoolevents.presentation.activity
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,7 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.vladusecho.schoolevents.ui.theme.SchoolEventsTheme
+import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,28 +20,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             SchoolEventsTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    SchoolEventsTheme {
-        Greeting("Android")
     }
 }

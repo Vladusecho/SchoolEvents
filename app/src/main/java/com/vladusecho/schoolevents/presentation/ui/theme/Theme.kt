@@ -1,6 +1,5 @@
-package com.vladusecho.schoolevents.ui.theme
+package com.vladusecho.schoolevents.presentation.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

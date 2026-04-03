@@ -2,6 +2,7 @@ package com.vladusecho.schoolevents.presentation.entity
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,11 +13,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -36,18 +38,21 @@ import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
 fun StudentEventCard(
     modifier: Modifier = Modifier,
     event: Event,
+    onFavClick: (isFav: Boolean) -> Unit,
     onEventClick: (eventId: Int) -> Unit
 ) {
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(20.dp))
-            .background(Color.White)
             .fillMaxWidth()
             .height(290.dp)
             .padding(8.dp)
+            .shadow(10.dp, RoundedCornerShape(20.dp)),
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(20.dp))
+                .background(Color.White)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.maxresdefault),
@@ -67,7 +72,8 @@ fun StudentEventCard(
                         overflow = TextOverflow.Ellipsis,
                         fontFamily = EventsFontFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 22.sp
+                        fontSize = 22.sp,
+                        color = Color.Black
                     )
                 }
                 Row() {
@@ -116,21 +122,24 @@ fun StudentEventCard(
                 modifier = modifier
                     .padding(8.dp)
                     .clip(RoundedCornerShape(10.dp))
+                    .clickable {
+                        onFavClick(event.isFavourite)
+                    }
                     .background(Color.White.copy(alpha = 0.5f))
                     .size(42.dp)
-                    .padding(8.dp)
+                    .padding(8.dp),
+                contentAlignment = Alignment.Center
             ) {
-                IconButton({}) {
-                    Icon(
-                        imageVector = if (!event.isFavourite) {
-                            ImageVector.vectorResource(R.drawable.ic_not_fav)
-                        } else {
-                            ImageVector.vectorResource(R.drawable.ic_is_fav)                        },
-                        contentDescription = null,
-                        tint = Color.Unspecified,
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
+                Icon(
+                    imageVector = if (!event.isFavourite) {
+                        ImageVector.vectorResource(R.drawable.ic_not_fav)
+                    } else {
+                        ImageVector.vectorResource(R.drawable.ic_is_fav)
+                    },
+                    contentDescription = null,
+                    tint = Color.Unspecified,
+                    modifier = Modifier.size(18.dp)
+                )
             }
         }
     }
@@ -149,7 +158,8 @@ fun StudentEventCardPreview() {
                 address = "ул. Ленина, д.80, Актовый зал",
                 isFavourite = true
             ),
-            onEventClick = {}
+            onEventClick = {},
+            onFavClick = {}
         )
     }
 }

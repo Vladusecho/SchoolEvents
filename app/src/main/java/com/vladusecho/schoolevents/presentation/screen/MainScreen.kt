@@ -25,11 +25,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.presentation.entity.StudentEventCard
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.viewModel.MainViewModel
-import kotlin.random.Random
 
 @Composable
 fun MainScreen(
@@ -39,28 +37,41 @@ fun MainScreen(
 
     val state = viewModel.state.collectAsState()
 
-    when(val currentState = state.value) {
+    when (val currentState = state.value) {
         is MainViewModel.MainState.Content -> {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 contentPadding = PaddingValues(top = 128.dp)
             ) {
-                items(currentState.events) {
+                items(
+                    items = currentState.events,
+                    key = { it.id }
+                ) {
                     StudentEventCard(
                         event = it,
                         onEventClick = {},
-                        onFavClick = {}
+                        onFavouriteClick = { isFavourite, eventId ->
+                            viewModel.processCommand(
+                                MainViewModel.MainCommand.SwitchFavouriteStatus(
+                                    isFavourite = isFavourite,
+                                    eventId = eventId
+                                )
+                            )
+                        }
                     )
                 }
 
             }
         }
+
         is MainViewModel.MainState.Error -> {
 
         }
+
         MainViewModel.MainState.Initial -> {
 
         }
+
         MainViewModel.MainState.Loading -> {
             Box(
                 modifier = Modifier
@@ -101,7 +112,8 @@ fun MainScreen(
                     fontWeight = FontWeight.Bold,
                     fontSize = 9.sp,
                     color = Color.White
-                )}
+                )
+            }
         }
     }
 }

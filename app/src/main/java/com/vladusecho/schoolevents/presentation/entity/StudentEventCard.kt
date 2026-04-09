@@ -40,7 +40,7 @@ import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
 fun StudentEventCard(
     modifier: Modifier = Modifier,
     event: Event,
-    onFavClick: (isFav: Boolean) -> Unit,
+    onFavouriteClick: (isFavourite: Boolean, eventId: Int) -> Unit,
     onEventClick: (eventId: Int) -> Unit
 ) {
     Box(
@@ -135,7 +135,10 @@ fun StudentEventCard(
                     .padding(8.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .clickable {
-                        onFavClick(event.isFavourite)
+                        onFavouriteClick(
+                            event.isFavourite,
+                            event.id
+                        )
                     }
                     .background(Color.White.copy(alpha = 0.5f))
                     .size(42.dp)
@@ -171,7 +174,10 @@ fun StudentEventCardPreview() {
                 isFavourite = true
             ),
             onEventClick = {},
-            onFavClick = {}
+            onFavouriteClick = {
+                isFav, eventId ->
+                println("isFav: $isFav, eventId: $eventId")
+            }
         )
     }
 }

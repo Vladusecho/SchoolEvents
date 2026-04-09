@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.domain.usecase.GetEventsUseCase
+import com.vladusecho.schoolevents.domain.usecase.SwitchEventFavouriteStatusUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val getEventsUseCase: GetEventsUseCase
+    private val getEventsUseCase: GetEventsUseCase,
+    private val switchFavouriteStatusUseCase: SwitchEventFavouriteStatusUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<MainState>(MainState.Initial)
@@ -22,14 +24,22 @@ class MainViewModel @Inject constructor(
 
 
     fun processCommand(command: MainCommand) {
+        when(command) {
+            is MainCommand.SwitchFavouriteStatus -> {
+                viewModelScope.launch {
+                    switchFavouriteStatusUseCase(command.isFavourite, command.eventId)
+                }
+            }
+        }
     }
 
     init {
         viewModelScope.launch {
             _state.value = MainState.Loading
-            delay(5000)
-            val events = getEventsUseCase()
-            _state.value = MainState.Content(events.first())
+            delay(1000)
+            getEventsUseCase().collect { events ->
+                _state.value = MainState.Content(events)
+            }
         }
     }
 
@@ -50,5 +60,9 @@ class MainViewModel @Inject constructor(
 
     sealed interface MainCommand {
 
+        data class SwitchFavouriteStatus(
+            val isFavourite: Boolean,
+            val eventId: Int
+        ) : MainCommand
     }
 }

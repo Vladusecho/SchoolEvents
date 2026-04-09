@@ -14,7 +14,7 @@ navigation_version = "2.9.7"
 
 [libraries]
 # ICONS
-icons = { group = "androidx.compose.material", name = "material-icons-extended"}
+#icons = { group = "androidx.compose.material", name = "material-icons-extended"}
 # COMPOSE NAV
 compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation_version" }
 # HILT (KSP-COMPILER)

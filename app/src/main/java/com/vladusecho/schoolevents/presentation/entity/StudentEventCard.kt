@@ -7,10 +7,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -44,7 +46,6 @@ fun StudentEventCard(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(290.dp)
             .padding(8.dp)
             .shadow(10.dp, RoundedCornerShape(20.dp)),
     ) {
@@ -63,7 +64,7 @@ fun StudentEventCard(
                     .height(118.dp)
             )
             Column(
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
             ) {
                 Row() {
                     Text(
@@ -83,17 +84,28 @@ fun StudentEventCard(
                         overflow = TextOverflow.Ellipsis,
                         fontFamily = EventsFontFamily,
                         fontWeight = FontWeight.Light,
-                        fontSize = 18.sp
+                        fontSize = 14.sp,
+                        lineHeight = 16.sp
                     )
                 }
-                Row() {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_event_place),
+                        contentDescription = null,
+                        tint = Color.Unspecified,
+                        modifier = Modifier.size(18.dp)
+
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = event.address,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         fontFamily = EventsFontFamily,
                         fontWeight = FontWeight.Light,
-                        fontSize = 18.sp,
+                        fontSize = 14.sp,
                         color = Color.Black.copy(alpha = 0.5f)
                     )
                 }

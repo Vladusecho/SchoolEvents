@@ -1,6 +1,7 @@
 package com.vladusecho.schoolevents.di
 
 import com.vladusecho.schoolevents.data.repository.EventsRepositoryImpl
+import com.vladusecho.schoolevents.data.repository.ExampleEventsRepositoryImpl
 import com.vladusecho.schoolevents.domain.repository.EventsRepository
 import dagger.Binds
 import dagger.Module
@@ -14,6 +15,6 @@ interface DataModule {
 
     @Binds
     @Singleton
-    fun bindEventsRepository(impl: EventsRepositoryImpl): EventsRepository
+    fun bindEventsRepository(impl: ExampleEventsRepositoryImpl): EventsRepository
 
 }

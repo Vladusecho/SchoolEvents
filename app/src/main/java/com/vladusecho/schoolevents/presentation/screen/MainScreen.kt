@@ -44,6 +44,7 @@ fun MainScreen(
             )
         }
     }
+
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(top = 128.dp)
@@ -75,4 +76,5 @@ fun MainScreen(
             textAlign = TextAlign.Center
         )
     }
+
 }

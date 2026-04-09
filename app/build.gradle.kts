@@ -42,6 +42,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.icons)
+    implementation(libs.compose.navigation)
     implementation(libs.androidx.core.ktx)
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)

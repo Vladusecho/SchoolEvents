@@ -6,6 +6,8 @@ import com.vladusecho.schoolevents.domain.repository.EventsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
@@ -44,7 +46,9 @@ class ExampleEventsRepositoryImpl @Inject constructor(
     }
 
     override fun getFavouriteEvents(): Flow<List<Event>> {
-        TODO("Not yet implemented")
+        return _eventsFlow.map { events ->
+            events.filter { it.isFavourite }
+        }
     }
 
     override suspend fun getEventById(eventId: Int): Event {

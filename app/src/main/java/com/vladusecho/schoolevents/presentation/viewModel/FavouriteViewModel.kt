@@ -3,29 +3,37 @@ package com.vladusecho.schoolevents.presentation.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vladusecho.schoolevents.domain.entity.Event
-import com.vladusecho.schoolevents.domain.usecase.GetEventsUseCase
+import com.vladusecho.schoolevents.domain.usecase.GetFavouriteEventsUseCase
 import com.vladusecho.schoolevents.domain.usecase.SwitchEventFavouriteStatusUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
-    private val getEventsUseCase: GetEventsUseCase,
+class FavouriteViewModel @Inject constructor(
+    private val getFavouriteEventsUseCase: GetFavouriteEventsUseCase,
     private val switchFavouriteStatusUseCase: SwitchEventFavouriteStatusUseCase
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow<MainState>(MainState.Initial)
+    private val _state = MutableStateFlow<FavouriteState>(FavouriteState.Initial)
     val state = _state.asStateFlow()
 
+    init {
+        viewModelScope.launch {
+            _state.value = FavouriteState.Loading
+            delay(1000)
+            getFavouriteEventsUseCase().collect { events ->
+                _state.value = FavouriteState.Content(events)
+            }
+        }
+    }
 
-    fun processCommand(command: MainCommand) {
+    fun processCommand(command: FavouriteCommand) {
         when(command) {
-            is MainCommand.SwitchFavouriteStatus -> {
+            is FavouriteCommand.SwitchFavouriteStatus -> {
                 viewModelScope.launch {
                     switchFavouriteStatusUseCase(command.isFavourite, command.eventId)
                 }
@@ -33,36 +41,28 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    init {
-        viewModelScope.launch {
-            _state.value = MainState.Loading
-            delay(1000)
-            getEventsUseCase().collect { events ->
-                _state.value = MainState.Content(events)
-            }
-        }
-    }
+    sealed interface FavouriteState {
 
-    sealed interface MainState {
+        object Initial : FavouriteState
 
-        object Initial : MainState
-
-        object Loading : MainState
+        object Loading : FavouriteState
 
         data class Error(
             val message: String
-        ) : MainState
+        ) : FavouriteState
 
         data class Content(
             val events: List<Event>
-        ) : MainState
+        ) : FavouriteState
+
     }
 
-    sealed interface MainCommand {
+
+    sealed interface FavouriteCommand {
 
         data class SwitchFavouriteStatus(
             val isFavourite: Boolean,
             val eventId: Int
-        ) : MainCommand
+        ) : FavouriteCommand
     }
 }

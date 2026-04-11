@@ -25,11 +25,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.presentation.entity.StudentEventCard
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.viewModel.MainViewModel
-import kotlin.random.Random
 
 @Composable
 fun MainScreen(
@@ -39,69 +37,95 @@ fun MainScreen(
 
     val state = viewModel.state.collectAsState()
 
-    when(val currentState = state.value) {
-        is MainViewModel.MainState.Content -> {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(top = 128.dp)
-            ) {
-                items(currentState.events) {
-                    StudentEventCard(
-                        event = it,
-                        onEventClick = {},
-                        onFavClick = {}
-                    )
-                }
-
-            }
-        }
-        is MainViewModel.MainState.Error -> {
-
-        }
-        MainViewModel.MainState.Initial -> {
-
-        }
-        MainViewModel.MainState.Loading -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(
-                    color = Color(0xff0DCDAA)
-                )
-            }
-        }
-    }
     Box(
         modifier = Modifier
-            .height(120.dp)
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp))
-            .background(Color(0xff0DCDAA))
-            .padding(start = 16.dp, end = 16.dp),
-        contentAlignment = Alignment.BottomCenter
+            .fillMaxSize()
+            .background(Color.White)
     ) {
-        Column() {
-            Text(
-                text = "Последние мероприятия нашей школы",
-                fontFamily = EventsFontFamily,
-                fontWeight = FontWeight.Bold,
-                fontSize = 24.sp,
-                color = Color.White,
-                textAlign = TextAlign.Center
-            )
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
+        when (val currentState = state.value) {
+            is MainViewModel.MainState.Content -> {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(top = 128.dp),
+                ) {
+                    items(
+                        items = currentState.events,
+                        key = { it.id }
+                    ) {
+                        Box(
+                            modifier = Modifier.animateItem()
+                        ) {
+                            StudentEventCard(
+                                event = it,
+                                onEventClick = {},
+                                onFavouriteClick = { isFavourite, eventId ->
+                                    viewModel.processCommand(
+                                        MainViewModel.MainCommand.SwitchFavouriteStatus(
+                                            isFavourite = isFavourite,
+                                            eventId = eventId
+                                        )
+                                    )
+                                }
+                            )
+                        }
+                    }
+
+                }
+            }
+
+            is MainViewModel.MainState.Error -> {
+
+            }
+
+            MainViewModel.MainState.Initial -> {
+
+            }
+
+            MainViewModel.MainState.Loading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        color = Color(0xff0DCDAA)
+                    )
+                }
+            }
+        }
+        Box(
+            modifier = Modifier
+                .height(120.dp)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp))
+                .background(Color(0xff0DCDAA))
+                .padding(start = 16.dp, end = 16.dp),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "--- Создано Vladusecho (Владислав Корзун) ---",
+                    text = "Последние мероприятия нашей школы",
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 9.sp,
-                    color = Color.White
-                )}
+                    fontSize = 24.sp,
+                    color = Color.White,
+                    textAlign = TextAlign.Center
+                )
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "--- Создано Vladusecho (Владислав Корзун) ---",
+                        fontFamily = EventsFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 9.sp,
+                        color = Color.White
+                    )
+                }
+            }
         }
     }
 }

@@ -3,14 +3,14 @@ package com.vladusecho.schoolevents.presentation.navigation
 import com.vladusecho.schoolevents.R
 
 sealed class StudentNavItem(
-    val screen: Screen,
+    val screen: Any,
     val title: String,
     val iconId: Int
 ) {
 
 
     object Events : StudentNavItem(
-        screen = Screen.Events,
+        screen = Screen.MainGraph,
         title = "Мероприятия",
         iconId = R.drawable.ic_events_screen
     )

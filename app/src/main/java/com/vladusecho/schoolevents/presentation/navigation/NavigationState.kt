@@ -9,7 +9,7 @@ class NavigationState(
     val navHostController: NavHostController
 ) {
 
-    fun navigateTo(route: String) {
+    fun navigateTo(route: Any) {
         navHostController.navigate(route) {
             // only one copy of screen we can use
             popUpTo(navHostController.graph.findStartDestination().id) {
@@ -20,6 +20,10 @@ class NavigationState(
             // save screen state after another screen
             restoreState = true
         }
+    }
+
+    fun navigateToDetail(eventId: Int) {
+        navHostController.navigate(Screen.EventDetails(id = eventId))
     }
 }
 

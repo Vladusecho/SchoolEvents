@@ -32,7 +32,8 @@ import com.vladusecho.schoolevents.presentation.viewModel.MainViewModel
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
-    viewModel: MainViewModel = hiltViewModel()
+    viewModel: MainViewModel = hiltViewModel(),
+    onEventClick: (eventId: Int) -> Unit
 ) {
 
     val state = viewModel.state.collectAsState()
@@ -57,7 +58,7 @@ fun MainScreen(
                         ) {
                             StudentEventCard(
                                 event = it,
-                                onEventClick = {},
+                                onEventClick = onEventClick,
                                 onFavouriteClick = { isFavourite, eventId ->
                                     viewModel.processCommand(
                                         MainViewModel.MainCommand.SwitchFavouriteStatus(

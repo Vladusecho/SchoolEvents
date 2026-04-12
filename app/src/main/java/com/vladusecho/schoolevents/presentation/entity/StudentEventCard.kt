@@ -54,6 +54,9 @@ fun StudentEventCard(
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(20.dp))
                 .background(Color.White)
+                .clickable {
+                    onEventClick(event.id)
+                }
         ) {
             Image(
                 painter = painterResource(id = R.drawable.maxresdefault),
@@ -169,9 +172,10 @@ fun StudentEventCardPreview() {
                 id = 1,
                 title = "Концерт 5opka в нашей школе! Не пропустите это невероятное событие",
                 description = "Пострадав в результате несчастного случая на стриме, провинциальный стример 5opka объединяется с лысым негром под псевдонимом MellSher, чтобы отправиться в тур «1+1» по городам России и рассказать всем свою невыдуманную историю, о которой невозможно молчать.",
-                eventDate = "10 июня",
                 address = "ул. Ленина, д.80, Актовый зал",
-                isFavourite = true
+                eventDate = "10 июня",
+                isFavourite = true,
+                imageUrl = R.drawable.maxresdefault,
             ),
             onEventClick = {},
             onFavouriteClick = {

@@ -25,6 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.vladusecho.schoolevents.presentation.navigation.AppNavGraph
@@ -68,7 +69,6 @@ fun EventsNavigationBottom(
     navState: NavigationState
 ) {
     val navBackStackEntry by navState.navHostController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
 
     val navItems = listOf(
         StudentNavItem.Events,
@@ -85,7 +85,7 @@ fun EventsNavigationBottom(
 
                 val isSelected =
                     navBackStackEntry?.destination?.hierarchy?.any {
-                        it.route == navItem.screen.route
+                        it.hasRoute(navItem.screen::class)
                     } ?: false
 
                 // Delete default ripple indication
@@ -93,7 +93,7 @@ fun EventsNavigationBottom(
                     NavigationBarItem(
                         selected = false,
                         onClick = {
-                            navState.navigateTo(navItem.screen.route)
+                            navState.navigateTo(navItem.screen)
                         },
                         icon = {
                             Icon(

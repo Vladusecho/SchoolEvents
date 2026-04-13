@@ -103,7 +103,7 @@ fun StudentEventCard(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = event.address,
+                        text = event.eventAddress,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         fontFamily = EventsFontFamily,
@@ -172,10 +172,11 @@ fun StudentEventCardPreview() {
                 id = 1,
                 title = "Концерт 5opka в нашей школе! Не пропустите это невероятное событие",
                 description = "Пострадав в результате несчастного случая на стриме, провинциальный стример 5opka объединяется с лысым негром под псевдонимом MellSher, чтобы отправиться в тур «1+1» по городам России и рассказать всем свою невыдуманную историю, о которой невозможно молчать.",
-                address = "ул. Ленина, д.80, Актовый зал",
+                eventAddress = "ул. Ленина, д.80, Актовый зал",
                 eventDate = "10 июня",
                 isFavourite = true,
-                imageUrl = R.drawable.maxresdefault,
+                eventPlace = "Fr",
+                eventDuration = "Вторник, 8:00 - 13:00"
             ),
             onEventClick = {},
             onFavouriteClick = {

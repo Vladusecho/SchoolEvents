@@ -2,7 +2,6 @@ package com.vladusecho.schoolevents.presentation.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -61,24 +62,30 @@ fun EventDetailsScreen(
             .background(Color.White)
     ) {
         when (currentState) {
-            is EventDetailsViewModel.EventsDetailsState.Content -> {
+            is EventDetailsViewModel.EventDetailsState.Content -> {
                 EventDetailsContent(
                     event = currentState.event,
                     onBackClick = onBackClick,
                     onFavouriteClick = { isFavourite, eventId ->
+                        viewModel.processCommand(
+                            EventDetailsViewModel.EventDetailsCommand.SwitchFavouriteStatus(
+                                isFavourite = isFavourite,
+                                eventId = eventId
+                            )
+                        )
                     }
                 )
             }
 
-            is EventDetailsViewModel.EventsDetailsState.Error -> {
+            is EventDetailsViewModel.EventDetailsState.Error -> {
 
             }
 
-            EventDetailsViewModel.EventsDetailsState.Initial -> {
+            EventDetailsViewModel.EventDetailsState.Initial -> {
 
             }
 
-            EventDetailsViewModel.EventsDetailsState.Loading -> {
+            EventDetailsViewModel.EventDetailsState.Loading -> {
 
             }
         }
@@ -93,153 +100,205 @@ fun EventDetailsContent(
     onFavouriteClick: (isFavourite: Boolean, eventId: Int) -> Unit
 ) {
 
-    Column(
+    LazyColumn(
         modifier = modifier.fillMaxSize()
     ) {
-        Box(
-            contentAlignment = Alignment.BottomEnd
-        ) {
-            Image(
-                painter = painterResource(event.imageUrl),
-                contentDescription = null,
-                contentScale = ContentScale.FillHeight,
-                modifier = Modifier
-                    .height(240.dp)
-                    .clip(RoundedCornerShape(bottomStart = 15.dp, bottomEnd = 15.dp))
-
-            )
+        item {
             Box(
-                modifier = modifier
-                    .padding(16.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .clickable {
-                        onFavouriteClick(
-                            event.isFavourite,
-                            event.id
-                        )
-                    }
-                    .background(Color.White.copy(alpha = 0.5f))
-                    .size(42.dp)
-                    .padding(8.dp),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.BottomEnd
             ) {
-                Icon(
-                    imageVector = if (!event.isFavourite) {
-                        ImageVector.vectorResource(R.drawable.ic_not_fav)
-                    } else {
-                        ImageVector.vectorResource(R.drawable.ic_is_fav)
-                    },
+                Image(
+                    painter = painterResource(event.imageUrl),
                     contentDescription = null,
-                    tint = Color.Unspecified,
-                    modifier = Modifier.size(18.dp)
+                    contentScale = ContentScale.FillHeight,
+                    modifier = Modifier
+                        .height(240.dp)
+                        .clip(RoundedCornerShape(bottomStart = 15.dp, bottomEnd = 15.dp))
+
                 )
             }
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = event.title,
+                    fontFamily = EventsFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp
+                )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_date),
+                    "",
+                    tint = Color(0xff0DCDAA)
+                )
+                Column(
+
+                ) {
+                    Text(
+                        text = event.eventDate,
+                        fontFamily = EventsFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
+                    Text(
+                        text = event.eventDuration,
+                        fontFamily = EventsFontFamily,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 16.sp
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_location),
+                    "",
+                    tint = Color(0xff0DCDAA)
+                )
+                Column() {
+                    Text(
+                        text = event.eventPlace,
+                        fontFamily = EventsFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
+                    Text(
+                        text = event.eventAddress,
+                        fontFamily = EventsFontFamily,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 16.sp
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(Color(0xff0DCDAA).copy(0.2f)),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "Организатор:",
+                        fontFamily = EventsFontFamily,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 16.sp
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Милютина Виктория",
+                        fontFamily = EventsFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "О мероприятии:",
+                    fontFamily = EventsFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = event.description,
+                    fontFamily = EventsFontFamily,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 20.sp
+                )
+            }
+            Spacer(modifier = Modifier.height(100.dp))
         }
-        Spacer(modifier = Modifier.height(8.dp))
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        contentAlignment = Alignment.BottomCenter
+    ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .clip(RoundedCornerShape(20.dp))
+                .background(Color(0xff0DCDAA).copy(alpha = 0.5f))
         ) {
             IconButton(onClick = onBackClick) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_back),
                     contentDescription = null,
-                    tint = Color.Unspecified
+                    tint = Color(0xff0DCDAA),
+                    modifier = Modifier
+                        .background(Color.White)
+                        .size(128.dp)
                 )
             }
-            Text(
-                text = event.title,
-                fontFamily = EventsFontFamily,
-                fontWeight = FontWeight.Bold,
-                fontSize = 24.sp
-            )
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_date),
-                "",
-                tint = Color(0xff0DCDAA)
-            )
-            Text(
-                text = event.eventDate,
-                fontFamily = EventsFontFamily,
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
-            )
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_location),
-                "",
-                tint = Color(0xff0DCDAA)
-            )
-            Text(
-                text = event.address,
-                fontFamily = EventsFontFamily,
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
-            )
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = "О мероприятии:",
-                fontFamily = EventsFontFamily,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp
-            )
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = event.description,
-                fontFamily = EventsFontFamily,
-                fontWeight = FontWeight.Normal,
-                fontSize = 20.sp
-            )
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = {},
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xff0DCDAA)
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp)
-        ) {
-            Text(
-                text = "Записаться на мероприятие",
-                fontFamily = EventsFontFamily,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp
-            )
+            Button(
+                onClick = {},
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xff0DCDAA)
+                ),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 8.dp)
+            ) {
+                Text(
+                    text = "Записаться",
+                    fontFamily = EventsFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+            }
+            IconButton(onClick = { onFavouriteClick(event.isFavourite, event.id) }) {
+                Icon(
+                    imageVector =
+                        ImageVector.vectorResource(R.drawable.ic_not_fav),
+                    contentDescription = null,
+                    tint = if (event.isFavourite) Color.Red else Color(0xff0DCDAA),
+                    modifier = Modifier
+                        .background(Color.White)
+                        .padding(8.dp)
+                        .size(128.dp)
+                )
+            }
         }
     }
 }
+
 
 @Composable
 @Preview(
@@ -251,11 +310,12 @@ fun Preview() {
             event = Event(
                 id = 1,
                 title = "Концерт 5opka в нашей школе! Не пропустите это невероятное событие",
-                description = "Пострадав в результате несчастного случая на стриме, провинциальный стример 5opka объединяется с лысым негром под псевдонимом MellSher, чтобы отправиться в тур «1+1» по городам России и рассказать всем свою невыдуманную историю, о которой невозможно молчать.",
-                address = "ул. Ленина, д.80, Актовый зал",
+                description = "Пострадав в результате несчастного случая на стриме, провинциальный стример 5opka объединяется с лысым негром под псевдонимом MellSher, чтобы отправиться в тур «1+1» по городам России и рассказать всем свою невыдуманную историю, о которой невозможно молчать. 1+1 = 11 городов. Победители всех музыкальных премий, авторы хитов «XXL» и «Мерси», люди, которые не нуждаются в представлении, но мы их все равно представили, в твоём городе. Приходи на их самые большие концерты или будешь жалеть всю жизнь!",
+                eventAddress = "ул. Ленина, д.80, Актовый зал",
                 eventDate = "10 июня",
                 isFavourite = true,
-                imageUrl = R.drawable.maxresdefault,
+                eventPlace = "Актовый зал",
+                eventDuration = "Вторник, 8:00 - 13:00"
             ),
             onBackClick = {},
             onFavouriteClick = { isFavourite, eventId -> }

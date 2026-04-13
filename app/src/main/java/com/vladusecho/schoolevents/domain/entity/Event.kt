@@ -7,7 +7,9 @@ data class Event(
     val title: String,
     val imageUrl: Int = R.drawable.maxresdefault,
     val description: String,
-    val address: String,
+    val eventAddress: String,
+    val eventPlace: String,
     val eventDate: String,
+    val eventDuration: String,
     val isFavourite: Boolean = false,
 )

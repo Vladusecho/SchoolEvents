@@ -12,6 +12,10 @@ sealed class Screen {
 
     @Serializable
     object MainGraph : Screen()
+
+    @Serializable
+    object FavouriteGraph : Screen()
+
     @Serializable
     data class EventDetails(
         val id: Int

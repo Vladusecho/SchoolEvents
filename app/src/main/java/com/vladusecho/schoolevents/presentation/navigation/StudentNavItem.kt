@@ -16,7 +16,7 @@ sealed class StudentNavItem(
     )
 
     object Favourite : StudentNavItem(
-        screen = Screen.Favourite,
+        screen = Screen.FavouriteGraph,
         title = "Избранное",
         iconId = R.drawable.ic_favourite_screen
     )

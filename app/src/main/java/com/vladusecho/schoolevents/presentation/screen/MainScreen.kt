@@ -96,7 +96,7 @@ fun MainScreen(
         }
         Box(
             modifier = Modifier
-                .height(120.dp)
+                .height(110.dp)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp))
                 .background(Color(0xff0DCDAA))
@@ -107,10 +107,10 @@ fun MainScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Последние мероприятия нашей школы",
+                    text = "Последние мероприятия",
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp,
+                    fontSize = 28.sp,
                     color = Color.White,
                     textAlign = TextAlign.Center
                 )
@@ -122,7 +122,7 @@ fun MainScreen(
                         text = "--- Создано Vladusecho (Владислав Корзун) ---",
                         fontFamily = EventsFontFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 9.sp,
+                        fontSize = 12.sp,
                         color = Color.White
                     )
                 }

@@ -1,7 +1,6 @@
 package com.vladusecho.schoolevents.data.repository
 
 import android.util.Log
-import com.vladusecho.schoolevents.R
 import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.domain.repository.EventsRepository
 import kotlinx.coroutines.flow.Flow
@@ -19,10 +18,12 @@ class ExampleEventsRepositoryImpl @Inject constructor(
             Event(
                 id = id,
                 title = "Концерт 5opka в нашей школе! Не пропустите это невероятное событие",
-                description = "Пострадав в результате несчастного случая на стриме, провинциальный стример 5opka объединяется с лысым негром под псевдонимом MellSher, чтобы отправиться в тур «1+1» по городам России и рассказать всем свою невыдуманную историю, о которой невозможно молчать.",
-                address = "ул. Ленина, д.80, Актовый зал",
-                eventDate = "${id+1} июня",
-                imageUrl = R.drawable.maxresdefault,
+                description = "Пострадав в результате несчастного случая на стриме, провинциальный стример 5opka объединяется с лысым негром под псевдонимом MellSher, чтобы отправиться в тур «1+1» по городам России и рассказать всем свою невыдуманную историю, о которой невозможно молчать. 1+1 = 11 городов. Победители всех музыкальных премий, авторы хитов «XXL» и «Мерси», люди, которые не нуждаются в представлении, но мы их все равно представили, в твоём городе. Приходи на их самые большие концерты или будешь жалеть всю жизнь!",
+                eventAddress = "ул. Ленина, д.80",
+                eventDate = "$id июня",
+                isFavourite = false,
+                eventPlace = "Актовый зал",
+                eventDuration = "Вторник, 8:00 - 13:00"
             )
         }
     )

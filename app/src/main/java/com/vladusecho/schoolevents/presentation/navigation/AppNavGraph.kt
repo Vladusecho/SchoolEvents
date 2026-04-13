@@ -48,8 +48,25 @@ fun AppNavGraph(
                 )
             }
         }
-        composable<Screen.Favourite> {
-            FavouriteScreen()
+        navigation<Screen.FavouriteGraph>(
+            startDestination = Screen.Favourite
+        ) {
+            composable<Screen.Favourite> {
+                FavouriteScreen(
+                    onEventClick = {
+                        navigationState.navigateToDetail(it)
+                    }
+                )
+            }
+            composable<Screen.EventDetails> { backStackEntry ->
+                val args = backStackEntry.toRoute<Screen.EventDetails>()
+                EventDetailsScreen(
+                    eventId = args.id,
+                    onBackClick = {
+                        navigationState.navHostController.navigateUp()
+                    }
+                )
+            }
         }
         composable<Screen.Profile> {
             ProfileScreen()

@@ -57,7 +57,7 @@ fun EventDetailsScreen(
     val currentState = state.value
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(Color.White)
     ) {

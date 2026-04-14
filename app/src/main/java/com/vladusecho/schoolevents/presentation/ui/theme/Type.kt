@@ -36,6 +36,6 @@ val Typography = Typography(
 )
 
 val EventsFontFamily = FontFamily(
-    Font(R.font.noteworthy_bold, weight = FontWeight.Bold),
-    Font(R.font.noteworthy_light, weight = FontWeight.Light),
+    Font(R.font.alegreya_sans_bold, weight = FontWeight.Bold),
+    Font(R.font.alegreya_sans_regular, weight = FontWeight.Light),
 )

@@ -32,7 +32,8 @@ import com.vladusecho.schoolevents.presentation.viewModel.FavouriteViewModel
 @Composable
 fun FavouriteScreen(
     modifier: Modifier = Modifier,
-    viewModel: FavouriteViewModel = hiltViewModel()
+    viewModel: FavouriteViewModel = hiltViewModel(),
+    onEventClick: (eventId: Int) -> Unit
 ) {
     val state = viewModel.state.collectAsState()
 
@@ -65,13 +66,13 @@ fun FavouriteScreen(
                         items(
                             items = currentState.events,
                             key = { it.id }
-                        ) {
+                        ) { event ->
                             Box(
                                 modifier = Modifier.animateItem()
                             ) {
                                 StudentEventCard(
-                                    event = it,
-                                    onEventClick = {},
+                                    event = event,
+                                    onEventClick = { onEventClick(event.id) },
                                     onFavouriteClick = { isFavourite, eventId ->
                                         viewModel.processCommand(
                                             FavouriteViewModel.FavouriteCommand.SwitchFavouriteStatus(
@@ -109,7 +110,7 @@ fun FavouriteScreen(
         }
         Box(
             modifier = Modifier
-                .height(120.dp)
+                .height(110.dp)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp))
                 .background(Color(0xff0DCDAA))
@@ -120,10 +121,10 @@ fun FavouriteScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Твои избранные мероприятия",
+                    text = "Избранные мероприятия",
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp,
+                    fontSize = 28.sp,
                     color = Color.White,
                     textAlign = TextAlign.Center
                 )
@@ -135,7 +136,7 @@ fun FavouriteScreen(
                         text = "--- Создано Vladusecho (Владислав Корзун) ---",
                         fontFamily = EventsFontFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 9.sp,
+                        fontSize = 12.sp,
                         color = Color.White
                     )
                 }

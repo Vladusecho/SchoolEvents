@@ -6,7 +6,6 @@ import com.vladusecho.schoolevents.domain.repository.EventsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
@@ -19,10 +18,12 @@ class ExampleEventsRepositoryImpl @Inject constructor(
             Event(
                 id = id,
                 title = "Концерт 5opka в нашей школе! Не пропустите это невероятное событие",
-                description = "Пострадав в результате несчастного случая на стриме, провинциальный стример 5opka объединяется с лысым негром под псевдонимом MellSher, чтобы отправиться в тур «1+1» по городам России и рассказать всем свою невыдуманную историю, о которой невозможно молчать.",
-                eventDate = "${id+1} июня",
-                address = "ул. Ленина, д.80, Актовый зал",
-                isFavourite = false
+                description = "Пострадав в результате несчастного случая на стриме, провинциальный стример 5opka объединяется с лысым негром под псевдонимом MellSher, чтобы отправиться в тур «1+1» по городам России и рассказать всем свою невыдуманную историю, о которой невозможно молчать. 1+1 = 11 городов. Победители всех музыкальных премий, авторы хитов «XXL» и «Мерси», люди, которые не нуждаются в представлении, но мы их все равно представили, в твоём городе. Приходи на их самые большие концерты или будешь жалеть всю жизнь!",
+                eventAddress = "ул. Ленина, д.80",
+                eventDate = "$id июня",
+                isFavourite = false,
+                eventPlace = "Актовый зал",
+                eventDuration = "Вторник, 8:00 - 13:00"
             )
         }
     )
@@ -52,7 +53,7 @@ class ExampleEventsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getEventById(eventId: Int): Event {
-        TODO("Not yet implemented")
+        return _eventsFlow.value.first { it.id == eventId }
     }
 
     override fun getConfirmationEvents(): Flow<List<Event>> {

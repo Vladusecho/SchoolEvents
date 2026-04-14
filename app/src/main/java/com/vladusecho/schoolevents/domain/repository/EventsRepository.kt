@@ -1,6 +1,7 @@
 package com.vladusecho.schoolevents.domain.repository
 
 import com.vladusecho.schoolevents.domain.entity.Event
+import com.vladusecho.schoolevents.domain.entity.Profile
 import kotlinx.coroutines.flow.Flow
 
 interface EventsRepository {
@@ -18,6 +19,8 @@ interface EventsRepository {
     fun getArchivedEvents(): Flow<List<Event>>
 
     suspend fun addNewEvent(event: Event)
+
+    fun getProfile(): Flow<Profile>
 }
 
 

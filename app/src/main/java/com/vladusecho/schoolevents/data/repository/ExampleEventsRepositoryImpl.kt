@@ -2,6 +2,7 @@ package com.vladusecho.schoolevents.data.repository
 
 import android.util.Log
 import com.vladusecho.schoolevents.domain.entity.Event
+import com.vladusecho.schoolevents.domain.entity.Profile
 import com.vladusecho.schoolevents.domain.repository.EventsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,6 +27,18 @@ class ExampleEventsRepositoryImpl @Inject constructor(
                 eventDuration = "Вторник, 8:00 - 13:00"
             )
         }
+    )
+
+    private val _profileFlow = MutableStateFlow(
+        Profile(
+            id = 100,
+            name = "Никита",
+            surname = "Княгинин",
+            email = "nikitaknyaginin@yandex.ru",
+            classNumber = "9",
+            role = "Ученик",
+            imageUrl = "",
+        )
     )
 
 
@@ -66,5 +79,9 @@ class ExampleEventsRepositoryImpl @Inject constructor(
 
     override suspend fun addNewEvent(event: Event) {
         TODO("Not yet implemented")
+    }
+
+    override fun getProfile(): Flow<Profile> {
+        return _profileFlow.asStateFlow()
     }
 }

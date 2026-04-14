@@ -1,6 +1,7 @@
 package com.vladusecho.schoolevents.data.repository
 
 import com.vladusecho.schoolevents.domain.entity.Event
+import com.vladusecho.schoolevents.domain.entity.Profile
 import com.vladusecho.schoolevents.domain.repository.EventsRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -32,6 +33,10 @@ class EventsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addNewEvent(event: Event) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getProfile(): Flow<Profile> {
         TODO("Not yet implemented")
     }
 }

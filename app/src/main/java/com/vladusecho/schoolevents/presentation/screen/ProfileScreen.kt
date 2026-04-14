@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -35,9 +37,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.vladusecho.schoolevents.R
+import com.vladusecho.schoolevents.domain.entity.Event
+import com.vladusecho.schoolevents.domain.entity.Profile
+import com.vladusecho.schoolevents.presentation.entity.StudentEventCard
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
-import com.vladusecho.schoolevents.presentation.viewModel.Profile
 import com.vladusecho.schoolevents.presentation.viewModel.ProfileViewModel
 
 @Composable
@@ -55,9 +59,39 @@ fun ProfileScreen(
     ) {
         when (val currentState = state.value) {
             is ProfileViewModel.ProfileState.Content -> {
-                ProfileContent(
-                    profile = currentState.profile
-                )
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    item {
+                        ProfileContent(
+                            profile = currentState.profile
+                        )
+                    }
+                    item {
+                        Text(
+                            text = "Вы записаны на мероприятия",
+                            fontFamily = EventsFontFamily,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 20.sp,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                    items(
+                        items = currentState.events,
+                        key = { it.id }
+                    ) {
+                        Box(
+                            modifier = Modifier.animateItem()
+                        ) {
+                            StudentEventCard(
+                                event = it,
+                                onEventClick = {},
+                                onFavouriteClick = { isFavourite, eventId -> }
+                            )
+                        }
+                    }
+                }
             }
 
             is ProfileViewModel.ProfileState.Error -> {
@@ -124,7 +158,6 @@ fun ProfileContent(
 ) {
     Box(
         modifier = modifier
-            .fillMaxSize()
             .padding(top = 128.dp)
     ) {
         Column(
@@ -156,7 +189,7 @@ fun ProfileContent(
                 fontSize = 18.sp,
             )
             Text(
-                text = profile.role.uppercase() + " (" + profile.classNumber + ")",
+                text = profile.role.uppercase() + " | " + profile.classNumber + " класс",
                 fontFamily = EventsFontFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize = 18.sp,

@@ -17,6 +17,8 @@ sealed class Screen {
     object FavouriteGraph : Screen()
 
     @Serializable
+    object ProfileGraph : Screen()
+    @Serializable
     data class EventDetails(
         val id: Int
     ) : Screen()

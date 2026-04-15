@@ -12,6 +12,18 @@ class EventsRepositoryImpl @Inject constructor(
         TODO("Not yet implemented")
     }
 
+    override fun getSubscribedEvents(): Flow<List<Event>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun subscribeToEvent(eventId: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun unsubscribeFromEvent(eventId: Int) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun switchFavouriteStatus(isFavourite: Boolean, eventId: Int) {
         TODO("Not yet implemented")
     }

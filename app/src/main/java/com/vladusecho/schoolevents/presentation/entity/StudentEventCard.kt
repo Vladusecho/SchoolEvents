@@ -122,7 +122,7 @@ fun StudentEventCard(
                 modifier = modifier
                     .padding(8.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(Color.White.copy(alpha = 0.5f))
+                    .background(Color.White.copy(alpha = 0.7f))
                     .padding(8.dp)
             ) {
                 Text(
@@ -133,31 +133,52 @@ fun StudentEventCard(
                     color = Color.Black
                 )
             }
-            Box(
-                modifier = modifier
-                    .padding(8.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .clickable {
-                        onFavouriteClick(
-                            event.isFavourite,
-                            event.id
+            Column(
+                modifier = Modifier.padding(end = 8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(
+                    modifier = modifier
+                        .padding(top = 8.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .clickable {
+                            onFavouriteClick(
+                                event.isFavourite,
+                                event.id
+                            )
+                        }
+                        .background(Color.White.copy(alpha = 0.7f))
+                        .size(42.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = if (!event.isFavourite) {
+                            ImageVector.vectorResource(R.drawable.ic_not_fav)
+                        } else {
+                            ImageVector.vectorResource(R.drawable.ic_is_fav)
+                        },
+                        contentDescription = null,
+                        tint = Color.Unspecified,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+                if (event.isSubscribed) {
+                    Box(
+                        modifier = modifier
+                            .padding(top = 8.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(Color.White.copy(alpha = 0.7f))
+                            .size(42.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_calendar),
+                            contentDescription = null,
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(24.dp)
                         )
                     }
-                    .background(Color.White.copy(alpha = 0.5f))
-                    .size(42.dp)
-                    .padding(8.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = if (!event.isFavourite) {
-                        ImageVector.vectorResource(R.drawable.ic_not_fav)
-                    } else {
-                        ImageVector.vectorResource(R.drawable.ic_is_fav)
-                    },
-                    contentDescription = null,
-                    tint = Color.Unspecified,
-                    modifier = Modifier.size(18.dp)
-                )
+                }
             }
         }
     }
@@ -176,11 +197,11 @@ fun StudentEventCardPreview() {
                 eventDate = "10 июня",
                 isFavourite = true,
                 eventPlace = "Fr",
-                eventDuration = "Вторник, 8:00 - 13:00"
+                eventDuration = "Вторник, 8:00 - 13:00",
+                isSubscribed = true
             ),
             onEventClick = {},
-            onFavouriteClick = {
-                isFav, eventId ->
+            onFavouriteClick = { isFav, eventId ->
                 println("isFav: $isFav, eventId: $eventId")
             }
         )

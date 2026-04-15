@@ -24,7 +24,8 @@ class ExampleEventsRepositoryImpl @Inject constructor(
                 eventDate = "$id июня",
                 isFavourite = false,
                 eventPlace = "Актовый зал",
-                eventDuration = "Вторник, 8:00 - 13:00"
+                eventDuration = "Вторник, 8:00 - 13:00",
+                isSubscribed = false
             )
         }
     )
@@ -41,9 +42,38 @@ class ExampleEventsRepositoryImpl @Inject constructor(
         )
     )
 
-
     override fun getEvents(): Flow<List<Event>> {
         return _eventsFlow.asStateFlow()
+    }
+
+    override fun getSubscribedEvents(): Flow<List<Event>> {
+        return _eventsFlow.map { events ->
+            events.filter { it.isSubscribed }
+        }
+    }
+
+    override suspend fun subscribeToEvent(eventId: Int) {
+        _eventsFlow.update { eventsList ->
+            eventsList.map { event ->
+                if (event.id == eventId) {
+                    event.copy(isSubscribed = true)
+                } else {
+                    event
+                }
+            }
+        }
+    }
+
+    override suspend fun unsubscribeFromEvent(eventId: Int) {
+        _eventsFlow.update { eventsList ->
+            eventsList.map { event ->
+                if (event.id == eventId) {
+                    event.copy(isSubscribed = false)
+                } else {
+                    event
+                }
+            }
+        }
     }
 
     override suspend fun switchFavouriteStatus(isFavourite: Boolean, eventId: Int) {

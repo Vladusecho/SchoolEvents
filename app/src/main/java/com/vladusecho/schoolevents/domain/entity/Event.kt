@@ -12,4 +12,5 @@ data class Event(
     val eventDate: String,
     val eventDuration: String,
     val isFavourite: Boolean = false,
+    val isSubscribed: Boolean = false
 )

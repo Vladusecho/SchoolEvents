@@ -8,6 +8,12 @@ interface EventsRepository {
 
     fun getEvents(): Flow<List<Event>>
 
+    fun getSubscribedEvents(): Flow<List<Event>>
+
+    suspend fun subscribeToEvent(eventId: Int)
+
+    suspend fun unsubscribeFromEvent(eventId: Int)
+
     suspend fun switchFavouriteStatus(isFavourite: Boolean, eventId: Int)
 
     fun getFavouriteEvents(): Flow<List<Event>>

@@ -73,6 +73,13 @@ fun EventDetailsScreen(
                                 eventId = eventId
                             )
                         )
+                    },
+                    onSubscribeClick = { isSubscribed, eventId ->
+                        viewModel.processCommand(
+                            EventDetailsViewModel.EventDetailsCommand.SubscribeToEvent(
+                                isSubscribed, eventId
+                            )
+                        )
                     }
                 )
             }
@@ -97,7 +104,8 @@ fun EventDetailsContent(
     modifier: Modifier = Modifier,
     event: Event,
     onBackClick: () -> Unit,
-    onFavouriteClick: (isFavourite: Boolean, eventId: Int) -> Unit
+    onFavouriteClick: (isFavourite: Boolean, eventId: Int) -> Unit,
+    onSubscribeClick: (isSubscribed: Boolean ,eventId: Int) -> Unit
 ) {
 
     LazyColumn(
@@ -268,16 +276,16 @@ fun EventDetailsContent(
                 )
             }
             Button(
-                onClick = {},
+                onClick = { onSubscribeClick(event.isSubscribed, event.id) },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xff0DCDAA)
+                    containerColor =  if (event.isSubscribed) Color.Red else Color(0xff0DCDAA)
                 ),
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 8.dp)
             ) {
                 Text(
-                    text = "Записаться",
+                    text = if (!event.isSubscribed) "Посетить" else "Не пойду",
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
@@ -315,10 +323,12 @@ fun Preview() {
                 eventDate = "10 июня",
                 isFavourite = true,
                 eventPlace = "Актовый зал",
-                eventDuration = "Вторник, 8:00 - 13:00"
+                eventDuration = "Вторник, 8:00 - 13:00",
+                isSubscribed = true
             ),
             onBackClick = {},
-            onFavouriteClick = { isFavourite, eventId -> }
+            onFavouriteClick = { isFavourite, eventId -> },
+            onSubscribeClick = { isSubscribed, eventId -> }
         )
     }
 }

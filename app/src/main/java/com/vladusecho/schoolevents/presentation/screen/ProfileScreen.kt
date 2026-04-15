@@ -1,5 +1,6 @@
 package com.vladusecho.schoolevents.presentation.screen
 
+import android.widget.Button
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.vladusecho.schoolevents.R
-import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.domain.entity.Profile
 import com.vladusecho.schoolevents.presentation.entity.StudentEventCard
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
@@ -48,6 +48,7 @@ import com.vladusecho.schoolevents.presentation.viewModel.ProfileViewModel
 fun ProfileScreen(
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel(),
+    onEventClick: (eventId: Int) -> Unit
 ) {
 
     val state = viewModel.state.collectAsState()
@@ -69,7 +70,7 @@ fun ProfileScreen(
                     }
                     item {
                         Text(
-                            text = "Вы записаны на мероприятия",
+                            text = "Вы записаны на мероприятия:",
                             fontFamily = EventsFontFamily,
                             fontWeight = FontWeight.Normal,
                             fontSize = 20.sp,
@@ -77,18 +78,44 @@ fun ProfileScreen(
                             textAlign = TextAlign.Center
                         )
                     }
-                    items(
-                        items = currentState.events,
-                        key = { it.id }
-                    ) {
-                        Box(
-                            modifier = Modifier.animateItem()
+                    if (currentState.events.isEmpty()) {
+                        item {
+                            Box(
+                                modifier = Modifier.fillMaxWidth(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(R.drawable.ic_sadface),
+                                    "",
+                                    tint = Color(0xff0DCDAA),
+                                    modifier = Modifier.size(32.dp)
+                                )
+                            }
+                        }
+                    } else {
+                        items(
+                            items = currentState.events,
+                            key = { it.id }
                         ) {
-                            StudentEventCard(
-                                event = it,
-                                onEventClick = {},
-                                onFavouriteClick = { isFavourite, eventId -> }
-                            )
+                            Box(
+                                modifier = Modifier.animateItem()
+                            ) {
+                                StudentEventCard(
+                                    event = it,
+                                    onEventClick = { eventId ->
+                                        onEventClick(eventId)
+                                    },
+                                    onFavouriteClick = { isFavourite, eventId ->
+                                        viewModel.processCommand(
+                                            ProfileViewModel.ProfileCommand.SwitchFavouriteStatus(
+                                                isFavourite,
+                                                eventId
+                                            )
+                                        )
+
+                                    }
+                                )
+                            }
                         }
                     }
                 }
@@ -196,11 +223,11 @@ fun ProfileContent(
                 color = Color(0xff0DCDAA)
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Row(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 48.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Button(
                     onClick = {},
@@ -208,7 +235,6 @@ fun ProfileContent(
                         containerColor = Color(0xff0DCDAA)
                     ),
                     modifier = Modifier
-                        .weight(2f)
                 ) {
                     Text(
                         text = "Редактировать",
@@ -217,14 +243,21 @@ fun ProfileContent(
                         fontSize = 18.sp
                     )
                 }
-                Spacer(modifier = Modifier.width(16.dp))
-                IconButton(
+                Button(
                     onClick = {},
-                    colors = IconButtonDefaults.iconButtonColors(
+                    colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Red
                     ),
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
                 ) {
+                    Text(
+                        text = "Выйти",
+                        fontFamily = EventsFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        color = Color.White
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_exit),
                         contentDescription = "",
@@ -241,6 +274,16 @@ fun ProfileContent(
 @Composable
 fun ProfPrev() {
     SchoolEventsTheme() {
-        ProfileScreen()
+        ProfileContent(
+            profile = Profile(
+                id = 100,
+                name = "Никита",
+                surname = "Княгинин",
+                email = "nikitaknyaginin@yandex.ru",
+                classNumber = "9",
+                role = "Ученик",
+                imageUrl = "",
+            )
+        )
     }
 }

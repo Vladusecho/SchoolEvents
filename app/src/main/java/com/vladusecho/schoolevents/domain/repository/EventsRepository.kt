@@ -1,11 +1,18 @@
 package com.vladusecho.schoolevents.domain.repository
 
 import com.vladusecho.schoolevents.domain.entity.Event
+import com.vladusecho.schoolevents.domain.entity.Profile
 import kotlinx.coroutines.flow.Flow
 
 interface EventsRepository {
 
     fun getEvents(): Flow<List<Event>>
+
+    fun getSubscribedEvents(): Flow<List<Event>>
+
+    suspend fun subscribeToEvent(eventId: Int)
+
+    suspend fun unsubscribeFromEvent(eventId: Int)
 
     suspend fun switchFavouriteStatus(isFavourite: Boolean, eventId: Int)
 
@@ -18,6 +25,8 @@ interface EventsRepository {
     fun getArchivedEvents(): Flow<List<Event>>
 
     suspend fun addNewEvent(event: Event)
+
+    fun getProfile(): Flow<Profile>
 }
 
 

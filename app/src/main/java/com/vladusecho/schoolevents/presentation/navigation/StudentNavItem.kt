@@ -22,7 +22,7 @@ sealed class StudentNavItem(
     )
 
     object Profile : StudentNavItem(
-        screen = Screen.Profile,
+        screen = Screen.ProfileGraph,
         title = "Профиль",
         iconId = R.drawable.ic_profile_screen
     )

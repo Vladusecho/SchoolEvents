@@ -68,8 +68,25 @@ fun AppNavGraph(
                 )
             }
         }
-        composable<Screen.Profile> {
-            ProfileScreen()
+        navigation<Screen.ProfileGraph>(
+            startDestination = Screen.Profile
+        ) {
+            composable<Screen.Profile> {
+                ProfileScreen(
+                    onEventClick = {
+                        navigationState.navigateToDetail(it)
+                    }
+                )
+            }
+            composable<Screen.EventDetails> { backStackEntry ->
+                val args = backStackEntry.toRoute<Screen.EventDetails>()
+                EventDetailsScreen(
+                    eventId = args.id,
+                    onBackClick = {
+                        navigationState.navHostController.navigateUp()
+                    }
+                )
+            }
         }
     }
 }

@@ -4,7 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.domain.usecase.GetEventByIdUseCase
+import com.vladusecho.schoolevents.domain.usecase.SubscribeToEventUseCase
 import com.vladusecho.schoolevents.domain.usecase.SwitchEventFavouriteStatusUseCase
+import com.vladusecho.schoolevents.domain.usecase.UnsubscribeFromEventUseCase
+import com.vladusecho.schoolevents.presentation.viewModel.EventDetailsViewModel.EventDetailsState.*
 import com.vladusecho.schoolevents.presentation.viewModel.MainViewModel.MainCommand
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -20,6 +23,8 @@ import kotlinx.coroutines.launch
 class EventDetailsViewModel @AssistedInject constructor(
     private val getEventByIdUseCase: GetEventByIdUseCase,
     private val switchFavouriteStatusUseCase: SwitchEventFavouriteStatusUseCase,
+    private val subscribeToEventUseCase: SubscribeToEventUseCase,
+    private val unsubscribeFromEventUseCase: UnsubscribeFromEventUseCase,
     @Assisted("eventId") eventId: Int
 ) : ViewModel() {
 
@@ -44,7 +49,24 @@ class EventDetailsViewModel @AssistedInject constructor(
                         val updatedEvent = currentState.event.copy(
                             isFavourite = !command.isFavourite
                         )
-                        _state.value = EventDetailsState.Content(updatedEvent)
+                        _state.value = Content(updatedEvent)
+                    }
+                }
+            }
+
+            is EventDetailsCommand.SubscribeToEvent -> {
+                viewModelScope.launch {
+                    if (!command.isSubscribed) {
+                        subscribeToEventUseCase(command.eventId)
+                    } else {
+                        unsubscribeFromEventUseCase(command.eventId)
+                    }
+                    val currentState = _state.value
+                    if (currentState is EventDetailsState.Content) {
+                        val updatedEvent = currentState.event.copy(
+                            isSubscribed = !command.isSubscribed
+                        )
+                        _state.value = Content(updatedEvent)
                     }
                 }
             }
@@ -73,6 +95,11 @@ class EventDetailsViewModel @AssistedInject constructor(
     sealed interface EventDetailsCommand {
         data class SwitchFavouriteStatus(
             val isFavourite: Boolean,
+            val eventId: Int
+        ) : EventDetailsCommand
+
+        data class SubscribeToEvent(
+            val isSubscribed: Boolean,
             val eventId: Int
         ) : EventDetailsCommand
     }

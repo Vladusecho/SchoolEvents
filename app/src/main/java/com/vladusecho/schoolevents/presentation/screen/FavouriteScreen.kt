@@ -38,7 +38,7 @@ fun FavouriteScreen(
     val state = viewModel.state.collectAsState()
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(Color.White)
     ) {

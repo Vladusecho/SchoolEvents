@@ -1,6 +1,7 @@
 package com.vladusecho.schoolevents.data.repository
 
 import android.util.Log
+import com.vladusecho.schoolevents.R
 import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.domain.entity.Profile
 import com.vladusecho.schoolevents.domain.repository.EventsRepository
@@ -15,17 +16,54 @@ class ExampleEventsRepositoryImpl @Inject constructor(
 ) : EventsRepository {
 
     private val _eventsFlow = MutableStateFlow(
-        List(10) { id ->
-            Event(
-                id = id,
-                title = "Концерт 5opka в нашей школе! Не пропустите это невероятное событие",
-                description = "Пострадав в результате несчастного случая на стриме, провинциальный стример 5opka объединяется с лысым негром под псевдонимом MellSher, чтобы отправиться в тур «1+1» по городам России и рассказать всем свою невыдуманную историю, о которой невозможно молчать. 1+1 = 11 городов. Победители всех музыкальных премий, авторы хитов «XXL» и «Мерси», люди, которые не нуждаются в представлении, но мы их все равно представили, в твоём городе. Приходи на их самые большие концерты или будешь жалеть всю жизнь!",
-                eventAddress = "ул. Ленина, д.80",
-                eventDate = "$id июня",
-                isFavourite = false,
-                eventPlace = "Актовый зал",
-                eventDuration = "Вторник, 8:00 - 13:00",
-                isSubscribed = false
+        mutableListOf<Event>().apply {
+            add(
+                Event(
+                    id = 100,
+                    title = "С нуля до 'Hello, World!': первый код за 2 часа",
+                    description = "Практический воркшоп для тех, кто боится начинать. Разберём основы Python, напишем первую программу, посмотрим, как работает ChatGPT. Ноутбук нужен, зарядку брать обязательно!",
+                    eventAddress = "ул. Ленина, д.80",
+                    eventPlace = "Кабинет № 122",
+                    eventDate = "18 июня",
+                    eventDuration = "Среда, 19:00 - 21:00",
+                    imageUrl = R.drawable.img_programming
+                )
+            )
+            add(
+                Event(
+                    id = 200,
+                    title = "День дублёра: ученики становятся учителями!",
+                    description = "Старшеклассники проведут уроки вместо учителей. Можно попробовать себя в роли преподавателя математики, физкультуры или даже директора. Уроки по 20 минут. Расписание дублёров будет вывешено у входа в учительскую.",
+                    eventAddress = "ул. Ленина, д.80",
+                    eventPlace = "Все кабинеты школы",
+                    eventDate = "15 июня",
+                    eventDuration = "Понедельник, 8:30 - 13:30",
+                    imageUrl = R.drawable.img_dubler_day
+                )
+            )
+            add(
+                Event(
+                    id = 300,
+                    title = "Золотая осень: школьная дискотека 2026",
+                    description = "Танцы, конкурс на лучший осенний образ, караоке-баттл между классами. Dress code: жёлтый, оранжевый или красный аксессуар. Бутербродный фуршет и лимонад в холле.",
+                    eventAddress = "ул. Ленина, д.80",
+                    eventPlace = "Актовый зал",
+                    eventDate = "28 сентября",
+                    eventDuration = "Суббота, 17:00 - 20:00",
+                    imageUrl = R.drawable.img_autumn
+                )
+            )
+            add(
+                Event(
+                    id = 400,
+                    title = "MathBattle: 9-11 классы сразятся в логике",
+                    description = "Командная игра по мотивам «Что? Где? Когда?». Будет 4 раунда: теория вероятности, геометрия вокруг нас, логические задачи и блиц-опрос. Победителей ждут пятёрки в журнал по желанию.",
+                    eventAddress = "ул. Ленина, д.80",
+                    eventPlace = "Кабинет № 203",
+                    eventDate = "4 октября",
+                    eventDuration = "Пятница, 14:00 - 15:30",
+                    imageUrl = R.drawable.img_math
+                )
             )
         }
     )
@@ -60,7 +98,7 @@ class ExampleEventsRepositoryImpl @Inject constructor(
                 } else {
                     event
                 }
-            }
+            } as MutableList<Event>
         }
     }
 
@@ -72,7 +110,7 @@ class ExampleEventsRepositoryImpl @Inject constructor(
                 } else {
                     event
                 }
-            }
+            } as MutableList<Event>
         }
     }
 
@@ -85,7 +123,7 @@ class ExampleEventsRepositoryImpl @Inject constructor(
                 } else {
                     event
                 }
-            }
+            } as MutableList<Event>
         }
     }
 

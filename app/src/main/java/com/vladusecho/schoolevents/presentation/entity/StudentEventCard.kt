@@ -1,5 +1,6 @@
 package com.vladusecho.schoolevents.presentation.entity
 
+import androidx.collection.intIntMapOf
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -56,15 +57,16 @@ fun StudentEventCard(
                 .background(Color.White)
                 .clickable {
                     onEventClick(event.id)
-                }
+                },
         ) {
             Image(
-                painter = painterResource(id = R.drawable.maxresdefault),
+                painter = painterResource(id = event.imageUrl),
                 contentDescription = null,
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier
                     .clip(RoundedCornerShape(20.dp))
-                    .height(118.dp)
+                    .height(120.dp)
+                    .fillMaxWidth()
             )
             Column(
                 modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
@@ -122,7 +124,7 @@ fun StudentEventCard(
                 modifier = modifier
                     .padding(8.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(Color.White.copy(alpha = 0.7f))
+                    .background(Color.White)
                     .padding(8.dp)
             ) {
                 Text(
@@ -147,18 +149,18 @@ fun StudentEventCard(
                                 event.id
                             )
                         }
-                        .background(Color.White.copy(alpha = 0.7f))
+                        .background(Color.White)
                         .size(42.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = if (!event.isFavourite) {
-                            ImageVector.vectorResource(R.drawable.ic_not_fav)
-                        } else {
-                            ImageVector.vectorResource(R.drawable.ic_is_fav)
-                        },
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_not_fav),
                         contentDescription = null,
-                        tint = Color.Unspecified,
+                        tint = if (!event.isFavourite) {
+                            Color.Gray
+                        } else {
+                            Color.Red
+                        },
                         modifier = Modifier.size(24.dp)
                     )
                 }
@@ -167,7 +169,7 @@ fun StudentEventCard(
                         modifier = modifier
                             .padding(top = 8.dp)
                             .clip(RoundedCornerShape(10.dp))
-                            .background(Color.White.copy(alpha = 0.7f))
+                            .background(Color.White)
                             .size(42.dp),
                         contentAlignment = Alignment.Center
                     ) {
@@ -195,10 +197,11 @@ fun StudentEventCardPreview() {
                 description = "Пострадав в результате несчастного случая на стриме, провинциальный стример 5opka объединяется с лысым негром под псевдонимом MellSher, чтобы отправиться в тур «1+1» по городам России и рассказать всем свою невыдуманную историю, о которой невозможно молчать.",
                 eventAddress = "ул. Ленина, д.80, Актовый зал",
                 eventDate = "10 июня",
-                isFavourite = true,
+                isFavourite = false,
                 eventPlace = "Fr",
                 eventDuration = "Вторник, 8:00 - 13:00",
-                isSubscribed = true
+                isSubscribed = true,
+                imageUrl = R.drawable.img_math
             ),
             onEventClick = {},
             onFavouriteClick = { isFav, eventId ->

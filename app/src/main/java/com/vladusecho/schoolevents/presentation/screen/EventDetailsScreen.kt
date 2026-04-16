@@ -118,10 +118,11 @@ fun EventDetailsContent(
                 Image(
                     painter = painterResource(event.imageUrl),
                     contentDescription = null,
-                    contentScale = ContentScale.FillHeight,
+                    contentScale = ContentScale.FillBounds,
                     modifier = Modifier
                         .height(240.dp)
-                        .clip(RoundedCornerShape(bottomStart = 15.dp, bottomEnd = 15.dp))
+                        .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp))
+                        .fillMaxWidth()
 
                 )
             }
@@ -324,7 +325,8 @@ fun Preview() {
                 isFavourite = true,
                 eventPlace = "Актовый зал",
                 eventDuration = "Вторник, 8:00 - 13:00",
-                isSubscribed = true
+                isSubscribed = true,
+                imageUrl = R.drawable.img_math
             ),
             onBackClick = {},
             onFavouriteClick = { isFavourite, eventId -> },

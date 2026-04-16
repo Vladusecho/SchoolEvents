@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vladusecho.schoolevents.domain.entity.Profile
 import com.vladusecho.schoolevents.domain.usecase.GetProfileUseCase
+import com.vladusecho.schoolevents.domain.usecase.SaveImageToInternalStorageUseCase
 import com.vladusecho.schoolevents.domain.usecase.UpdateProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +15,8 @@ import javax.inject.Inject
 @HiltViewModel
 class EditingProfileViewModel @Inject constructor(
     private val getProfileUseCase: GetProfileUseCase,
-    private val updateProfileUseCase: UpdateProfileUseCase
+    private val updateProfileUseCase: UpdateProfileUseCase,
+    private val saveImageToInternalStorageUseCase: SaveImageToInternalStorageUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<EditingProfileState>(EditingProfileState.Initial)
@@ -32,7 +34,12 @@ class EditingProfileViewModel @Inject constructor(
         when (command) {
             is EditingProfileCommand.SaveProfile -> {
                 viewModelScope.launch {
-                    updateProfileUseCase(command.profile)
+                    val finalPath = if (command.profile.imageUrl.startsWith("content://")) {
+                        saveImageToInternalStorageUseCase(command.profile.imageUrl)
+                    } else {
+                        command.profile.imageUrl
+                    }
+                    updateProfileUseCase(command.profile.copy(imageUrl = finalPath))
                 }
             }
         }

@@ -1,5 +1,10 @@
 package com.vladusecho.schoolevents.presentation.screen
 
+import android.content.Context
+import android.net.Uri
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -31,6 +37,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -39,11 +47,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import coil3.compose.AsyncImage
 import com.vladusecho.schoolevents.R
 import com.vladusecho.schoolevents.domain.entity.Profile
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
 import com.vladusecho.schoolevents.presentation.viewModel.EditingProfileViewModel
+import java.io.File
 
 @Composable
 fun ProfileEditingScreen(
@@ -140,10 +150,21 @@ fun ProfileEditingContent(
     onBackClick: () -> Unit
 ) {
 
+    val context = LocalContext.current
+
     val userClass = remember { mutableStateOf(profile.classNumber) }
     val userName = remember { mutableStateOf(profile.name) }
     val userSurname = remember { mutableStateOf(profile.surname) }
     val userEmail = remember { mutableStateOf(profile.email) }
+
+    val selectedImageUri = remember { mutableStateOf<Uri?>(null) }
+
+    val imagePicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri ->
+            uri?.let { selectedImageUri.value = it }
+        }
+    )
 
     Column(
         modifier = modifier
@@ -152,13 +173,20 @@ fun ProfileEditingContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         IconButton(
-            onClick = {},
+            onClick = {
+                imagePicker.launch("image/*")
+            },
             modifier = Modifier.size(96.dp)
         ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_avatar),
+            AsyncImage(
+                model = selectedImageUri.value ?: profile.imageUrl,
                 contentDescription = "",
-                tint = Color(0xff0DCDAA)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(R.drawable.ic_avatar),
+                error = painterResource(R.drawable.ic_avatar)
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
@@ -245,7 +273,7 @@ fun ProfileEditingContent(
                         email = userEmail.value,
                         classNumber = userClass.value,
                         role = profile.role,
-                        imageUrl = profile.imageUrl
+                        imageUrl = selectedImageUri.value?.toString() ?: profile.imageUrl
                     )
                 )
             },

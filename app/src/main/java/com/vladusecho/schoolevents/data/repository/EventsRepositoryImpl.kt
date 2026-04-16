@@ -55,4 +55,8 @@ class EventsRepositoryImpl @Inject constructor(
     override suspend fun updateProfile(profile: Profile) {
         TODO("Not yet implemented")
     }
+
+    override suspend fun saveImageToInternalStorage(uri: String): String {
+        TODO("Not yet implemented")
+    }
 }

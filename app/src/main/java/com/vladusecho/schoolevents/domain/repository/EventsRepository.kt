@@ -29,6 +29,8 @@ interface EventsRepository {
     fun getProfile(): Flow<Profile>
 
     suspend fun updateProfile(profile: Profile)
+
+    suspend fun saveImageToInternalStorage(uri: String): String
 }
 
 

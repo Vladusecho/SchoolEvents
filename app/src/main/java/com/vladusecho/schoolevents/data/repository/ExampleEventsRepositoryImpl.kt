@@ -1,18 +1,26 @@
 package com.vladusecho.schoolevents.data.repository
 
+import android.content.Context
+import android.net.Uri
 import android.util.Log
 import com.vladusecho.schoolevents.R
 import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.domain.entity.Profile
 import com.vladusecho.schoolevents.domain.repository.EventsRepository
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import androidx.core.net.toUri
+import java.io.File
 
 class ExampleEventsRepositoryImpl @Inject constructor(
+    @param:ApplicationContext private val context: Context
 ) : EventsRepository {
 
     private val _eventsFlow = MutableStateFlow(
@@ -155,5 +163,21 @@ class ExampleEventsRepositoryImpl @Inject constructor(
 
     override suspend fun updateProfile(profile: Profile) {
         _profileFlow.update { profile }
+    }
+
+    override suspend fun saveImageToInternalStorage(uri: String): String {
+        return withContext(Dispatchers.IO) {
+            val uri = uri.toUri()
+            val inputStream = context.contentResolver.openInputStream(uri)
+            val fileName = "avatar_${System.currentTimeMillis()}.jpg"
+            val file = File(context.filesDir, fileName)
+
+            inputStream?.use { input ->
+                file.outputStream().use { output ->
+                    input.copyTo(output)
+                }
+            }
+            file.absolutePath
+        }
     }
 }

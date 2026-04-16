@@ -3,6 +3,7 @@ package com.vladusecho.schoolevents.presentation.entity
 import androidx.collection.intIntMapOf
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -124,6 +125,7 @@ fun StudentEventCard(
                 modifier = modifier
                     .padding(8.dp)
                     .clip(RoundedCornerShape(10.dp))
+                    .border(1.dp, Color.Gray, RoundedCornerShape(10.dp))
                     .background(Color.White)
                     .padding(8.dp)
             ) {
@@ -150,7 +152,8 @@ fun StudentEventCard(
                             )
                         }
                         .background(Color.White)
-                        .size(42.dp),
+                        .size(42.dp)
+                        .border(1.dp, Color.Gray, RoundedCornerShape(10.dp)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -161,7 +164,9 @@ fun StudentEventCard(
                         } else {
                             Color.Red
                         },
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier
+                            .size(24.dp)
+
                     )
                 }
                 if (event.isSubscribed) {
@@ -170,7 +175,8 @@ fun StudentEventCard(
                             .padding(top = 8.dp)
                             .clip(RoundedCornerShape(10.dp))
                             .background(Color.White)
-                            .size(42.dp),
+                            .size(42.dp)
+                            .border(1.dp, Color.Gray, RoundedCornerShape(10.dp)),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(

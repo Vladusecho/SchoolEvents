@@ -27,6 +27,8 @@ interface EventsRepository {
     suspend fun addNewEvent(event: Event)
 
     fun getProfile(): Flow<Profile>
+
+    suspend fun updateProfile(profile: Profile)
 }
 
 

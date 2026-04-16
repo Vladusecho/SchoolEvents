@@ -16,12 +16,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,104 +38,93 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.vladusecho.schoolevents.R
 import com.vladusecho.schoolevents.domain.entity.Profile
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
+import com.vladusecho.schoolevents.presentation.viewModel.EditingProfileViewModel
 
 @Composable
 fun ProfileEditingScreen(
     modifier: Modifier = Modifier,
+    viewModel: EditingProfileViewModel = hiltViewModel(),
     onBackClick: () -> Unit
 ) {
+
+    val state = viewModel.state.collectAsState()
+
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(Color.White)
     ) {
-//        when (val currentState = state.value) {
-//            is MainViewModel.MainState.Content -> {
-//                
-//            }
-//
-//            is MainViewModel.MainState.Error -> {
-//
-//            }
-//
-//            MainViewModel.MainState.Initial -> {
-//
-//            }
-//
-//            MainViewModel.MainState.Loading -> {
-//                Box(
-//                    modifier = Modifier
-//                        .fillMaxSize(),
-//                    contentAlignment = Alignment.Center
-//                ) {
-//                    CircularProgressIndicator(
-//                        color = Color(0xff0DCDAA)
-//                    )
-//                }
-//            }
-//        }
-        ProfileEditingContent(
-            Profile(
-                id = 100,
-                name = "Никита",
-                surname = "Княгинин",
-                email = "nikitaknyaginin@yandex.ru",
-                classNumber = "9",
-                role = "Ученик",
-                imageUrl = "",
-            )
-        )
-        Box(
-            modifier = Modifier
-                .height(110.dp)
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp))
-                .background(Color(0xff0DCDAA))
-                .padding(start = 16.dp, end = 16.dp),
-            contentAlignment = Alignment.BottomCenter
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_back),
-                            contentDescription = null,
-                            tint = Color(0xff0DCDAA),
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(50))
-                                .background(Color.White)
-                                .size(32.dp)
+        when (val currentState = state.value) {
+            is EditingProfileViewModel.EditingProfileState.Content -> {
+                ProfileEditingContent(
+                    profile = currentState.profile,
+                    onSaveClick = { newProfile ->
+                        viewModel.processCommand(
+                            EditingProfileViewModel.EditingProfileCommand.SaveProfile(
+                                newProfile
+                            )
                         )
-                    }
-                    Text(
-                        text = "Редактирование",
-                        fontFamily = EventsFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 28.sp,
-                        color = Color.White,
-                        textAlign = TextAlign.Center
-                    )
-                }
+                        onBackClick()
+                    },
+                    onBackClick = onBackClick
+                )
                 Box(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .height(110.dp)
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp))
+                        .background(Color(0xff0DCDAA))
+                        .padding(start = 16.dp, end = 16.dp),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Редактирование",
+                            fontFamily = EventsFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 28.sp,
+                            color = Color.White,
+                            textAlign = TextAlign.Center
+                        )
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "--- Создано Vladusecho (Владислав Корзун) ---",
+                                fontFamily = EventsFontFamily,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp,
+                                color = Color.White
+                            )
+                        }
+                    }
+                }
+            }
+
+            is EditingProfileViewModel.EditingProfileState.Error -> {
+
+            }
+
+            EditingProfileViewModel.EditingProfileState.Initial -> {
+
+            }
+
+            EditingProfileViewModel.EditingProfileState.Loading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = "--- Создано Vladusecho (Владислав Корзун) ---",
-                        fontFamily = EventsFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 12.sp,
-                        color = Color.White
+                    CircularProgressIndicator(
+                        color = Color(0xff0DCDAA)
                     )
                 }
             }
@@ -141,10 +134,19 @@ fun ProfileEditingScreen(
 
 @Composable
 fun ProfileEditingContent(
-    profile: Profile
+    modifier: Modifier = Modifier,
+    profile: Profile,
+    onSaveClick: (newProfile: Profile) -> Unit,
+    onBackClick: () -> Unit
 ) {
+
+    val userClass = remember { mutableStateOf(profile.classNumber) }
+    val userName = remember { mutableStateOf(profile.name) }
+    val userSurname = remember { mutableStateOf(profile.surname) }
+    val userEmail = remember { mutableStateOf(profile.email) }
+
     Column(
-        modifier = Modifier
+        modifier = modifier
             .padding(top = 128.dp)
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -161,8 +163,8 @@ fun ProfileEditingContent(
         }
         Spacer(modifier = Modifier.height(8.dp))
         EventsTextField(
-            value = profile.classNumber,
-            onValueChange = {},
+            value = userClass.value,
+            onValueChange = { userClass.value = it },
             prefix = {
                 Row(
 
@@ -183,8 +185,8 @@ fun ProfileEditingContent(
         )
         Spacer(modifier = Modifier.height(8.dp))
         EventsTextField(
-            value = profile.name,
-            onValueChange = {},
+            value = userName.value,
+            onValueChange = { userName.value = it },
             prefix = {
                 Row(
 
@@ -200,8 +202,8 @@ fun ProfileEditingContent(
         )
         Spacer(modifier = Modifier.height(8.dp))
         EventsTextField(
-            value = profile.surname,
-            onValueChange = {},
+            value = userSurname.value,
+            onValueChange = { userSurname.value = it },
             prefix = {
                 Row(
 
@@ -217,8 +219,8 @@ fun ProfileEditingContent(
         )
         Spacer(modifier = Modifier.height(8.dp))
         EventsTextField(
-            value = profile.email,
-            onValueChange = {},
+            value = userEmail.value,
+            onValueChange = { userEmail.value = it },
             prefix = {
                 Row(
 
@@ -232,16 +234,47 @@ fun ProfileEditingContent(
                 }
             }
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(24.dp))
         Button(
-            onClick = {},
+            onClick = {
+                onSaveClick(
+                    Profile(
+                        id = profile.id,
+                        name = userName.value,
+                        surname = userSurname.value,
+                        email = userEmail.value,
+                        classNumber = userClass.value,
+                        role = profile.role,
+                        imageUrl = profile.imageUrl
+                    )
+                )
+            },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xff0DCDAA)
             ),
             modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 32.dp)
         ) {
             Text(
                 text = "Сохранить",
+                fontFamily = EventsFontFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(
+            onClick = onBackClick,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xff0DCDAA)
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 32.dp)
+        ) {
+            Text(
+                text = "Вернуться",
                 fontFamily = EventsFontFamily,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp

@@ -152,4 +152,8 @@ class ExampleEventsRepositoryImpl @Inject constructor(
     override fun getProfile(): Flow<Profile> {
         return _profileFlow.asStateFlow()
     }
+
+    override suspend fun updateProfile(profile: Profile) {
+        _profileFlow.update { profile }
+    }
 }

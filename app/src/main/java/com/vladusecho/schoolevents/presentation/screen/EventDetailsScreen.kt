@@ -118,9 +118,8 @@ fun EventDetailsContent(
                 Image(
                     painter = painterResource(event.imageUrl),
                     contentDescription = null,
-                    contentScale = ContentScale.FillBounds,
+                    contentScale = ContentScale.FillWidth,
                     modifier = Modifier
-                        .height(240.dp)
                         .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp))
                         .fillMaxWidth()
 

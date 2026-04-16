@@ -25,6 +25,10 @@ class NavigationState(
     fun navigateToDetail(eventId: Int) {
         navHostController.navigate(Screen.EventDetails(id = eventId))
     }
+
+    fun navigateToProfileEditing() {
+        navHostController.navigate(Screen.ProfileEditing)
+    }
 }
 
 @Composable

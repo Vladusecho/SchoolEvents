@@ -48,7 +48,8 @@ import com.vladusecho.schoolevents.presentation.viewModel.ProfileViewModel
 fun ProfileScreen(
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel(),
-    onEventClick: (eventId: Int) -> Unit
+    onEventClick: (eventId: Int) -> Unit,
+    onEditingClick: () -> Unit
 ) {
 
     val state = viewModel.state.collectAsState()
@@ -65,7 +66,8 @@ fun ProfileScreen(
                 ) {
                     item {
                         ProfileContent(
-                            profile = currentState.profile
+                            profile = currentState.profile,
+                            onEditingClick = onEditingClick
                         )
                     }
                     item {
@@ -182,6 +184,7 @@ fun ProfileScreen(
 fun ProfileContent(
     modifier: Modifier = Modifier,
     profile: Profile,
+    onEditingClick: () -> Unit
 ) {
     Box(
         modifier = modifier
@@ -230,7 +233,7 @@ fun ProfileContent(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Button(
-                    onClick = {},
+                    onClick = onEditingClick,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xff0DCDAA)
                     ),
@@ -283,7 +286,8 @@ fun ProfPrev() {
                 classNumber = "9",
                 role = "Ученик",
                 imageUrl = "",
-            )
+            ),
+            onEditingClick = {}
         )
     }
 }

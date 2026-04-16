@@ -3,6 +3,9 @@ package com.vladusecho.schoolevents.presentation.navigation
 import kotlinx.serialization.Serializable
 
 sealed class Screen {
+
+    @Serializable
+    object ProfileEditing : Screen()
     @Serializable
     object Events : Screen()
     @Serializable

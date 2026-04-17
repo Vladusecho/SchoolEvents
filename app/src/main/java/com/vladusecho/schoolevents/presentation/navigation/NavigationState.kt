@@ -9,7 +9,7 @@ class NavigationState(
     val navHostController: NavHostController
 ) {
 
-    fun navigateTo(route: Any) {
+    fun navigateToTab(route: Any) {
         navHostController.navigate(route) {
             // only one copy of screen we can use
             popUpTo(navHostController.graph.findStartDestination().id) {
@@ -23,11 +23,17 @@ class NavigationState(
     }
 
     fun navigateToDetail(eventId: Int) {
-        navHostController.navigate(Screen.EventDetails(id = eventId))
+        navigateToSecondary(Screen.EventDetails(eventId))
     }
 
     fun navigateToProfileEditing() {
-        navHostController.navigate(Screen.ProfileEditing)
+        navigateToSecondary(Screen.ProfileEditing)
+    }
+
+    fun navigateToSecondary(route: Any) {
+        navHostController.navigate(route) {
+            launchSingleTop = true
+        }
     }
 }
 

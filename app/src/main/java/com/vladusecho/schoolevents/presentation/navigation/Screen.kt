@@ -14,6 +14,16 @@ sealed class Screen {
     object Profile : Screen()
 
     @Serializable
+    data class Login(val email: String) : Screen()
+
+    @Serializable
+    data class Registration(val email: String) : Screen()
+
+    @Serializable
+    object StartApp : Screen()
+    @Serializable
+    object AuthGraph : Screen()
+    @Serializable
     object MainGraph : Screen()
 
     @Serializable

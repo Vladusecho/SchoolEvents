@@ -23,6 +23,11 @@ class ExampleEventsRepositoryImpl @Inject constructor(
     @param:ApplicationContext private val context: Context
 ) : EventsRepository {
 
+    private val userIsAuth = MutableStateFlow(false)
+
+    private val correctEmail = "test"
+    private val correctPassword = "0000"
+
     private val _eventsFlow = MutableStateFlow(
         mutableListOf<Event>().apply {
             add(
@@ -179,5 +184,24 @@ class ExampleEventsRepositoryImpl @Inject constructor(
             }
             file.absolutePath
         }
+    }
+
+    override suspend fun checkUserExists(email: String): Boolean {
+        return email == correctEmail
+    }
+
+    override suspend fun checkUserPassword(
+        email: String,
+        password: String
+    ): Boolean {
+        return email == correctEmail && password == correctPassword
+    }
+
+    override fun checkUserIsAuth(): Flow<Boolean> {
+        return userIsAuth.asStateFlow()
+    }
+
+    override suspend fun changeUserIsAuth() {
+        userIsAuth.update { !it }
     }
 }

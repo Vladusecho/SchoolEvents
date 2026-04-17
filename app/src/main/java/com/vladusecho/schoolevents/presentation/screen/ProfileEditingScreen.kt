@@ -320,6 +320,7 @@ fun EventsTextField(
     value: String,
     prefix: @Composable (() -> Unit),
     suffix: @Composable (() -> Unit)? = null,
+    placeholder: @Composable (() -> Unit)? = null,
     onValueChange: (String) -> Unit,
 ) {
     TextField(
@@ -339,7 +340,8 @@ fun EventsTextField(
             cursorColor = MaterialTheme.colorScheme.secondary
         ),
         prefix = prefix,
-        suffix = suffix
+        suffix = suffix,
+        placeholder = placeholder
     )
 }
 

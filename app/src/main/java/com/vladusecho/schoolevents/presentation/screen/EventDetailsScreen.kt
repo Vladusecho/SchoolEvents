@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +20,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -59,7 +61,7 @@ fun EventDetailsScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         when (currentState) {
             is EventDetailsViewModel.EventDetailsState.Content -> {
@@ -109,7 +111,10 @@ fun EventDetailsContent(
 ) {
 
     LazyColumn(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
+        contentPadding = PaddingValues(bottom = 128.dp),
     ) {
         item {
             Box(
@@ -118,27 +123,28 @@ fun EventDetailsContent(
                 Image(
                     painter = painterResource(event.imageUrl),
                     contentDescription = null,
-                    contentScale = ContentScale.FillBounds,
+                    contentScale = ContentScale.FillWidth,
                     modifier = Modifier
-                        .height(240.dp)
                         .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp))
                         .fillMaxWidth()
 
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
-            Row(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(horizontal = 8.dp)
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(MaterialTheme.colorScheme.primary)
+                    .padding(8.dp)
             ) {
                 Text(
                     text = event.title,
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp
+                    fontSize = 24.sp,
+                    color = Color.White
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -161,13 +167,15 @@ fun EventDetailsContent(
                         text = event.eventDate,
                         fontFamily = EventsFontFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colorScheme.secondary
                     )
                     Text(
                         text = event.eventDuration,
                         fontFamily = EventsFontFamily,
                         fontWeight = FontWeight.Normal,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colorScheme.secondary
                     )
                 }
             }
@@ -189,13 +197,15 @@ fun EventDetailsContent(
                         text = event.eventPlace,
                         fontFamily = EventsFontFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colorScheme.secondary
                     )
                     Text(
                         text = event.eventAddress,
                         fontFamily = EventsFontFamily,
                         fontWeight = FontWeight.Normal,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colorScheme.secondary
                     )
                 }
             }
@@ -209,21 +219,23 @@ fun EventDetailsContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(20.dp))
-                        .background(Color(0xff0DCDAA).copy(0.2f)),
+                        .background(MaterialTheme.colorScheme.primary),
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Text(
                         text = "Организатор:",
                         fontFamily = EventsFontFamily,
                         fontWeight = FontWeight.Normal,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
+                        color = Color.White
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "Милютина Виктория",
                         fontFamily = EventsFontFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
+                        color = Color.White
                     )
                 }
             }
@@ -236,7 +248,8 @@ fun EventDetailsContent(
                     text = "О мероприятии:",
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colorScheme.secondary
                 )
             }
             Box(
@@ -249,7 +262,8 @@ fun EventDetailsContent(
                     text = event.description,
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Normal,
-                    fontSize = 20.sp
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colorScheme.secondary
                 )
             }
             Spacer(modifier = Modifier.height(100.dp))
@@ -263,23 +277,25 @@ fun EventDetailsContent(
     ) {
         Row(
             modifier = Modifier
+                .padding(bottom = 108.dp)
                 .clip(RoundedCornerShape(20.dp))
-                .background(Color(0xff0DCDAA).copy(alpha = 0.5f))
+                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
+
         ) {
             IconButton(onClick = onBackClick) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_back),
                     contentDescription = null,
-                    tint = Color(0xff0DCDAA),
+                    tint = Color.White,
                     modifier = Modifier
-                        .background(Color.White)
+                        .background(MaterialTheme.colorScheme.primary)
                         .size(128.dp)
                 )
             }
             Button(
                 onClick = { onSubscribeClick(event.isSubscribed, event.id) },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor =  if (event.isSubscribed) Color.Red else Color(0xff0DCDAA)
+                    containerColor =  if (event.isSubscribed) Color.Red else MaterialTheme.colorScheme.primary
                 ),
                 modifier = Modifier
                     .weight(1f)
@@ -289,7 +305,8 @@ fun EventDetailsContent(
                     text = if (!event.isSubscribed) "Посетить" else "Не пойду",
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
+                    fontSize = 18.sp,
+                    color = Color.White
                 )
             }
             IconButton(onClick = { onFavouriteClick(event.isFavourite, event.id) }) {
@@ -297,9 +314,9 @@ fun EventDetailsContent(
                     imageVector =
                         ImageVector.vectorResource(R.drawable.ic_not_fav),
                     contentDescription = null,
-                    tint = if (event.isFavourite) Color.Red else Color(0xff0DCDAA),
+                    tint = if (event.isFavourite) Color.Red else Color.White,
                     modifier = Modifier
-                        .background(Color.White)
+                        .background(color = MaterialTheme.colorScheme.primary)
                         .padding(8.dp)
                         .size(128.dp)
                 )
@@ -314,7 +331,9 @@ fun EventDetailsContent(
     showBackground = true
 )
 fun Preview() {
-    SchoolEventsTheme() {
+    SchoolEventsTheme(
+        darkTheme = true
+    ) {
         EventDetailsContent(
             event = Event(
                 id = 1,
@@ -322,7 +341,7 @@ fun Preview() {
                 description = "Пострадав в результате несчастного случая на стриме, провинциальный стример 5opka объединяется с лысым негром под псевдонимом MellSher, чтобы отправиться в тур «1+1» по городам России и рассказать всем свою невыдуманную историю, о которой невозможно молчать. 1+1 = 11 городов. Победители всех музыкальных премий, авторы хитов «XXL» и «Мерси», люди, которые не нуждаются в представлении, но мы их все равно представили, в твоём городе. Приходи на их самые большие концерты или будешь жалеть всю жизнь!",
                 eventAddress = "ул. Ленина, д.80, Актовый зал",
                 eventDate = "10 июня",
-                isFavourite = true,
+                isFavourite = false,
                 eventPlace = "Актовый зал",
                 eventDuration = "Вторник, 8:00 - 13:00",
                 isSubscribed = true,

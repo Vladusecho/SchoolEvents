@@ -11,6 +11,7 @@ import androidx.navigation.toRoute
 import com.vladusecho.schoolevents.presentation.screen.EventDetailsScreen
 import com.vladusecho.schoolevents.presentation.screen.FavouriteScreen
 import com.vladusecho.schoolevents.presentation.screen.MainScreen
+import com.vladusecho.schoolevents.presentation.screen.ProfileEditingScreen
 import com.vladusecho.schoolevents.presentation.screen.ProfileScreen
 
 @Composable
@@ -75,6 +76,9 @@ fun AppNavGraph(
                 ProfileScreen(
                     onEventClick = {
                         navigationState.navigateToDetail(it)
+                    },
+                    onEditingClick = {
+                        navigationState.navigateToProfileEditing()
                     }
                 )
             }
@@ -82,6 +86,13 @@ fun AppNavGraph(
                 val args = backStackEntry.toRoute<Screen.EventDetails>()
                 EventDetailsScreen(
                     eventId = args.id,
+                    onBackClick = {
+                        navigationState.navHostController.navigateUp()
+                    }
+                )
+            }
+            composable<Screen.ProfileEditing> {
+                ProfileEditingScreen(
                     onBackClick = {
                         navigationState.navHostController.navigateUp()
                     }

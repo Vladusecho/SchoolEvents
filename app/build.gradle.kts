@@ -43,7 +43,8 @@ android {
 }
 
 dependencies {
-//    implementation(libs.icons)
+    implementation(libs.coil)
+    implementation(libs.coil.network)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.compose.navigation)
     implementation(libs.androidx.core.ktx)

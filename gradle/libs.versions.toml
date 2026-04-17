@@ -13,10 +13,12 @@ hiltAndroid = "2.59.2"
 hiltNavigationCompose = "1.3.0"
 navigation_version = "2.9.7"
 navigationCompose = "2.8.0-beta02"
+coil_version = "3.0.4"
 
 [libraries]
-# ICONS
-#icons = { group = "androidx.compose.material", name = "material-icons-extended"}
+# COIL
+coil = {group = "io.coil-kt.coil3", name="coil-compose", version.ref="coil_version"}
+coil-network = {group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref ="coil_version"}
 # COMPOSE NAV
 compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation_version" }
 # HILT (KSP-COMPILER)

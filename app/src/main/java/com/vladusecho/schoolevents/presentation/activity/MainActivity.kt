@@ -4,14 +4,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalRippleConfiguration
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -20,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -47,14 +49,15 @@ class MainActivity : ComponentActivity() {
                 val navState = rememberNavigationState()
 
                 Scaffold(
+                    containerColor = Color.Transparent,
                     bottomBar = {
                         EventsNavigationBottom(navState)
                     }
                 ) { paddingValues ->
+                    val padding = paddingValues.calculateBottomPadding()
                     Box(
                         modifier = Modifier
-                            .background(Color.White)
-                            .padding(bottom = paddingValues.calculateBottomPadding()),
+                            .padding(),
                     ) {
                         AppNavGraph(navState)
                     }
@@ -76,48 +79,44 @@ fun EventsNavigationBottom(
         StudentNavItem.Profile,
     )
 
-    Column() {
-        HorizontalDivider(thickness = 0.5.dp, color = Color(0xff0DCDAA))
-        NavigationBar(
-            containerColor = Color.White
-        ) {
-            navItems.forEach { navItem ->
+    NavigationBar(
+        containerColor = MaterialTheme.colorScheme.primary,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
+    ) {
+        navItems.forEach { navItem ->
 
-                val isSelected =
-                    navBackStackEntry?.destination?.hierarchy?.any {
-                        it.hasRoute(navItem.screen::class)
-                    } ?: false
+            val isSelected =
+                navBackStackEntry?.destination?.hierarchy?.any {
+                    it.hasRoute(navItem.screen::class)
+                } ?: false
 
-                // Delete default ripple indication
-                CompositionLocalProvider(LocalRippleConfiguration provides null) {
-                    NavigationBarItem(
-                        selected = false,
-                        onClick = {
-                            navState.navigateTo(navItem.screen)
-                        },
-                        icon = {
-                            Icon(
-                                painter = painterResource(navItem.iconId),
-                                "",
-                                modifier = Modifier.offset(y = (5.dp)),
-                                tint = if (isSelected) Color.Black else Color(
-                                    0xffBDBDBD
-                                )
-                            )
-                        },
-                        label = {
-                            Text(
-                                text = navItem.title,
-                                fontFamily = EventsFontFamily,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 12.sp,
-                                color = if (isSelected) Color.Black else Color(
-                                    0xffBDBDBD
-                                )
-                            )
-                        }
-                    )
-                }
+            // Delete default ripple indication
+            CompositionLocalProvider(LocalRippleConfiguration provides null) {
+                NavigationBarItem(
+                    selected = false,
+                    onClick = {
+                        navState.navigateTo(navItem.screen)
+                    },
+                    icon = {
+                        Icon(
+                            painter = painterResource(navItem.iconId),
+                            "",
+                            modifier = Modifier.offset(y = (5.dp)),
+                            tint = if (isSelected) Color.White else Color.White.copy(alpha = 0.5f)
+                        )
+                    },
+                    label = {
+                        Text(
+                            text = navItem.title,
+                            fontFamily = EventsFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 12.sp,
+                            color = if (isSelected) Color.White else Color.White.copy(alpha = 0.5f)
+                        )
+                    }
+                )
             }
         }
     }

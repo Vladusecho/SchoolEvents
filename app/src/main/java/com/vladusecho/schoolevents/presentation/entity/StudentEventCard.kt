@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -55,7 +56,7 @@ fun StudentEventCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(20.dp))
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.onBackground)
                 .clickable {
                     onEventClick(event.id)
                 },
@@ -80,7 +81,7 @@ fun StudentEventCard(
                         fontFamily = EventsFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 22.sp,
-                        color = Color.Black
+                        color = MaterialTheme.colorScheme.secondary
                     )
                 }
                 Row() {
@@ -91,7 +92,8 @@ fun StudentEventCard(
                         fontFamily = EventsFontFamily,
                         fontWeight = FontWeight.Light,
                         fontSize = 14.sp,
-                        lineHeight = 16.sp
+                        lineHeight = 16.sp,
+                        color = MaterialTheme.colorScheme.secondary
                     )
                 }
                 Row(
@@ -112,7 +114,7 @@ fun StudentEventCard(
                         fontFamily = EventsFontFamily,
                         fontWeight = FontWeight.Light,
                         fontSize = 14.sp,
-                        color = Color.Black.copy(alpha = 0.5f)
+                        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
                     )
                 }
             }
@@ -125,8 +127,8 @@ fun StudentEventCard(
                 modifier = modifier
                     .padding(8.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .border(1.dp, Color.Gray, RoundedCornerShape(10.dp))
-                    .background(Color.White)
+                    .border(1.dp, MaterialTheme.colorScheme.surface, RoundedCornerShape(10.dp))
+                    .background(MaterialTheme.colorScheme.onBackground)
                     .padding(8.dp)
             ) {
                 Text(
@@ -134,7 +136,7 @@ fun StudentEventCard(
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
-                    color = Color.Black
+                    color = MaterialTheme.colorScheme.secondary
                 )
             }
             Column(
@@ -151,9 +153,9 @@ fun StudentEventCard(
                                 event.id
                             )
                         }
-                        .background(Color.White)
+                        .background(MaterialTheme.colorScheme.onBackground)
                         .size(42.dp)
-                        .border(1.dp, Color.Gray, RoundedCornerShape(10.dp)),
+                        .border(1.dp, MaterialTheme.colorScheme.surface, RoundedCornerShape(10.dp)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -174,15 +176,15 @@ fun StudentEventCard(
                         modifier = modifier
                             .padding(top = 8.dp)
                             .clip(RoundedCornerShape(10.dp))
-                            .background(Color.White)
+                            .background(MaterialTheme.colorScheme.onBackground)
                             .size(42.dp)
-                            .border(1.dp, Color.Gray, RoundedCornerShape(10.dp)),
+                            .border(1.dp, MaterialTheme.colorScheme.surface, RoundedCornerShape(10.dp)),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.ic_calendar),
                             contentDescription = null,
-                            tint = Color.Unspecified,
+                            tint = MaterialTheme.colorScheme.secondary,
                             modifier = Modifier.size(24.dp)
                         )
                     }
@@ -193,9 +195,11 @@ fun StudentEventCard(
 }
 
 @Composable
-@Preview
+@Preview(showBackground = true)
 fun StudentEventCardPreview() {
-    SchoolEventsTheme() {
+    SchoolEventsTheme(
+        darkTheme = true
+    ) {
         StudentEventCard(
             event = Event(
                 id = 1,

@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -41,13 +42,13 @@ fun MainScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         when (val currentState = state.value) {
             is MainViewModel.MainState.Content -> {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
-                    contentPadding = PaddingValues(top = 128.dp),
+                    contentPadding = PaddingValues(vertical = 128.dp),
                 ) {
                     items(
                         items = currentState.events,
@@ -89,7 +90,7 @@ fun MainScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator(
-                        color = Color(0xff0DCDAA)
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             }
@@ -99,7 +100,7 @@ fun MainScreen(
                 .height(110.dp)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp))
-                .background(Color(0xff0DCDAA))
+                .background(MaterialTheme.colorScheme.primary)
                 .padding(start = 16.dp, end = 16.dp),
             contentAlignment = Alignment.BottomCenter
         ) {

@@ -19,6 +19,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -57,7 +58,7 @@ fun ProfileScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         when (val currentState = state.value) {
             is ProfileViewModel.ProfileState.Content -> {
@@ -77,7 +78,8 @@ fun ProfileScreen(
                             fontWeight = FontWeight.Normal,
                             fontSize = 20.sp,
                             modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.secondary
                         )
                     }
                     if (currentState.events.isEmpty()) {
@@ -89,7 +91,7 @@ fun ProfileScreen(
                                 Icon(
                                     imageVector = ImageVector.vectorResource(R.drawable.ic_sadface),
                                     "",
-                                    tint = Color(0xff0DCDAA),
+                                    tint = MaterialTheme.colorScheme.secondary,
                                     modifier = Modifier.size(32.dp)
                                 )
                             }
@@ -138,7 +140,7 @@ fun ProfileScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator(
-                        color = Color(0xff0DCDAA)
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             }
@@ -148,7 +150,7 @@ fun ProfileScreen(
                 .height(110.dp)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp))
-                .background(Color(0xff0DCDAA))
+                .background(MaterialTheme.colorScheme.primary)
                 .padding(start = 16.dp, end = 16.dp),
             contentAlignment = Alignment.BottomCenter
         ) {
@@ -209,7 +211,8 @@ fun ProfileContent(
                 text = profile.name + " " + profile.surname,
                 fontFamily = EventsFontFamily,
                 fontWeight = FontWeight.Bold,
-                fontSize = 24.sp
+                fontSize = 24.sp,
+                color = MaterialTheme.colorScheme.secondary
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
@@ -217,13 +220,14 @@ fun ProfileContent(
                 fontFamily = EventsFontFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize = 18.sp,
+                color = MaterialTheme.colorScheme.secondary
             )
             Text(
                 text = profile.role.uppercase() + " | " + profile.classNumber + " класс",
                 fontFamily = EventsFontFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize = 18.sp,
-                color = Color(0xff0DCDAA)
+                color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
             )
             Spacer(modifier = Modifier.height(16.dp))
             Column(
@@ -235,7 +239,7 @@ fun ProfileContent(
                 Button(
                     onClick = onEditingClick,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xff0DCDAA)
+                        containerColor = MaterialTheme.colorScheme.primary
                     ),
                     modifier = Modifier
                 ) {
@@ -243,7 +247,8 @@ fun ProfileContent(
                         text = "Редактировать",
                         fontFamily = EventsFontFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
+                        fontSize = 18.sp,
+                        color = Color.White
                     )
                 }
                 Button(

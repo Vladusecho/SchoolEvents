@@ -25,6 +25,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -67,7 +68,7 @@ fun ProfileEditingScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         when (val currentState = state.value) {
             is EditingProfileViewModel.EditingProfileState.Content -> {
@@ -88,7 +89,7 @@ fun ProfileEditingScreen(
                         .height(110.dp)
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp))
-                        .background(Color(0xff0DCDAA))
+                        .background(MaterialTheme.colorScheme.primary)
                         .padding(start = 16.dp, end = 16.dp),
                     contentAlignment = Alignment.BottomCenter
                 ) {
@@ -134,7 +135,7 @@ fun ProfileEditingScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator(
-                        color = Color(0xff0DCDAA)
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             }
@@ -200,7 +201,7 @@ fun ProfileEditingContent(
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_profile),
                         contentDescription = "",
-                        tint = Color(0xff0DCDAA)
+                        tint = MaterialTheme.colorScheme.secondary
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                 }
@@ -222,7 +223,7 @@ fun ProfileEditingContent(
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_profile),
                         contentDescription = "",
-                        tint = Color(0xff0DCDAA)
+                        tint = MaterialTheme.colorScheme.secondary
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                 }
@@ -239,7 +240,7 @@ fun ProfileEditingContent(
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_profile),
                         contentDescription = "",
-                        tint = Color(0xff0DCDAA)
+                        tint = MaterialTheme.colorScheme.secondary
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                 }
@@ -256,7 +257,7 @@ fun ProfileEditingContent(
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_mail),
                         contentDescription = "",
-                        tint = Color(0xff0DCDAA)
+                        tint = MaterialTheme.colorScheme.secondary
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                 }
@@ -278,7 +279,7 @@ fun ProfileEditingContent(
                 )
             },
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xff0DCDAA)
+                containerColor = MaterialTheme.colorScheme.primary
             ),
             modifier = Modifier
                 .fillMaxWidth()
@@ -288,14 +289,15 @@ fun ProfileEditingContent(
                 text = "Сохранить",
                 fontFamily = EventsFontFamily,
                 fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
+                fontSize = 18.sp,
+                color = Color.White
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
         Button(
             onClick = onBackClick,
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xff0DCDAA)
+                containerColor = MaterialTheme.colorScheme.primary
             ),
             modifier = Modifier
                 .fillMaxWidth()
@@ -305,7 +307,8 @@ fun ProfileEditingContent(
                 text = "Вернуться",
                 fontFamily = EventsFontFamily,
                 fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
+                fontSize = 18.sp,
+                color = Color.White
             )
         }
     }
@@ -328,20 +331,36 @@ fun EventsTextField(
             .border(1.dp, Color(0xff0DCDAA), RoundedCornerShape(20)),
         singleLine = true,
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White,
+            focusedContainerColor = MaterialTheme.colorScheme.background,
+            unfocusedContainerColor = MaterialTheme.colorScheme.background,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
+            cursorColor = MaterialTheme.colorScheme.secondary
         ),
         prefix = prefix,
         suffix = suffix
     )
 }
 
-@Preview(showBackground = true)
+@Preview()
 @Composable
 private fun ProfileEditingScreenPreview() {
-    SchoolEventsTheme {
-        ProfileEditingScreen() {}
+    SchoolEventsTheme(
+        darkTheme = true
+    ) {
+        ProfileEditingContent(
+            profile = Profile(
+                id = 100,
+                name = "Никита",
+                surname = "Княгинин",
+                email = "nikitaknyaginin@yandex.ru",
+                classNumber = "9",
+                role = "Ученик",
+                imageUrl = "",
+            ),
+            onBackClick = {},
+            onSaveClick = {}
+        )
     }
 }

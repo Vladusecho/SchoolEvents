@@ -50,7 +50,8 @@ fun ProfileScreen(
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel(),
     onEventClick: (eventId: Int) -> Unit,
-    onEditingClick: () -> Unit
+    onEditingClick: () -> Unit,
+    onExitClick: () -> Unit
 ) {
 
     val state = viewModel.state.collectAsState()
@@ -68,7 +69,11 @@ fun ProfileScreen(
                     item {
                         ProfileContent(
                             profile = currentState.profile,
-                            onEditingClick = onEditingClick
+                            onEditingClick = onEditingClick,
+                            onExitClick = {
+                                onExitClick()
+                                viewModel.changeUserIsAuth()
+                            }
                         )
                     }
                     item {
@@ -186,7 +191,8 @@ fun ProfileScreen(
 fun ProfileContent(
     modifier: Modifier = Modifier,
     profile: Profile,
-    onEditingClick: () -> Unit
+    onEditingClick: () -> Unit,
+    onExitClick: () -> Unit
 ) {
     Box(
         modifier = modifier
@@ -252,7 +258,7 @@ fun ProfileContent(
                     )
                 }
                 Button(
-                    onClick = {},
+                    onClick = onExitClick,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Red
                     ),
@@ -292,7 +298,8 @@ fun ProfPrev() {
                 role = "Ученик",
                 imageUrl = "",
             ),
-            onEditingClick = {}
+            onEditingClick = {},
+            onExitClick = {}
         )
     }
 }

@@ -1,8 +1,8 @@
 package com.vladusecho.schoolevents.data.repository
 
 import android.content.Context
-import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import com.vladusecho.schoolevents.R
 import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.domain.entity.Profile
@@ -15,9 +15,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import androidx.core.net.toUri
 import java.io.File
+import javax.inject.Inject
 
 class ExampleEventsRepositoryImpl @Inject constructor(
     @param:ApplicationContext private val context: Context
@@ -203,5 +202,12 @@ class ExampleEventsRepositoryImpl @Inject constructor(
 
     override suspend fun changeUserIsAuth() {
         userIsAuth.update { !it }
+    }
+
+    override suspend fun registerUser(profile: Profile): Boolean {
+        _profileFlow.update {
+            profile
+        }
+        return true
     }
 }

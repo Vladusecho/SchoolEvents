@@ -2,10 +2,12 @@ package com.vladusecho.schoolevents.presentation.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vladusecho.schoolevents.domain.entity.Profile
 import com.vladusecho.schoolevents.domain.usecase.ChangeUserIsAuthUseCase
 import com.vladusecho.schoolevents.domain.usecase.CheckUserExistsUseCase
 import com.vladusecho.schoolevents.domain.usecase.CheckUserIsAuthUseCase
 import com.vladusecho.schoolevents.domain.usecase.CheckUserPasswordUseCase
+import com.vladusecho.schoolevents.domain.usecase.RegisterUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -20,7 +22,8 @@ class AuthViewModel @Inject constructor(
     private val checkUserExistsUseCase: CheckUserExistsUseCase,
     private val checkUserPasswordUseCase: CheckUserPasswordUseCase,
     private val changeUserIsAuthUseCase: ChangeUserIsAuthUseCase,
-    private val checkUserIsAuthUseCase: CheckUserIsAuthUseCase
+    private val checkUserIsAuthUseCase: CheckUserIsAuthUseCase,
+    private val registerUserUseCase: RegisterUserUseCase
 ) : ViewModel() {
 
     private val _isLoading = MutableStateFlow(false)
@@ -55,6 +58,20 @@ class AuthViewModel @Inject constructor(
             delay(2000)
             try {
                 val result = checkUserPasswordUseCase(email, password)
+                _authResult.emit(result)
+                _isLoading.value = false
+            } catch (e: Exception) {
+                // Обработка ошибки (например, через еще один StateFlow)
+            }
+        }
+    }
+
+    fun registerUser(profile: Profile) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            delay(2000)
+            try {
+                val result = registerUserUseCase(profile)
                 _authResult.emit(result)
                 _isLoading.value = false
             } catch (e: Exception) {

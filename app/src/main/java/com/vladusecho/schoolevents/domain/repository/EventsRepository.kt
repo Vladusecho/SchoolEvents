@@ -39,6 +39,8 @@ interface EventsRepository {
     fun checkUserIsAuth(): Flow<Boolean>
 
     suspend fun changeUserIsAuth()
+
+    suspend fun registerUser(profile: Profile): Boolean
 }
 
 

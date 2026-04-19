@@ -1,6 +1,7 @@
 package com.vladusecho.schoolevents.presentation.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +14,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,7 +44,8 @@ fun LoginScreen(
     modifier: Modifier = Modifier,
     email: String,
     viewModel: AuthViewModel = hiltViewModel(),
-    onLoginClick: () -> Unit
+    onLoginClick: () -> Unit,
+    onBackClick: () -> Unit
 ) {
 
     val password = remember { mutableStateOf("") }
@@ -67,16 +70,28 @@ fun LoginScreen(
             .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(180.dp))
-        Text(
-            text = "И снова вместе!",
-            fontFamily = EventsFontFamily,
-            fontWeight = FontWeight.Bold,
-            fontSize = 40.sp,
-            color = MaterialTheme.colorScheme.secondary,
-            textAlign = TextAlign.Center,
-            lineHeight = 30.sp
-        )
+        Spacer(modifier = Modifier.height(160.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            IconButton(onClick = onBackClick) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_back),
+                    contentDescription = "",
+                    tint = MaterialTheme.colorScheme.secondary
+                )
+            }
+            Text(
+                text = "И снова вместе!",
+                fontFamily = EventsFontFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 30.sp,
+                color = MaterialTheme.colorScheme.secondary,
+                lineHeight = 30.sp
+            )
+        }
         Spacer(modifier = Modifier.height(42.dp))
         Text(
             text = "Вам осталось ввести свой пароль",
@@ -155,7 +170,7 @@ fun LoginScreen(
 fun LoginPreview() {
     SchoolEventsTheme() {
         LoginScreen(
-            onLoginClick = {}, email = ""
+            onLoginClick = {}, email = "", onBackClick = {}
         )
     }
 }

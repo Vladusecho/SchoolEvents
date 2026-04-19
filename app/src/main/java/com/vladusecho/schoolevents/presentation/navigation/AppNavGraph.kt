@@ -64,13 +64,22 @@ fun AppNavGraph(
                         navigationState.navHostController.navigate(Screen.MainGraph) {
                             popUpTo(Screen.AuthGraph) { inclusive = true }
                         }
+                    },
+                    onBackClick = {
+                        navigationState.navHostController.navigateUp()
                     }
                 )
             }
-            composable<Screen.Registration> {
+            composable<Screen.Registration> { backStackEntry ->
                 RegistrationScreen(
+                    email = backStackEntry.toRoute<Screen.Registration>().email,
                     onRegistrationClick = {
-
+                        navigationState.navHostController.navigate(Screen.MainGraph) {
+                            popUpTo(Screen.AuthGraph) { inclusive = true }
+                        }
+                    },
+                    onBackClick = {
+                        navigationState.navHostController.navigateUp()
                     }
                 )
             }
@@ -125,6 +134,11 @@ fun AppNavGraph(
                     },
                     onEditingClick = {
                         navigationState.navigateToProfileEditing()
+                    },
+                    onExitClick = {
+                        navigationState.navHostController.navigate(Screen.AuthGraph) {
+                            popUpTo(Screen.MainGraph) { inclusive = true }
+                        }
                     }
                 )
             }

@@ -78,4 +78,8 @@ class EventsRepositoryImpl @Inject constructor(
     override suspend fun changeUserIsAuth() {
         TODO("Not yet implemented")
     }
+
+    override suspend fun registerUser(profile: Profile): Boolean {
+        TODO("Not yet implemented")
+    }
 }

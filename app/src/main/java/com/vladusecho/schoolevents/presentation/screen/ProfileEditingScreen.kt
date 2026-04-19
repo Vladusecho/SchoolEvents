@@ -43,6 +43,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -199,9 +200,9 @@ fun ProfileEditingContent(
 
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_profile),
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_user),
                         contentDescription = "",
-                        tint = MaterialTheme.colorScheme.secondary
+                        tint = MaterialTheme.colorScheme.secondary.copy(0.5f)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                 }
@@ -221,9 +222,9 @@ fun ProfileEditingContent(
 
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_profile),
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_user),
                         contentDescription = "",
-                        tint = MaterialTheme.colorScheme.secondary
+                        tint = MaterialTheme.colorScheme.secondary.copy(0.5f)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                 }
@@ -238,9 +239,9 @@ fun ProfileEditingContent(
 
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_profile),
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_user),
                         contentDescription = "",
-                        tint = MaterialTheme.colorScheme.secondary
+                        tint = MaterialTheme.colorScheme.secondary.copy(0.5f)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                 }
@@ -257,9 +258,9 @@ fun ProfileEditingContent(
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_mail),
                         contentDescription = "",
-                        tint = MaterialTheme.colorScheme.secondary
+                        tint = MaterialTheme.colorScheme.secondary.copy(0.5f)
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
                 }
             }
         )
@@ -321,11 +322,13 @@ fun EventsTextField(
     prefix: @Composable (() -> Unit),
     suffix: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
     onValueChange: (String) -> Unit,
 ) {
     TextField(
         value = value,
         onValueChange = onValueChange,
+        visualTransformation = visualTransformation,
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 32.dp)

@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,6 +53,7 @@ fun LoginScreen(
     val isLoading by viewModel.isLoading.collectAsState()
 
     val incorrectPassword = remember { mutableStateOf("") }
+    val isValidPassword = password.value.isNotBlank()
 
     LaunchedEffect(Unit) {
         viewModel.authResult.collect { result ->
@@ -70,11 +72,10 @@ fun LoginScreen(
             .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(160.dp))
+        Spacer(modifier = Modifier.height(100.dp))
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+            horizontalArrangement = Arrangement.Start
         ) {
             IconButton(onClick = onBackClick) {
                 Icon(
@@ -83,11 +84,24 @@ fun LoginScreen(
                     tint = MaterialTheme.colorScheme.secondary
                 )
             }
+        }
+        Column (
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Text(
                 text = "И снова вместе!",
                 fontFamily = EventsFontFamily,
                 fontWeight = FontWeight.Bold,
-                fontSize = 30.sp,
+                fontSize = 40.sp,
+                color = MaterialTheme.colorScheme.secondary,
+                lineHeight = 30.sp
+            )
+            Text(
+                text = email,
+                fontFamily = EventsFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 20.sp,
                 color = MaterialTheme.colorScheme.secondary,
                 lineHeight = 30.sp
             )
@@ -104,15 +118,16 @@ fun LoginScreen(
         )
         EventsTextField(
             value = password.value,
+            visualTransformation = PasswordVisualTransformation(),
             onValueChange = { password.value = it },
             prefix = {
                 Row(
 
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_mail),
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_lock),
                         contentDescription = "",
-                        tint = MaterialTheme.colorScheme.secondary
+                        tint = MaterialTheme.colorScheme.secondary.copy(0.5f)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                 }
@@ -141,12 +156,14 @@ fun LoginScreen(
             )
         } else {
             Button(
+                enabled = isValidPassword,
                 onClick = {
                     incorrectPassword.value = ""
                     viewModel.checkPassword(email, password.value)
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
                 ),
                 modifier = Modifier
                     .fillMaxWidth()

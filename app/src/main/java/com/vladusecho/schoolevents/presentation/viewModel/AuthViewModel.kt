@@ -85,7 +85,6 @@ class AuthViewModel @Inject constructor(
 
         viewModelScope.launch {
             _isLoading.value = true
-            delay(2000)
 
             try {
                 val exists = checkUserExistsUseCase(email)

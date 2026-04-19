@@ -24,7 +24,7 @@ class ExampleEventsRepositoryImpl @Inject constructor(
 
     private val userIsAuth = MutableStateFlow(false)
 
-    private val correctEmail = "test"
+    private val correctEmail = "test@test.com"
     private val correctPassword = "0000"
 
     private val _eventsFlow = MutableStateFlow(

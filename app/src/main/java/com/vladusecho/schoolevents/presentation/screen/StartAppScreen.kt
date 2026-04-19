@@ -1,5 +1,6 @@
 package com.vladusecho.schoolevents.presentation.screen
 
+import android.util.Patterns
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -49,6 +50,10 @@ fun StartAppScreen(
     val email = remember { mutableStateOf("") }
     val isLoading by viewModel.isLoading.collectAsState()
 
+    val isEmailValid = remember(email.value) {
+        Patterns.EMAIL_ADDRESS.matcher(email.value).matches()
+    }
+
     LaunchedEffect(Unit) {
         viewModel.navigationEvent.collect { event ->
             when (event) {
@@ -95,7 +100,7 @@ fun StartAppScreen(
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_mail),
                         contentDescription = "",
-                        tint = MaterialTheme.colorScheme.secondary
+                        tint = MaterialTheme.colorScheme.secondary.copy(0.5f)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                 }
@@ -117,9 +122,11 @@ fun StartAppScreen(
             )
         } else {
             Button(
+                enabled = isEmailValid,
                 onClick = { viewModel.checkEmail(email.value) },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
                 ),
                 modifier = Modifier
                     .fillMaxWidth()

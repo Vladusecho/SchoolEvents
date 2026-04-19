@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,7 +40,6 @@ import com.vladusecho.schoolevents.domain.entity.Profile
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
 import com.vladusecho.schoolevents.presentation.viewModel.AuthViewModel
-import java.util.UUID
 import kotlin.random.Random
 
 @Composable
@@ -57,6 +57,7 @@ fun RegistrationScreen(
     val surname = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
     val confirmPassword = remember { mutableStateOf("") }
+    val organizationCode = remember { mutableStateOf("") }
 
     var selectedRole by remember { mutableStateOf(UserRole.STUDENT) }
 
@@ -69,18 +70,27 @@ fun RegistrationScreen(
         }
     }
 
+    val isFormValid = name.value.isNotBlank() &&
+            surname.value.isNotBlank() &&
+            password.value.isNotBlank() &&
+            password.value == confirmPassword.value &&
+            (if (selectedRole == UserRole.ORGANIZER || selectedRole == UserRole.DIRECTOR)
+                organizationCode.value.isNotBlank() else true)
+
+
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(160.dp))
+        Spacer(modifier = Modifier.height(100.dp))
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
+            horizontalArrangement = Arrangement.Start
         ) {
             IconButton(onClick = onBackClick) {
                 Icon(
@@ -89,11 +99,26 @@ fun RegistrationScreen(
                     tint = MaterialTheme.colorScheme.secondary
                 )
             }
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
             Text(
                 text = "Создайте аккаунт",
                 fontFamily = EventsFontFamily,
                 fontWeight = FontWeight.Bold,
-                fontSize = 30.sp,
+                fontSize = 40.sp,
+                color = MaterialTheme.colorScheme.secondary,
+                lineHeight = 30.sp
+            )
+            Text(
+                text = email,
+                fontFamily = EventsFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 20.sp,
                 color = MaterialTheme.colorScheme.secondary,
                 lineHeight = 30.sp
             )
@@ -101,15 +126,17 @@ fun RegistrationScreen(
         Spacer(modifier = Modifier.height(16.dp))
         EventsTextField(
             value = name.value,
-            onValueChange = { name.value = it },
+            onValueChange = { input ->
+                name.value = input.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+            },
             prefix = {
                 Row(
 
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_mail),
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_user),
                         contentDescription = "",
-                        tint = MaterialTheme.colorScheme.secondary
+                        tint = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                 }
@@ -127,15 +154,17 @@ fun RegistrationScreen(
         Spacer(modifier = Modifier.height(16.dp))
         EventsTextField(
             value = surname.value,
-            onValueChange = {  surname.value = it },
+            onValueChange = { input ->
+                surname.value = input.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+            },
             prefix = {
                 Row(
 
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_mail),
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_user),
                         contentDescription = "",
-                        tint = MaterialTheme.colorScheme.secondary
+                        tint = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                 }
@@ -158,7 +187,7 @@ fun RegistrationScreen(
             fontSize = 18.sp,
             color = MaterialTheme.colorScheme.secondary
         )
-        Column (
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
@@ -168,8 +197,11 @@ fun RegistrationScreen(
                 val isSelected = selectedRole == role
 
                 Button(
+                    enabled = !(role == UserRole.ORGANIZER || role == UserRole.DIRECTOR),
                     onClick = { selectedRole = role },
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 32.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if (isSelected)
                             MaterialTheme.colorScheme.primary
@@ -193,16 +225,17 @@ fun RegistrationScreen(
         }
         Spacer(modifier = Modifier.height(16.dp))
         EventsTextField(
-            value = password .value,
+            value = password.value,
             onValueChange = { password.value = it },
+            visualTransformation = PasswordVisualTransformation(),
             prefix = {
                 Row(
 
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_mail),
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_lock),
                         contentDescription = "",
-                        tint = MaterialTheme.colorScheme.secondary
+                        tint = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                 }
@@ -221,14 +254,15 @@ fun RegistrationScreen(
         EventsTextField(
             value = confirmPassword.value,
             onValueChange = { confirmPassword.value = it },
+            visualTransformation = PasswordVisualTransformation(),
             prefix = {
                 Row(
 
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_mail),
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_lock),
                         contentDescription = "",
-                        tint = MaterialTheme.colorScheme.secondary
+                        tint = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                 }
@@ -246,16 +280,17 @@ fun RegistrationScreen(
         Spacer(modifier = Modifier.height(16.dp))
         if (selectedRole == UserRole.ORGANIZER || selectedRole == UserRole.DIRECTOR) {
             EventsTextField(
-                value = "",
-                onValueChange = { },
+                value = organizationCode.value,
+                onValueChange = { organizationCode.value = it },
+                visualTransformation = PasswordVisualTransformation(),
                 prefix = {
                     Row(
 
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_mail),
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_lock),
                             contentDescription = "",
-                            tint = MaterialTheme.colorScheme.secondary
+                            tint = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                     }
@@ -278,27 +313,33 @@ fun RegistrationScreen(
             )
         } else {
             Button(
+                enabled = isFormValid,
                 onClick = {
-                    val profile = Profile(
-                        id = Random.nextInt(100, 10000000),
-                        name = name.value,
-                        surname = surname.value,
-                        email = email,
-                        classNumber = "Не указан",
-                        role = selectedRole.label,
-                        imageUrl = ""
-                    )
-                    viewModel.registerUser(profile)
+                    if (isFormValid) {
+                        val profile = Profile(
+                            id = Random.nextInt(100, 10000000),
+                            name = name.value,
+                            surname = surname.value,
+                            email = email,
+                            classNumber = "Не указан",
+                            role = selectedRole.label,
+                            imageUrl = ""
+                        )
+                        viewModel.registerUser(profile)
+                    }
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 32.dp)
             ) {
                 Text(
-                    text = "Создать",
+                    text = if (password.value != confirmPassword.value && confirmPassword.value.isNotEmpty())
+                        "Пароли не совпадают"
+                    else "Создать",
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,

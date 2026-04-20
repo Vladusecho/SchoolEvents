@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.vladusecho.schoolevents.domain.entity.Profile
 
 class NavigationState(
     val navHostController: NavHostController
@@ -26,8 +27,8 @@ class NavigationState(
         navigateToSecondary(Screen.EventDetails(eventId))
     }
 
-    fun navigateToProfileEditing() {
-        navigateToSecondary(Screen.ProfileEditing)
+    fun navigateToProfileEditing(profile: Profile) {
+        navigateToSecondary(Screen.ProfileEditing(profile))
     }
 
     fun navigateToSecondary(route: Any) {

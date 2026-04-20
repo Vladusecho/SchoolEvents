@@ -1,4 +1,4 @@
-package com.vladusecho.schoolevents.domain.usecase
+package com.vladusecho.schoolevents.domain.usecase.events
 
 import com.vladusecho.schoolevents.domain.repository.EventsRepository
 import javax.inject.Inject

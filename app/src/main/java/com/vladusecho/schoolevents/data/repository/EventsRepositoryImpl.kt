@@ -47,39 +47,4 @@ class EventsRepositoryImpl @Inject constructor(
     override suspend fun addNewEvent(event: Event) {
         TODO("Not yet implemented")
     }
-
-    override fun getProfile(): Flow<Profile> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun updateProfile(profile: Profile) {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun saveImageToInternalStorage(uri: String): String {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun checkUserExists(email: String): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun checkUserPassword(
-        email: String,
-        password: String
-    ): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override fun checkUserIsAuth(): Flow<Boolean>{
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun changeUserIsAuth() {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun registerUser(profile: Profile): Boolean {
-        TODO("Not yet implemented")
-    }
 }

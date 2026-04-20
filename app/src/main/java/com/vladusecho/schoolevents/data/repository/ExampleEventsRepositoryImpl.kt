@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.core.net.toUri
 import com.vladusecho.schoolevents.R
+import com.vladusecho.schoolevents.data.local.EventsAppDao
 import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.domain.entity.Profile
 import com.vladusecho.schoolevents.domain.repository.EventsRepository
@@ -19,13 +20,9 @@ import java.io.File
 import javax.inject.Inject
 
 class ExampleEventsRepositoryImpl @Inject constructor(
+    private val dao: EventsAppDao,
     @param:ApplicationContext private val context: Context
 ) : EventsRepository {
-
-    private val userIsAuth = MutableStateFlow(false)
-
-    private val correctEmail = "test@test.com"
-    private val correctPassword = "0000"
 
     private val _eventsFlow = MutableStateFlow(
         mutableListOf<Event>().apply {
@@ -78,18 +75,6 @@ class ExampleEventsRepositoryImpl @Inject constructor(
                 )
             )
         }
-    )
-
-    private val _profileFlow = MutableStateFlow(
-        Profile(
-            id = 100,
-            name = "Никита",
-            surname = "Княгинин",
-            email = "nikitaknyaginin@yandex.ru",
-            classNumber = "9",
-            role = "Ученик",
-            imageUrl = "",
-        )
     )
 
     override fun getEvents(): Flow<List<Event>> {
@@ -159,55 +144,5 @@ class ExampleEventsRepositoryImpl @Inject constructor(
 
     override suspend fun addNewEvent(event: Event) {
         TODO("Not yet implemented")
-    }
-
-    override fun getProfile(): Flow<Profile> {
-        return _profileFlow.asStateFlow()
-    }
-
-    override suspend fun updateProfile(profile: Profile) {
-        _profileFlow.update { profile }
-    }
-
-    override suspend fun saveImageToInternalStorage(uri: String): String {
-        return withContext(Dispatchers.IO) {
-            val uri = uri.toUri()
-            val inputStream = context.contentResolver.openInputStream(uri)
-            val fileName = "avatar_${System.currentTimeMillis()}.jpg"
-            val file = File(context.filesDir, fileName)
-
-            inputStream?.use { input ->
-                file.outputStream().use { output ->
-                    input.copyTo(output)
-                }
-            }
-            file.absolutePath
-        }
-    }
-
-    override suspend fun checkUserExists(email: String): Boolean {
-        return email == correctEmail
-    }
-
-    override suspend fun checkUserPassword(
-        email: String,
-        password: String
-    ): Boolean {
-        return email == correctEmail && password == correctPassword
-    }
-
-    override fun checkUserIsAuth(): Flow<Boolean> {
-        return userIsAuth.asStateFlow()
-    }
-
-    override suspend fun changeUserIsAuth() {
-        userIsAuth.update { !it }
-    }
-
-    override suspend fun registerUser(profile: Profile): Boolean {
-        _profileFlow.update {
-            profile
-        }
-        return true
     }
 }

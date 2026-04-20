@@ -3,8 +3,8 @@ package com.vladusecho.schoolevents.presentation.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vladusecho.schoolevents.domain.entity.Event
-import com.vladusecho.schoolevents.domain.usecase.GetFavouriteEventsUseCase
-import com.vladusecho.schoolevents.domain.usecase.SwitchEventFavouriteStatusUseCase
+import com.vladusecho.schoolevents.domain.usecase.events.GetFavouriteEventsUseCase
+import com.vladusecho.schoolevents.domain.usecase.events.SwitchEventFavouriteStatusUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

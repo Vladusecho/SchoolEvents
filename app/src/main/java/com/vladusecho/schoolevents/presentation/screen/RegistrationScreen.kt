@@ -65,7 +65,6 @@ fun RegistrationScreen(
         viewModel.authResult.collect { result ->
             if (result) {
                 onRegistrationClick()
-                viewModel.changeUserIsAuth()
             }
         }
     }
@@ -321,6 +320,7 @@ fun RegistrationScreen(
                             name = name.value,
                             surname = surname.value,
                             email = email,
+                            password = password.value,
                             classNumber = "Не указан",
                             role = selectedRole.label,
                             imageUrl = ""

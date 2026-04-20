@@ -1,19 +1,15 @@
 package com.vladusecho.schoolevents.presentation.navigation
 
-import android.util.Log
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
+import com.vladusecho.schoolevents.domain.entity.Profile
+import com.vladusecho.schoolevents.presentation.navigation.ProfileNavType
 import com.vladusecho.schoolevents.presentation.screen.EventDetailsScreen
 import com.vladusecho.schoolevents.presentation.screen.FavouriteScreen
 import com.vladusecho.schoolevents.presentation.screen.LoginScreen
@@ -22,7 +18,7 @@ import com.vladusecho.schoolevents.presentation.screen.ProfileEditingScreen
 import com.vladusecho.schoolevents.presentation.screen.ProfileScreen
 import com.vladusecho.schoolevents.presentation.screen.RegistrationScreen
 import com.vladusecho.schoolevents.presentation.screen.StartAppScreen
-import com.vladusecho.schoolevents.presentation.viewModel.AuthViewModel
+import kotlin.reflect.typeOf
 
 @Composable
 fun AppNavGraph(
@@ -133,7 +129,7 @@ fun AppNavGraph(
                         navigationState.navigateToDetail(it)
                     },
                     onEditingClick = {
-                        navigationState.navigateToProfileEditing()
+                        navigationState.navigateToProfileEditing(it)
                     },
                     onExitClick = {
                         navigationState.navHostController.navigate(Screen.AuthGraph) {
@@ -151,11 +147,17 @@ fun AppNavGraph(
                     }
                 )
             }
-            composable<Screen.ProfileEditing> {
+            composable<Screen.ProfileEditing>(
+                typeMap = mapOf(
+                    typeOf<Profile>() to ProfileNavType
+                )
+            ) { backStackEntry ->
+                val args = backStackEntry.toRoute<Screen.ProfileEditing>()
                 ProfileEditingScreen(
                     onBackClick = {
                         navigationState.navHostController.navigateUp()
-                    }
+                    },
+                    profile = args.profile
                 )
             }
         }

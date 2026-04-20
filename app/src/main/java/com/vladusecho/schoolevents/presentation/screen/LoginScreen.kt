@@ -59,7 +59,6 @@ fun LoginScreen(
         viewModel.authResult.collect { result ->
             if (result) {
                 onLoginClick()
-                viewModel.changeUserIsAuth()
             } else {
                 incorrectPassword.value = "Неверный пароль"
             }
@@ -147,7 +146,7 @@ fun LoginScreen(
             fontFamily = EventsFontFamily,
             fontWeight = FontWeight.Normal,
             fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
+            color = Color.Red
         )
         Spacer(modifier = Modifier.weight(1f))
         if (isLoading) {

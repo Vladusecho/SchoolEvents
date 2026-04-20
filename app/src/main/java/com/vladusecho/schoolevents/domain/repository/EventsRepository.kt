@@ -26,21 +26,6 @@ interface EventsRepository {
 
     suspend fun addNewEvent(event: Event)
 
-    fun getProfile(): Flow<Profile>
-
-    suspend fun updateProfile(profile: Profile)
-
-    suspend fun saveImageToInternalStorage(uri: String): String
-
-    suspend fun checkUserExists(email: String): Boolean
-
-    suspend fun checkUserPassword(email: String, password: String): Boolean
-
-    fun checkUserIsAuth(): Flow<Boolean>
-
-    suspend fun changeUserIsAuth()
-
-    suspend fun registerUser(profile: Profile): Boolean
 }
 
 

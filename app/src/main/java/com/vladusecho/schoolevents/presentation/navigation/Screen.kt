@@ -1,11 +1,17 @@
 package com.vladusecho.schoolevents.presentation.navigation
 
+import android.net.Uri
+import android.os.Bundle
+import androidx.navigation.NavType
+import com.vladusecho.schoolevents.domain.entity.Profile
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 sealed class Screen {
 
     @Serializable
-    object ProfileEditing : Screen()
+    data class ProfileEditing(val profile: com.vladusecho.schoolevents.domain.entity.Profile) : Screen()
     @Serializable
     object Events : Screen()
     @Serializable
@@ -35,4 +41,23 @@ sealed class Screen {
     data class EventDetails(
         val id: Int
     ) : Screen()
+}
+
+
+val ProfileNavType = object : NavType<Profile>(isNullableAllowed = false) {
+    override fun get(bundle: Bundle, key: String): Profile? {
+        return bundle.getString(key)?.let { Json.decodeFromString(it) }
+    }
+
+    override fun parseValue(value: String): Profile {
+        return Json.decodeFromString(Uri.decode(value))
+    }
+
+    override fun serializeAsValue(value: Profile): String {
+        return Uri.encode(Json.encodeToString(value))
+    }
+
+    override fun put(bundle: Bundle, key: String, value: Profile) {
+        bundle.putString(key, Json.encodeToString(value))
+    }
 }

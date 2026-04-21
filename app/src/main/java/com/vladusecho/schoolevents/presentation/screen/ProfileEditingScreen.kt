@@ -1,13 +1,10 @@
 package com.vladusecho.schoolevents.presentation.screen
 
-import android.content.Context
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,7 +19,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -43,6 +39,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -54,12 +51,12 @@ import com.vladusecho.schoolevents.domain.entity.Profile
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
 import com.vladusecho.schoolevents.presentation.viewModel.EditingProfileViewModel
-import java.io.File
 
 @Composable
 fun ProfileEditingScreen(
     modifier: Modifier = Modifier,
     viewModel: EditingProfileViewModel = hiltViewModel(),
+    profile: Profile,
     onBackClick: () -> Unit
 ) {
 
@@ -70,77 +67,54 @@ fun ProfileEditingScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        when (val currentState = state.value) {
-            is EditingProfileViewModel.EditingProfileState.Content -> {
-                ProfileEditingContent(
-                    profile = currentState.profile,
-                    onSaveClick = { newProfile ->
-                        viewModel.processCommand(
-                            EditingProfileViewModel.EditingProfileCommand.SaveProfile(
-                                newProfile
-                            )
-                        )
-                        onBackClick()
-                    },
-                    onBackClick = onBackClick
+        ProfileEditingContent(
+            profile = profile,
+            onSaveClick = { newProfile ->
+                viewModel.processCommand(
+                    EditingProfileViewModel.EditingProfileCommand.SaveProfile(
+                        newProfile
+                    )
+                )
+                onBackClick()
+            },
+            onBackClick = onBackClick
+        )
+        Box(
+            modifier = Modifier
+                .height(110.dp)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp))
+                .background(MaterialTheme.colorScheme.primary)
+                .padding(start = 16.dp, end = 16.dp),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Редактирование",
+                    fontFamily = EventsFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 28.sp,
+                    color = Color.White,
+                    textAlign = TextAlign.Center
                 )
                 Box(
-                    modifier = Modifier
-                        .height(110.dp)
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp))
-                        .background(MaterialTheme.colorScheme.primary)
-                        .padding(start = 16.dp, end = 16.dp),
-                    contentAlignment = Alignment.BottomCenter
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "Редактирование",
-                            fontFamily = EventsFontFamily,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 28.sp,
-                            color = Color.White,
-                            textAlign = TextAlign.Center
-                        )
-                        Box(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "--- Создано Vladusecho (Владислав Корзун) ---",
-                                fontFamily = EventsFontFamily,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 12.sp,
-                                color = Color.White
-                            )
-                        }
-                    }
-                }
-            }
-
-            is EditingProfileViewModel.EditingProfileState.Error -> {
-
-            }
-
-            EditingProfileViewModel.EditingProfileState.Initial -> {
-
-            }
-
-            EditingProfileViewModel.EditingProfileState.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
+                    modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator(
-                        color = MaterialTheme.colorScheme.primary
+                    Text(
+                        text = "--- Создано Vladusecho (Владислав Корзун) ---",
+                        fontFamily = EventsFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 12.sp,
+                        color = Color.White
                     )
                 }
             }
         }
     }
+
 }
 
 @Composable
@@ -199,9 +173,9 @@ fun ProfileEditingContent(
 
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_profile),
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_user),
                         contentDescription = "",
-                        tint = MaterialTheme.colorScheme.secondary
+                        tint = MaterialTheme.colorScheme.secondary.copy(0.5f)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                 }
@@ -221,9 +195,9 @@ fun ProfileEditingContent(
 
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_profile),
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_user),
                         contentDescription = "",
-                        tint = MaterialTheme.colorScheme.secondary
+                        tint = MaterialTheme.colorScheme.secondary.copy(0.5f)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                 }
@@ -238,9 +212,9 @@ fun ProfileEditingContent(
 
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_profile),
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_user),
                         contentDescription = "",
-                        tint = MaterialTheme.colorScheme.secondary
+                        tint = MaterialTheme.colorScheme.secondary.copy(0.5f)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                 }
@@ -257,9 +231,9 @@ fun ProfileEditingContent(
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_mail),
                         contentDescription = "",
-                        tint = MaterialTheme.colorScheme.secondary
+                        tint = MaterialTheme.colorScheme.secondary.copy(0.5f)
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
                 }
             }
         )
@@ -267,13 +241,12 @@ fun ProfileEditingContent(
         Button(
             onClick = {
                 onSaveClick(
-                    Profile(
+                    profile.copy(
                         id = profile.id,
                         name = userName.value,
                         surname = userSurname.value,
                         email = userEmail.value,
                         classNumber = userClass.value,
-                        role = profile.role,
                         imageUrl = selectedImageUri.value?.toString() ?: profile.imageUrl
                     )
                 )
@@ -320,11 +293,14 @@ fun EventsTextField(
     value: String,
     prefix: @Composable (() -> Unit),
     suffix: @Composable (() -> Unit)? = null,
+    placeholder: @Composable (() -> Unit)? = null,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
     onValueChange: (String) -> Unit,
 ) {
     TextField(
         value = value,
         onValueChange = onValueChange,
+        visualTransformation = visualTransformation,
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 32.dp)
@@ -339,7 +315,8 @@ fun EventsTextField(
             cursorColor = MaterialTheme.colorScheme.secondary
         ),
         prefix = prefix,
-        suffix = suffix
+        suffix = suffix,
+        placeholder = placeholder
     )
 }
 
@@ -355,6 +332,7 @@ private fun ProfileEditingScreenPreview() {
                 name = "Никита",
                 surname = "Княгинин",
                 email = "nikitaknyaginin@yandex.ru",
+                password = "",
                 classNumber = "9",
                 role = "Ученик",
                 imageUrl = "",

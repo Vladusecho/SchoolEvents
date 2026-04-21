@@ -3,10 +3,10 @@ package com.vladusecho.schoolevents.presentation.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vladusecho.schoolevents.domain.entity.Event
-import com.vladusecho.schoolevents.domain.usecase.GetEventByIdUseCase
-import com.vladusecho.schoolevents.domain.usecase.SubscribeToEventUseCase
-import com.vladusecho.schoolevents.domain.usecase.SwitchEventFavouriteStatusUseCase
-import com.vladusecho.schoolevents.domain.usecase.UnsubscribeFromEventUseCase
+import com.vladusecho.schoolevents.domain.usecase.events.GetEventByIdUseCase
+import com.vladusecho.schoolevents.domain.usecase.events.SubscribeToEventUseCase
+import com.vladusecho.schoolevents.domain.usecase.events.SwitchEventFavouriteStatusUseCase
+import com.vladusecho.schoolevents.domain.usecase.events.UnsubscribeFromEventUseCase
 import com.vladusecho.schoolevents.presentation.viewModel.EventDetailsViewModel.EventDetailsState.*
 import com.vladusecho.schoolevents.presentation.viewModel.MainViewModel.MainCommand
 import dagger.assisted.Assisted

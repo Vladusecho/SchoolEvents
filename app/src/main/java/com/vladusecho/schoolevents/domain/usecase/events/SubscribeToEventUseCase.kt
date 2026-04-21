@@ -1,13 +1,12 @@
-package com.vladusecho.schoolevents.domain.usecase
+package com.vladusecho.schoolevents.domain.usecase.events
 
 import com.vladusecho.schoolevents.domain.repository.EventsRepository
 import javax.inject.Inject
 
-class UnsubscribeFromEventUseCase @Inject constructor(
+class SubscribeToEventUseCase @Inject constructor(
     private val eventsRepository: EventsRepository
 ) {
-
     suspend operator fun invoke(eventId: Int) {
-        eventsRepository.unsubscribeFromEvent(eventId)
+        eventsRepository.subscribeToEvent(eventId)
     }
 }

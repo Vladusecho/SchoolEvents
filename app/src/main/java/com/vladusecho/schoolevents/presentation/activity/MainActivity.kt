@@ -4,12 +4,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
@@ -19,7 +21,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -27,15 +31,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.vladusecho.schoolevents.presentation.navigation.AppNavGraph
 import com.vladusecho.schoolevents.presentation.navigation.NavigationState
+import com.vladusecho.schoolevents.presentation.navigation.Screen
 import com.vladusecho.schoolevents.presentation.navigation.StudentNavItem
 import com.vladusecho.schoolevents.presentation.navigation.rememberNavigationState
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
+import com.vladusecho.schoolevents.presentation.viewModel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -46,20 +53,46 @@ class MainActivity : ComponentActivity() {
         setContent {
             SchoolEventsTheme {
 
-                val navState = rememberNavigationState()
+                val authViewModel: AuthViewModel = hiltViewModel()
+                val isAuth by authViewModel.isAuth.collectAsState()
 
-                Scaffold(
-                    containerColor = Color.Transparent,
-                    bottomBar = {
-                        EventsNavigationBottom(navState)
+                val navState = rememberNavigationState()
+                val navBackStackEntry by navState.navHostController.currentBackStackEntryAsState()
+                val currentDestination = navBackStackEntry?.destination
+
+                if (isAuth != null) {
+                    Scaffold(
+                        containerColor = Color.Transparent,
+
+                        bottomBar = {
+                            val showBottomBar = currentDestination?.hierarchy?.any {
+                                it.hasRoute(Screen.AuthGraph::class)
+                            } == false
+
+                            if (showBottomBar) {
+                                EventsNavigationBottom(navState)
+                            }
+                        }
+                    ) { paddingValues ->
+                        val padding = paddingValues.calculateBottomPadding()
+                        Box(
+                            modifier = Modifier
+                                .padding(),
+                        ) {
+                            AppNavGraph(
+                                navigationState = navState,
+                                startDestination = if (isAuth == true) Screen.MainGraph else Screen.AuthGraph
+                            )
+                        }
                     }
-                ) { paddingValues ->
-                    val padding = paddingValues.calculateBottomPadding()
+                } else {
                     Box(
-                        modifier = Modifier
-                            .padding(),
+                        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
+                        contentAlignment = Alignment.Center
                     ) {
-                        AppNavGraph(navState)
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colorScheme.primary
+                        )
                     }
                 }
             }
@@ -97,7 +130,7 @@ fun EventsNavigationBottom(
                 NavigationBarItem(
                     selected = false,
                     onClick = {
-                        navState.navigateTo(navItem.screen)
+                        navState.navigateToTab(navItem.screen)
                     },
                     icon = {
                         Icon(

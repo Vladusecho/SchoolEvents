@@ -22,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,10 +51,19 @@ fun ProfileScreen(
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel(),
     onEventClick: (eventId: Int) -> Unit,
-    onEditingClick: () -> Unit
+    onEditingClick: (profile: Profile) -> Unit,
+    onExitClick: () -> Unit
 ) {
 
     val state = viewModel.state.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.isExit.collect {
+            if (it) {
+                onExitClick()
+            }
+        }
+    }
 
     Box(
         modifier = modifier
@@ -68,7 +78,10 @@ fun ProfileScreen(
                     item {
                         ProfileContent(
                             profile = currentState.profile,
-                            onEditingClick = onEditingClick
+                            onEditingClick = { onEditingClick(currentState.profile) },
+                            onExitClick = {
+                                viewModel.processCommand(ProfileViewModel.ProfileCommand.Exit)
+                            }
                         )
                     }
                     item {
@@ -185,9 +198,14 @@ fun ProfileScreen(
 @Composable
 fun ProfileContent(
     modifier: Modifier = Modifier,
+    viewModel: ProfileViewModel = hiltViewModel(),
     profile: Profile,
-    onEditingClick: () -> Unit
+    onEditingClick: () -> Unit,
+    onExitClick: () -> Unit
 ) {
+
+    val isLoading = viewModel.isLoading.collectAsState()
+
     Box(
         modifier = modifier
             .padding(top = 128.dp)
@@ -252,7 +270,8 @@ fun ProfileContent(
                     )
                 }
                 Button(
-                    onClick = {},
+                    enabled = !isLoading.value,
+                    onClick = onExitClick,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Red
                     ),
@@ -288,11 +307,13 @@ fun ProfPrev() {
                 name = "Никита",
                 surname = "Княгинин",
                 email = "nikitaknyaginin@yandex.ru",
+                password = "",
                 classNumber = "9",
                 role = "Ученик",
                 imageUrl = "",
             ),
-            onEditingClick = {}
+            onEditingClick = {},
+            onExitClick = {}
         )
     }
 }

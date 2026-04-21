@@ -4,17 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.domain.entity.Profile
-import com.vladusecho.schoolevents.domain.usecase.GetEventsUseCase
-import com.vladusecho.schoolevents.domain.usecase.GetProfileUseCase
-import com.vladusecho.schoolevents.domain.usecase.GetSubscribedEventsUseCase
-import com.vladusecho.schoolevents.domain.usecase.SwitchEventFavouriteStatusUseCase
-import com.vladusecho.schoolevents.domain.usecase.SwitchEventFavouriteStatusUseCase_Factory
+import com.vladusecho.schoolevents.domain.usecase.auth.ChangeUserIsAuthUseCase
+import com.vladusecho.schoolevents.domain.usecase.events.GetSubscribedEventsUseCase
+import com.vladusecho.schoolevents.domain.usecase.events.SwitchEventFavouriteStatusUseCase
+import com.vladusecho.schoolevents.domain.usecase.profile.GetProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,16 +22,31 @@ class ProfileViewModel @Inject constructor(
     private val getProfileUseCase: GetProfileUseCase,
     private val getSubscribedEventsUseCase: GetSubscribedEventsUseCase,
     private val switchFavouriteStatusUseCase: SwitchEventFavouriteStatusUseCase,
+    private val changeUserIsAuthUseCase: ChangeUserIsAuthUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<ProfileState>(ProfileState.Initial)
     val state = _state.asStateFlow()
 
+    val isLoading = MutableStateFlow<Boolean>(false)
+    val isExit = MutableSharedFlow<Boolean>()
+
     fun processCommand(command: ProfileCommand) {
-        when(command) {
+        when (command) {
             is ProfileCommand.SwitchFavouriteStatus -> {
                 viewModelScope.launch {
                     switchFavouriteStatusUseCase(command.isFavourite, command.eventId)
+                }
+            }
+
+            ProfileCommand.Exit -> {
+                viewModelScope.launch {
+                    isLoading.value = true
+                    delay(2000)
+                    changeUserIsAuthUseCase()
+                    isExit.emit(true)
+                    delay(1000)
+                    isLoading.value = false
                 }
             }
         }
@@ -78,5 +92,7 @@ class ProfileViewModel @Inject constructor(
             val isFavourite: Boolean,
             val eventId: Int
         ) : ProfileCommand
+
+        object Exit : ProfileCommand
     }
 }

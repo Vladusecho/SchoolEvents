@@ -43,6 +43,9 @@ android {
 }
 
 dependencies {
+    implementation(libs.room.core)
+    ksp(libs.room.compiler)
+    implementation(libs.androidx.datastore.preferences)
     implementation(libs.coil)
     implementation(libs.coil.network)
     implementation(libs.kotlinx.serialization.json)

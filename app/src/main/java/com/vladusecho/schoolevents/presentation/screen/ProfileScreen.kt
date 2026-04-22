@@ -92,7 +92,7 @@ fun ProfileScreen(
                     }
                     item {
                         Text(
-                            text = if (!isNotStudent) "Вы записаны на мероприятия:" else "Вы не создали ни одного мероприятия",
+                            text = if (!isNotStudent) "Вы записаны на мероприятия:" else "Ваши мероприятия:",
                             fontFamily = EventsFontFamily,
                             fontWeight = FontWeight.Normal,
                             fontSize = 20.sp,
@@ -174,7 +174,8 @@ fun ProfileScreen(
             contentAlignment = Alignment.BottomCenter
         ) {
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier = Modifier.padding(bottom = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
                     text = "Профиль",
@@ -184,18 +185,18 @@ fun ProfileScreen(
                     color = Color.White,
                     textAlign = TextAlign.Center
                 )
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "--- Создано Vladusecho (Владислав Корзун) ---",
-                        fontFamily = EventsFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 12.sp,
-                        color = Color.White
-                    )
-                }
+//                Box(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    contentAlignment = Alignment.Center
+//                ) {
+//                    Text(
+//                        text = "--- Создано Vladusecho (Владислав Корзун) ---",
+//                        fontFamily = EventsFontFamily,
+//                        fontWeight = FontWeight.Bold,
+//                        fontSize = 12.sp,
+//                        color = Color.White
+//                    )
+//                }
             }
         }
     }

@@ -114,4 +114,8 @@ class EventsRepositoryImpl @Inject constructor(
             file.absolutePath
         }
     }
+
+    override suspend fun deleteEvent(eventId: Int) {
+        dao.deleteEvent(eventId)
+    }
 }

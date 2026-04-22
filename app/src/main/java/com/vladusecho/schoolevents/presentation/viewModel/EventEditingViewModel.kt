@@ -3,9 +3,11 @@ package com.vladusecho.schoolevents.presentation.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vladusecho.schoolevents.domain.entity.Event
+import com.vladusecho.schoolevents.domain.usecase.events.DeleteEventUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.GetEventByIdUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.SaveEventImageUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.UpdateEventUseCase
+import com.vladusecho.schoolevents.domain.usecase.profile.GetProfileByEmailUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -21,6 +23,8 @@ class EventEditingViewModel @AssistedInject constructor(
     private val getEventByIdUseCase: GetEventByIdUseCase,
     private val updateEventUseCase: UpdateEventUseCase,
     private val saveEventImageUseCase: SaveEventImageUseCase,
+    private val deleteEventUseCase: DeleteEventUseCase,
+    private val getProfileByEmailUseCase: GetProfileByEmailUseCase,
     @Assisted("eventId") private val eventId: Int
 ) : ViewModel() {
 
@@ -36,7 +40,13 @@ class EventEditingViewModel @AssistedInject constructor(
             _state.value = EventEditingState.Loading
             try {
                 val event = getEventByIdUseCase(eventId)
-                _state.value = EventEditingState.Content(event)
+                val organizerName = try {
+                    val profile = getProfileByEmailUseCase(event.creatorEmail)
+                    "${profile.name} ${profile.surname}"
+                } catch (e: Exception) {
+                    "Организатор не указан"
+                }
+                _state.value = EventEditingState.Content(event, organizerName)
             } catch (e: Exception) {
                 _state.value = EventEditingState.Error(e.message ?: "Unknown error")
             }
@@ -51,6 +61,13 @@ class EventEditingViewModel @AssistedInject constructor(
         }
     }
 
+    fun deleteEvent() {
+        viewModelScope.launch {
+            deleteEventUseCase(eventId)
+            _state.value = EventEditingState.Saved
+        }
+    }
+
     @AssistedFactory
     interface Factory {
         fun create(
@@ -61,7 +78,7 @@ class EventEditingViewModel @AssistedInject constructor(
     sealed interface EventEditingState {
         object Initial : EventEditingState
         object Loading : EventEditingState
-        data class Content(val event: Event) : EventEditingState
+        data class Content(val event: Event, val organizerName: String) : EventEditingState
         data class Error(val message: String) : EventEditingState
         object Saved : EventEditingState
     }

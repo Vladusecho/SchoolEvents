@@ -119,7 +119,8 @@ fun FavouriteScreen(
             contentAlignment = Alignment.BottomCenter
         ) {
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(bottom = 16.dp),
             ) {
                 Text(
                     text = "Избранные мероприятия",
@@ -129,18 +130,18 @@ fun FavouriteScreen(
                     color = Color.White,
                     textAlign = TextAlign.Center
                 )
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "--- Создано Vladusecho (Владислав Корзун) ---",
-                        fontFamily = EventsFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 12.sp,
-                        color = Color.White
-                    )
-                }
+//                Box(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    contentAlignment = Alignment.Center
+//                ) {
+//                    Text(
+//                        text = "--- Создано Vladusecho (Владислав Корзун) ---",
+//                        fontFamily = EventsFontFamily,
+//                        fontWeight = FontWeight.Bold,
+//                        fontSize = 12.sp,
+//                        color = Color.White
+//                    )
+//                }
             }
         }
     }

@@ -24,6 +24,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -90,9 +91,13 @@ fun EventEditingScreen(
             is EventEditingViewModel.EventEditingState.Content -> {
                 EventEditingContent(
                     event = currentState.event,
+                    organizerName = currentState.organizerName,
                     onBackClick = onBackClick,
                     onSaveClick = { updatedEvent, uri ->
                         viewModel.updateEvent(updatedEvent, uri)
+                    },
+                    onArchiveClick = {
+                        viewModel.updateEvent(currentState.event.copy(isArchived = true), null)
                     }
                 )
             }
@@ -111,8 +116,10 @@ fun EventEditingScreen(
 @Composable
 private fun EventEditingContent(
     event: Event,
+    organizerName: String,
     onBackClick: () -> Unit,
-    onSaveClick: (Event, String?) -> Unit
+    onSaveClick: (Event, String?) -> Unit,
+    onArchiveClick: () -> Unit
 ) {
     var title by remember { mutableStateOf(event.title) }
     var dateText by remember { mutableStateOf(event.eventDate) }
@@ -163,10 +170,20 @@ private fun EventEditingContent(
                         dateText = sdf.format(date)
                     }
                     showDatePicker = false
-                }) { Text("OK") }
+                }) { Text("OK",
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = EventsFontFamily,
+                    color = MaterialTheme.colorScheme.secondary) }
             }
         ) {
-            DatePicker(state = datePickerState)
+            DatePicker(
+                state = datePickerState,
+                colors = DatePickerDefaults.colors(
+                    selectedDayContentColor = MaterialTheme.colorScheme.secondary,
+                    todayContentColor = MaterialTheme.colorScheme.secondary,
+                    todayDateBorderColor = MaterialTheme.colorScheme.secondary
+                )
+            )
         }
     }
 
@@ -272,7 +289,7 @@ private fun EventEditingContent(
             Spacer(modifier = Modifier.height(24.dp))
             
             Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                Text(text = "Милютина Виктория", fontWeight = FontWeight.Bold, fontFamily = EventsFontFamily)
+                Text(text = organizerName, fontWeight = FontWeight.Bold, fontFamily = EventsFontFamily)
                 Text(text = "Организатор", fontSize = 12.sp, color = Color.Gray, fontFamily = EventsFontFamily)
             }
 
@@ -310,12 +327,12 @@ private fun EventEditingContent(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Button(
-                    onClick = onBackClick,
+                    onClick = onArchiveClick,
                     modifier = Modifier.weight(1f),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text("ОТМЕНИТЬ", color = Color.White, fontWeight = FontWeight.Bold)
+                    Text("ЗАКОНЧИТЬ", color = Color.White, fontWeight = FontWeight.Bold)
                 }
                 Button(
                     onClick = {

@@ -19,7 +19,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -78,6 +77,32 @@ fun MainScreen(
                         }
                     }
                 }
+                Box(
+                    modifier = Modifier.fillMaxSize().padding(bottom = 108.dp),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    if (userRole != UserRole.STUDENT) {
+                        Button(
+                            onClick = {
+                                onAddClick()
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 32.dp)
+                        ) {
+                            Text(
+                                text = "Добавить мероприятие",
+                                fontFamily = EventsFontFamily,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp,
+                                color = Color.White
+                            )
+                        }
+                    }
+                }
             }
 
             is MainViewModel.MainState.Error -> {
@@ -110,6 +135,7 @@ fun MainScreen(
             contentAlignment = Alignment.BottomCenter
         ) {
             Column(
+                modifier = Modifier.padding(bottom = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
@@ -118,20 +144,19 @@ fun MainScreen(
                     fontWeight = FontWeight.Bold,
                     fontSize = 28.sp,
                     color = Color.White,
-                    textAlign = TextAlign.Center
                 )
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "--- Создано Vladusecho (Владислав Корзун) ---",
-                        fontFamily = EventsFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 12.sp,
-                        color = Color.White
-                    )
-                }
+//                Box(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    contentAlignment = Alignment.Center
+//                ) {
+//                    Text(
+//                        text = "--- Создано Vladusecho (Владислав Корзун) ---",
+//                        fontFamily = EventsFontFamily,
+//                        fontWeight = FontWeight.Bold,
+//                        fontSize = 12.sp,
+//                        color = Color.White
+//                    )
+//                }
             }
         }
     }

@@ -7,8 +7,8 @@ import com.vladusecho.schoolevents.domain.usecase.events.GetEventByIdUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.SubscribeToEventUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.SwitchEventFavouriteStatusUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.UnsubscribeFromEventUseCase
+import com.vladusecho.schoolevents.domain.usecase.profile.GetProfileByEmailUseCase
 import com.vladusecho.schoolevents.presentation.viewModel.EventDetailsViewModel.EventDetailsState.*
-import com.vladusecho.schoolevents.presentation.viewModel.MainViewModel.MainCommand
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -25,6 +25,7 @@ class EventDetailsViewModel @AssistedInject constructor(
     private val switchFavouriteStatusUseCase: SwitchEventFavouriteStatusUseCase,
     private val subscribeToEventUseCase: SubscribeToEventUseCase,
     private val unsubscribeFromEventUseCase: UnsubscribeFromEventUseCase,
+    private val getProfileByEmailUseCase: GetProfileByEmailUseCase,
     @Assisted("eventId") eventId: Int
 ) : ViewModel() {
 
@@ -35,7 +36,13 @@ class EventDetailsViewModel @AssistedInject constructor(
         viewModelScope.launch {
             _state.value = EventDetailsState.Loading
             val event = getEventByIdUseCase(eventId)
-            _state.value = EventDetailsState.Content(event)
+            val organizerName = try {
+                val profile = getProfileByEmailUseCase(event.creatorEmail)
+                "${profile.name} ${profile.surname}"
+            } catch (e: Exception) {
+                "Организатор не указан"
+            }
+            _state.value = EventDetailsState.Content(event, organizerName)
         }
     }
 
@@ -49,7 +56,7 @@ class EventDetailsViewModel @AssistedInject constructor(
                         val updatedEvent = currentState.event.copy(
                             isFavourite = !command.isFavourite
                         )
-                        _state.value = Content(updatedEvent)
+                        _state.value = currentState.copy(event = updatedEvent)
                     }
                 }
             }
@@ -66,7 +73,7 @@ class EventDetailsViewModel @AssistedInject constructor(
                         val updatedEvent = currentState.event.copy(
                             isSubscribed = !command.isSubscribed
                         )
-                        _state.value = Content(updatedEvent)
+                        _state.value = currentState.copy(event = updatedEvent)
                     }
                 }
             }
@@ -88,7 +95,8 @@ class EventDetailsViewModel @AssistedInject constructor(
         ) : EventDetailsState
 
         data class Content(
-            val event: Event
+            val event: Event,
+            val organizerName: String
         ) : EventDetailsState
     }
 

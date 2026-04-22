@@ -27,4 +27,6 @@ interface EventsRepository {
 
     suspend fun saveImageToInternalStorage(uri: String): String
 
+    suspend fun deleteEvent(eventId: Int)
+
 }

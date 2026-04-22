@@ -6,14 +6,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalRippleConfiguration
@@ -81,34 +78,11 @@ class MainActivity : ComponentActivity() {
                             } == false
 
                             if (showBottomBar) {
-                                Column() {
-                                    if (userRole != UserRole.STUDENT) {
-                                        Button(
-                                            onClick = {
-                                                navState.navigateToEventCreation()
-                                            },
-                                            colors = ButtonDefaults.buttonColors(
-                                                containerColor = MaterialTheme.colorScheme.primary
-                                            ),
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(horizontal = 32.dp)
-                                        ) {
-                                            Text(
-                                                text = "Добавить мероприятие",
-                                                fontFamily = EventsFontFamily,
-                                                fontWeight = FontWeight.Bold,
-                                                fontSize = 18.sp,
-                                                color = Color.White
-                                            )
-                                        }
-                                    }
-
-                                    EventsNavigationBottom(
-                                        navState, userRole
-                                    )
-                                }
+                                EventsNavigationBottom(
+                                    navState, userRole
+                                )
                             }
+
                         }
                     ) { paddingValues ->
                         val padding = paddingValues.calculateBottomPadding()

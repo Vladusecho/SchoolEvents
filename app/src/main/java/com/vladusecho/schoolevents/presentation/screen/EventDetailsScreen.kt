@@ -68,6 +68,7 @@ fun EventDetailsScreen(
             is EventDetailsViewModel.EventDetailsState.Content -> {
                 EventDetailsContent(
                     event = currentState.event,
+                    organizerName = currentState.organizerName,
                     onBackClick = onBackClick,
                     onFavouriteClick = { isFavourite, eventId ->
                         viewModel.processCommand(
@@ -106,6 +107,7 @@ fun EventDetailsScreen(
 fun EventDetailsContent(
     modifier: Modifier = Modifier,
     event: Event,
+    organizerName: String,
     onBackClick: () -> Unit,
     onFavouriteClick: (isFavourite: Boolean, eventId: Int) -> Unit,
     onSubscribeClick: (isSubscribed: Boolean ,eventId: Int) -> Unit
@@ -232,7 +234,7 @@ fun EventDetailsContent(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Милютина Виктория",
+                        text = organizerName,
                         fontFamily = EventsFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
@@ -323,35 +325,5 @@ fun EventDetailsContent(
                 )
             }
         }
-    }
-}
-
-
-@Composable
-@Preview(
-    showBackground = true
-)
-fun Preview() {
-    SchoolEventsTheme(
-        darkTheme = true
-    ) {
-        EventDetailsContent(
-            event = Event(
-                id = 1,
-                title = "Концерт 5opka в нашей школе! Не пропустите это невероятное событие",
-                description = "Пострадав в результате несчастного случая на стриме, провинциальный стример 5opka объединяется с лысым негром под псевдонимом MellSher, чтобы отправиться в тур «1+1» по городам России и рассказать всем свою невыдуманную историю, о которой невозможно молчать. 1+1 = 11 городов. Победители всех музыкальных премий, авторы хитов «XXL» и «Мерси», люди, которые не нуждаются в представлении, но мы их все равно представили, в твоём городе. Приходи на их самые большие концерты или будешь жалеть всю жизнь!",
-                eventAddress = "ул. Ленина, д.80, Актовый зал",
-                eventDate = "10 июня",
-                isFavourite = false,
-                eventPlace = "Актовый зал",
-                eventDuration = "Вторник, 8:00 - 13:00",
-                isSubscribed = true,
-                imageUrl = "",
-                isArchived = false
-            ),
-            onBackClick = {},
-            onFavouriteClick = { isFavourite, eventId -> },
-            onSubscribeClick = { isSubscribed, eventId -> }
-        )
     }
 }

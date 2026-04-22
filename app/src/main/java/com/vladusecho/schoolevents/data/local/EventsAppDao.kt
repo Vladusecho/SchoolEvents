@@ -17,6 +17,9 @@ interface EventsAppDao {
     @Query("SELECT * FROM profile WHERE email = :email")
     fun getProfile(email: String): Flow<ProfileModel>
 
+    @Query("SELECT * FROM profile WHERE email = :email")
+    suspend fun getProfileOnce(email: String): ProfileModel
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveProfile(profile: ProfileModel)
 
@@ -28,6 +31,9 @@ interface EventsAppDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertEvent(event: EventModel)
+
+    @Query("DELETE FROM events WHERE id = :eventId")
+    suspend fun deleteEvent(eventId: Int)
 
     @Query("SELECT * FROM events WHERE id = :eventId")
     suspend fun getEventById(eventId: Int): EventModel

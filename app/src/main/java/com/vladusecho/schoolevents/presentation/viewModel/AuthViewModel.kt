@@ -10,7 +10,9 @@ import com.vladusecho.schoolevents.domain.usecase.auth.CheckUserIsAuthUseCase
 import com.vladusecho.schoolevents.domain.usecase.auth.CheckUserPasswordUseCase
 import com.vladusecho.schoolevents.domain.usecase.auth.GetCurrentUserRoleUseCase
 import com.vladusecho.schoolevents.domain.usecase.auth.SetCurrentUserRoleUseCase
+import com.vladusecho.schoolevents.domain.usecase.profile.GetProfileByEmailUseCase
 import com.vladusecho.schoolevents.domain.usecase.profile.SaveProfileUseCase
+import com.vladusecho.schoolevents.domain.usecase.profile.SetCurrentUserEmailUseCase
 import com.vladusecho.schoolevents.presentation.screen.UserRole
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -31,7 +33,9 @@ class AuthViewModel @Inject constructor(
     private val checkUserIsAuthUseCase: CheckUserIsAuthUseCase,
     private val changeUserIsAuthUseCase: ChangeUserIsAuthUseCase,
     private val setCurrentUserRoleUseCase: SetCurrentUserRoleUseCase,
-    private val getCurrentUserRoleUseCase: GetCurrentUserRoleUseCase
+    private val getCurrentUserRoleUseCase: GetCurrentUserRoleUseCase,
+    private val setCurrentUserEmailUseCase: SetCurrentUserEmailUseCase,
+    private val getProfileByEmailUseCase: GetProfileByEmailUseCase
 ) : ViewModel() {
 
     private val _isLoading = MutableStateFlow(false)
@@ -62,13 +66,22 @@ class AuthViewModel @Inject constructor(
             _isLoading.value = true
             try {
                 val result = checkUserPasswordUseCase(email, password)
-                _authResult.emit(result)
                 if (result) {
+                    // 1. Сначала жестко ставим новый email
+                    setCurrentUserEmailUseCase(email)
+                    // 2. Получаем профиль именно для этого email
+                    val profile = getProfileByEmailUseCase(email)
+                    val role = UserRole.entries.find { it.label == profile.role } ?: UserRole.STUDENT
+                    // 3. Сохраняем роль
+                    setCurrentUserRoleUseCase(role)
+                    // 4. И только в самом конце — авторизация
                     changeUserIsAuthUseCase()
                 }
-                _isLoading.value = false
+                _authResult.emit(result)
             } catch (e: Exception) {
                 Log.e("tag", "check password: ", e)
+            } finally {
+                _isLoading.value = false
             }
         }
     }
@@ -78,24 +91,23 @@ class AuthViewModel @Inject constructor(
             _isLoading.value = true
             try {
                 saveProfileUseCase(profile)
-                changeUserIsAuthUseCase()
+                setCurrentUserEmailUseCase(profile.email)
                 val role = UserRole.entries.find { it.label == profile.role } ?: UserRole.STUDENT
                 setCurrentUserRoleUseCase(role)
+                changeUserIsAuthUseCase()
                 _authResult.emit(true)
             } catch (e: Exception) {
                 Log.e("tag", "registerUser: ", e)
+            } finally {
+                _isLoading.value = false
             }
-
-            _isLoading.value = false
         }
     }
 
     fun checkEmail(email: String) {
         if (email.isBlank()) return
-
         viewModelScope.launch {
             _isLoading.value = true
-
             try {
                 val exists = checkUserExistsUseCase(email)
                 if (exists) {
@@ -104,7 +116,7 @@ class AuthViewModel @Inject constructor(
                     _navigationEvent.emit(AuthNavigationTarget.ToRegistration(email))
                 }
             } catch (e: Exception) {
-                // Обработка ошибки (например, через еще один StateFlow)
+                Log.e("tag", "checkEmail: ", e)
             } finally {
                 _isLoading.value = false
             }

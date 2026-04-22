@@ -172,7 +172,7 @@ private fun EventCreationContent(
     }
 
     if (showTimePickerStart) {
-        TimePickerDialog(
+        CustomTimePickerDialog(
             onDismissRequest = { showTimePickerStart = false },
             onConfirm = {
                 durationStart = String.format(
@@ -194,7 +194,7 @@ private fun EventCreationContent(
     }
 
     if (showTimePickerEnd) {
-        TimePickerDialog(
+        CustomTimePickerDialog(
             onDismissRequest = { showTimePickerEnd = false },
             onConfirm = {
                 durationEnd = String.format(
@@ -428,17 +428,32 @@ private fun EventCreationContent(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimePickerDialog(
+fun CustomTimePickerDialog(
     onDismissRequest: () -> Unit,
     onConfirm: () -> Unit,
     content: @Composable () -> Unit
 ) {
     DatePickerDialog(
         onDismissRequest = onDismissRequest,
-        confirmButton = { Button(onClick = onConfirm) { Text("OK") } }
+        confirmButton = {
+            Button(onClick = onConfirm) {
+                Text(
+                    "OK",
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = EventsFontFamily
+                )
+            }
+        }
     ) {
-        content()
+        Box(
+            modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            content()
+        }
     }
 }
 

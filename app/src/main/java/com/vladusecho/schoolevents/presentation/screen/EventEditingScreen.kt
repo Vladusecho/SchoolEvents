@@ -188,7 +188,7 @@ private fun EventEditingContent(
     }
 
     if (showTimePickerStart) {
-        TimePickerDialog(
+        CustomTimePickerDialog (
             onDismissRequest = { showTimePickerStart = false },
             onConfirm = {
                 durationStart = String.format(Locale.getDefault(), "%02d:%02d", timePickerStateStart.hour, timePickerStateStart.minute)
@@ -200,7 +200,7 @@ private fun EventEditingContent(
     }
 
     if (showTimePickerEnd) {
-        TimePickerDialog(
+        CustomTimePickerDialog (
             onDismissRequest = { showTimePickerEnd = false },
             onConfirm = {
                 durationEnd = String.format(Locale.getDefault(), "%02d:%02d", timePickerStateEnd.hour, timePickerStateEnd.minute)

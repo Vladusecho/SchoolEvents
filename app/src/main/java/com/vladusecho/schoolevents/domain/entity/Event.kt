@@ -3,12 +3,13 @@ package com.vladusecho.schoolevents.domain.entity
 data class Event(
     val id: Int,
     val title: String,
-    val imageUrl: Int,
+    val imageUrl: String,
     val description: String,
     val eventAddress: String,
     val eventPlace: String,
     val eventDate: String,
     val eventDuration: String,
-    val isFavourite: Boolean = false,
-    val isSubscribed: Boolean = false
+    val isArchived: Boolean,
+    val isFavourite: Boolean,
+    val isSubscribed: Boolean
 )

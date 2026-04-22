@@ -37,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import coil3.compose.AsyncImage
 import com.vladusecho.schoolevents.R
 import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
@@ -120,8 +121,8 @@ fun EventDetailsContent(
             Box(
                 contentAlignment = Alignment.BottomEnd
             ) {
-                Image(
-                    painter = painterResource(event.imageUrl),
+                AsyncImage(
+                    model = event.imageUrl,
                     contentDescription = null,
                     contentScale = ContentScale.FillWidth,
                     modifier = Modifier
@@ -345,7 +346,8 @@ fun Preview() {
                 eventPlace = "Актовый зал",
                 eventDuration = "Вторник, 8:00 - 13:00",
                 isSubscribed = true,
-                imageUrl = R.drawable.img_math
+                imageUrl = "",
+                isArchived = false
             ),
             onBackClick = {},
             onFavouriteClick = { isFavourite, eventId -> },

@@ -1,6 +1,5 @@
 package com.vladusecho.schoolevents.presentation.entity
 
-import androidx.collection.intIntMapOf
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -34,8 +33,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.Image
+import coil3.compose.AsyncImage
 import com.vladusecho.schoolevents.R
 import com.vladusecho.schoolevents.domain.entity.Event
+import com.vladusecho.schoolevents.presentation.activity.LocalUserRole
+import com.vladusecho.schoolevents.presentation.screen.UserRole
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
 
@@ -43,9 +46,14 @@ import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
 fun StudentEventCard(
     modifier: Modifier = Modifier,
     event: Event,
-    onFavouriteClick: (isFavourite: Boolean, eventId: Int) -> Unit,
+    onFavouriteClick: (isFavourite: Boolean, eventId: Int) -> Unit = { _, _ -> },
+    onListClick: (eventId: Int) -> Unit = {},
     onEventClick: (eventId: Int) -> Unit
 ) {
+
+    val role = LocalUserRole.current
+    val isNotStudent = role != UserRole.STUDENT
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -61,8 +69,8 @@ fun StudentEventCard(
                     onEventClick(event.id)
                 },
         ) {
-            Image(
-                painter = painterResource(id = event.imageUrl),
+            AsyncImage(
+                model = event.imageUrl,
                 contentDescription = null,
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier
@@ -148,18 +156,27 @@ fun StudentEventCard(
                         .padding(top = 8.dp)
                         .clip(RoundedCornerShape(10.dp))
                         .clickable {
-                            onFavouriteClick(
-                                event.isFavourite,
-                                event.id
-                            )
+                            if (isNotStudent) {
+                                onListClick(event.id)
+                            } else {
+                                onFavouriteClick(
+                                    event.isFavourite,
+                                    event.id
+                                )
+                            }
                         }
                         .background(MaterialTheme.colorScheme.onBackground)
                         .size(42.dp)
                         .border(1.dp, MaterialTheme.colorScheme.surface, RoundedCornerShape(10.dp)),
                     contentAlignment = Alignment.Center
                 ) {
+                    val icon = if (isNotStudent) {
+                        ImageVector.vectorResource(R.drawable.ic_users)
+                    } else {
+                        ImageVector.vectorResource(R.drawable.ic_not_fav)
+                    }
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_not_fav),
+                        imageVector = icon,
                         contentDescription = null,
                         tint = if (!event.isFavourite) {
                             Color.Gray
@@ -178,7 +195,11 @@ fun StudentEventCard(
                             .clip(RoundedCornerShape(10.dp))
                             .background(MaterialTheme.colorScheme.onBackground)
                             .size(42.dp)
-                            .border(1.dp, MaterialTheme.colorScheme.surface, RoundedCornerShape(10.dp)),
+                            .border(
+                                1.dp,
+                                MaterialTheme.colorScheme.surface,
+                                RoundedCornerShape(10.dp)
+                            ),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
@@ -207,11 +228,12 @@ fun StudentEventCardPreview() {
                 description = "Пострадав в результате несчастного случая на стриме, провинциальный стример 5opka объединяется с лысым негром под псевдонимом MellSher, чтобы отправиться в тур «1+1» по городам России и рассказать всем свою невыдуманную историю, о которой невозможно молчать.",
                 eventAddress = "ул. Ленина, д.80, Актовый зал",
                 eventDate = "10 июня",
-                isFavourite = false,
                 eventPlace = "Fr",
                 eventDuration = "Вторник, 8:00 - 13:00",
-                isSubscribed = true,
-                imageUrl = R.drawable.img_math
+                imageUrl = "",
+                isArchived = false,
+                isFavourite = false,
+                isSubscribed = false
             ),
             onEventClick = {},
             onFavouriteClick = { isFav, eventId ->

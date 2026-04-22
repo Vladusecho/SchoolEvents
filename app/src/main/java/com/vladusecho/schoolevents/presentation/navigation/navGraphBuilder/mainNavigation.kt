@@ -19,6 +19,9 @@ fun NavGraphBuilder.mainNavigation(
             MainScreen(
                 onEventClick = { eventId ->
                     navigationState.navigateToDetail(eventId)
+                },
+                onAddClick = {
+
                 }
             )
         }

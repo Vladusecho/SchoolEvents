@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,7 +36,8 @@ import com.vladusecho.schoolevents.presentation.viewModel.MainViewModel
 fun MainScreen(
     modifier: Modifier = Modifier,
     viewModel: MainViewModel = hiltViewModel(),
-    onEventClick: (eventId: Int) -> Unit
+    onEventClick: (eventId: Int) -> Unit,
+    onAddClick: () -> Unit,
 ) {
 
     val state = viewModel.state.collectAsState()
@@ -71,7 +74,11 @@ fun MainScreen(
                             )
                         }
                     }
-
+                }
+                Box(
+                    modifier = Modifier.fillMaxSize().padding(bottom = 128.dp),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
                 }
             }
 

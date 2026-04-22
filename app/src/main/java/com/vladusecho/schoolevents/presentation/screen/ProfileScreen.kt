@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,6 +42,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.vladusecho.schoolevents.R
 import com.vladusecho.schoolevents.domain.entity.Profile
+import com.vladusecho.schoolevents.presentation.activity.LocalUserRole
 import com.vladusecho.schoolevents.presentation.entity.StudentEventCard
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
@@ -57,6 +59,8 @@ fun ProfileScreen(
 ) {
 
     val state = viewModel.state.collectAsState()
+    val role = LocalUserRole.current
+    val isNotStudent = role != UserRole.STUDENT
 
     LaunchedEffect(Unit) {
         viewModel.isExit.collect {
@@ -74,7 +78,8 @@ fun ProfileScreen(
         when (val currentState = state.value) {
             is ProfileViewModel.ProfileState.Content -> {
                 LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(bottom = 128.dp)
                 ) {
                     item {
                         ProfileContent(
@@ -87,7 +92,7 @@ fun ProfileScreen(
                     }
                     item {
                         Text(
-                            text = "Вы записаны на мероприятия:",
+                            text = if (!isNotStudent) "Вы записаны на мероприятия:" else "Вы не создали ни одного мероприятия",
                             fontFamily = EventsFontFamily,
                             fontWeight = FontWeight.Normal,
                             fontSize = 20.sp,

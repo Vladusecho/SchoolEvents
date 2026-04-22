@@ -6,11 +6,14 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalRippleConfiguration
@@ -23,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,6 +49,11 @@ import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
 import com.vladusecho.schoolevents.presentation.viewModel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
+
+val LocalUserRole = staticCompositionLocalOf<UserRole> {
+    UserRole.STUDENT
+}
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -72,9 +81,31 @@ class MainActivity : ComponentActivity() {
                             } == false
 
                             if (showBottomBar) {
-                                EventsNavigationBottom(
-                                    navState, userRole
-                                )
+                                Column() {
+                                    if (userRole != UserRole.STUDENT) {
+                                        Button(
+                                            onClick = {},
+                                            colors = ButtonDefaults.buttonColors(
+                                                containerColor = MaterialTheme.colorScheme.primary
+                                            ),
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(horizontal = 32.dp)
+                                        ) {
+                                            Text(
+                                                text = "Добавить мероприятие",
+                                                fontFamily = EventsFontFamily,
+                                                fontWeight = FontWeight.Bold,
+                                                fontSize = 18.sp,
+                                                color = Color.White
+                                            )
+                                        }
+                                    }
+
+                                    EventsNavigationBottom(
+                                        navState, userRole
+                                    )
+                                }
                             }
                         }
                     ) { paddingValues ->
@@ -83,15 +114,21 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier
                                 .padding(),
                         ) {
-                            AppNavGraph(
-                                navigationState = navState,
-                                startDestination = if (isAuth == true) Screen.MainGraph else Screen.AuthGraph
-                            )
+                            CompositionLocalProvider(
+                                LocalUserRole provides userRole
+                            ) {
+                                AppNavGraph(
+                                    navigationState = navState,
+                                    startDestination = if (isAuth == true) Screen.MainGraph else Screen.AuthGraph
+                                )
+                            }
                         }
                     }
                 } else {
                     Box(
-                        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background),
                         contentAlignment = Alignment.Center
                     ) {
                         CircularProgressIndicator(

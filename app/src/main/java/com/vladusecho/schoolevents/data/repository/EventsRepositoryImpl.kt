@@ -1,50 +1,98 @@
 package com.vladusecho.schoolevents.data.repository
 
+import android.content.Context
+import androidx.datastore.preferences.core.stringPreferencesKey
+import com.vladusecho.schoolevents.data.local.EventsAppDao
+import com.vladusecho.schoolevents.data.local.model.FavouriteEventModel
+import com.vladusecho.schoolevents.data.local.model.SubscribedEventModel
+import com.vladusecho.schoolevents.data.mapper.toEventEntity
+import com.vladusecho.schoolevents.data.mapper.toEventModel
+import com.vladusecho.schoolevents.data.mapper.toEventWithStatusEntityListFlow
 import com.vladusecho.schoolevents.domain.entity.Event
-import com.vladusecho.schoolevents.domain.entity.Profile
 import com.vladusecho.schoolevents.domain.repository.EventsRepository
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class EventsRepositoryImpl @Inject constructor(
+    private val dao: EventsAppDao,
+    @param:ApplicationContext private val context: Context
 ) : EventsRepository {
-    override fun getEvents(): Flow<List<Event>> {
-        TODO("Not yet implemented")
+
+    private val currentUserEmailKey = stringPreferencesKey("current_user_email")
+
+    private val userEmailFlow: Flow<String> = context.dataStoreSettings.data
+        .map { preferences -> preferences[currentUserEmailKey] ?: "" }
+
+    private suspend fun getCurrentUserEmail(): String {
+        return userEmailFlow.first()
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun getEvents(): Flow<List<Event>> {
+        return userEmailFlow.flatMapLatest { email ->
+            dao.getEvents(email).toEventWithStatusEntityListFlow()
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun getSubscribedEvents(): Flow<List<Event>> {
-        TODO("Not yet implemented")
+        return userEmailFlow.flatMapLatest { email ->
+            dao.getSubscribedEvents(email).toEventWithStatusEntityListFlow()
+        }
     }
 
     override suspend fun subscribeToEvent(eventId: Int) {
-        TODO("Not yet implemented")
+        val email = getCurrentUserEmail()
+        dao.subscribeToEvent(SubscribedEventModel(userEmail = email, eventId = eventId))
     }
 
     override suspend fun unsubscribeFromEvent(eventId: Int) {
-        TODO("Not yet implemented")
+        val email = getCurrentUserEmail()
+        dao.unsubscribeFromEvent(userEmail = email, eventId = eventId)
     }
 
     override suspend fun switchFavouriteStatus(isFavourite: Boolean, eventId: Int) {
-        TODO("Not yet implemented")
+        val email = getCurrentUserEmail()
+        if (!isFavourite) {
+            dao.addFavouriteEvent(FavouriteEventModel(userEmail = email, eventId = eventId))
+        } else {
+            dao.removeFavouriteEvent(userEmail = email, eventId = eventId)
+        }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun getFavouriteEvents(): Flow<List<Event>> {
-        TODO("Not yet implemented")
+        return userEmailFlow.flatMapLatest { email ->
+            dao.getFavouriteEvents(email).toEventWithStatusEntityListFlow()
+        }
     }
 
     override suspend fun getEventById(eventId: Int): Event {
-        TODO("Not yet implemented")
+        val email = getCurrentUserEmail()
+        return dao.getEventWithStatusById(eventId, email).let { 
+            it.event.toEventEntity(isFavourite = it.isFavourite, isSubscribed = it.isSubscribed)
+        }
     }
 
     override fun getConfirmationEvents(): Flow<List<Event>> {
-        TODO("Not yet implemented")
+        // Not implemented on UI yet, returning empty flow for now
+        return flowOf(emptyList())
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun getArchivedEvents(): Flow<List<Event>> {
-        TODO("Not yet implemented")
+        return userEmailFlow.flatMapLatest { email ->
+            dao.getArchivedEvents(email).toEventWithStatusEntityListFlow()
+        }
     }
 
     override suspend fun addNewEvent(event: Event) {
-        TODO("Not yet implemented")
+        dao.insertEvent(event.toEventModel())
     }
 }

@@ -1,4 +1,4 @@
-package com.vladusecho.schoolevents.data.local
+package com.vladusecho.schoolevents.data.local.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

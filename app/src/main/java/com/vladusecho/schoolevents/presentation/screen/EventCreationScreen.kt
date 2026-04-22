@@ -1,6 +1,10 @@
 package com.vladusecho.schoolevents.presentation.screen
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -54,7 +58,6 @@ import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.viewModel.EventCreationViewModel
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -83,8 +86,8 @@ fun EventCreationScreen(
                 EventCreationContent(
                     organizerName = currentState.organizerName,
                     onBackClick = onBackClick,
-                    onSaveClick = { event ->
-                        viewModel.createEvent(event)
+                    onSaveClick = { event, uri ->
+                        viewModel.createEvent(event, uri)
                     }
                 )
             }
@@ -101,7 +104,7 @@ fun EventCreationScreen(
 private fun EventCreationContent(
     organizerName: String,
     onBackClick: () -> Unit,
-    onSaveClick: (Event) -> Unit
+    onSaveClick: (Event, String?) -> Unit
 ) {
     var title by remember { mutableStateOf("") }
     var dateText by remember { mutableStateOf("") }
@@ -119,6 +122,12 @@ private fun EventCreationContent(
     val datePickerState = rememberDatePickerState()
     val timePickerStateStart = rememberTimePickerState()
     val timePickerStateEnd = rememberTimePickerState()
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        uri?.let { imageUrl = it.toString() }
+    }
 
     if (showDatePicker) {
         DatePickerDialog(
@@ -142,7 +151,7 @@ private fun EventCreationContent(
         TimePickerDialog(
             onDismissRequest = { showTimePickerStart = false },
             onConfirm = {
-                durationStart = String.format("%02d:%02d", timePickerStateStart.hour, timePickerStateStart.minute)
+                durationStart = String.format(Locale.getDefault(), "%02d:%02d", timePickerStateStart.hour, timePickerStateStart.minute)
                 showTimePickerStart = false
             }
         ) {
@@ -154,7 +163,7 @@ private fun EventCreationContent(
         TimePickerDialog(
             onDismissRequest = { showTimePickerEnd = false },
             onConfirm = {
-                durationEnd = String.format("%02d:%02d", timePickerStateEnd.hour, timePickerStateEnd.minute)
+                durationEnd = String.format(Locale.getDefault(), "%02d:%02d", timePickerStateEnd.hour, timePickerStateEnd.minute)
                 showTimePickerEnd = false
             }
         ) {
@@ -172,15 +181,26 @@ private fun EventCreationContent(
                     .fillMaxWidth()
                     .height(200.dp)
                     .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp))
-                    .background(Color.LightGray),
+                    .background(Color.LightGray)
+                    .clickable {
+                        launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                    },
                 contentAlignment = Alignment.Center
             ) {
                 if (imageUrl.isNotEmpty()) {
-                    AsyncImage(model = imageUrl, contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
+                    AsyncImage(
+                        model = imageUrl,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
                 } else {
-                    IconButton(onClick = { /* Логика выбора фото */ }) {
-                        Icon(painterResource(R.drawable.ic_archive_screen), null, modifier = Modifier.size(48.dp))
-                    }
+                    Icon(
+                        painter = painterResource(R.drawable.ic_archive_screen),
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp),
+                        tint = Color.Gray
+                    )
                 }
             }
 
@@ -282,7 +302,8 @@ private fun EventCreationContent(
                                 isArchived = false,
                                 isFavourite = false,
                                 isSubscribed = false
-                            )
+                            ),
+                            if (imageUrl.isNotEmpty()) imageUrl else null
                         )
                     },
                     modifier = Modifier.weight(1f),

@@ -1,7 +1,6 @@
 package com.vladusecho.schoolevents.domain.repository
 
 import com.vladusecho.schoolevents.domain.entity.Event
-import com.vladusecho.schoolevents.domain.entity.Profile
 import kotlinx.coroutines.flow.Flow
 
 interface EventsRepository {
@@ -26,6 +25,6 @@ interface EventsRepository {
 
     suspend fun addNewEvent(event: Event)
 
+    suspend fun saveImageToInternalStorage(uri: String): String
+
 }
-
-

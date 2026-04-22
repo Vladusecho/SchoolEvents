@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.domain.usecase.events.AddNewEventUseCase
+import com.vladusecho.schoolevents.domain.usecase.events.SaveEventImageUseCase
 import com.vladusecho.schoolevents.domain.usecase.profile.GetProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +16,8 @@ import javax.inject.Inject
 @HiltViewModel
 class EventCreationViewModel @Inject constructor(
     private val getProfileUseCase: GetProfileUseCase,
-    private val addNewEventUseCase: AddNewEventUseCase
+    private val addNewEventUseCase: AddNewEventUseCase,
+    private val saveEventImageUseCase: SaveEventImageUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<EventCreationState>(EventCreationState.Initial)
@@ -38,9 +40,10 @@ class EventCreationViewModel @Inject constructor(
         }
     }
 
-    fun createEvent(event: Event) {
+    fun createEvent(event: Event, imageUri: String?) {
         viewModelScope.launch {
-            addNewEventUseCase(event)
+            val finalImageUrl = imageUri?.let { saveEventImageUseCase(it) } ?: event.imageUrl
+            addNewEventUseCase(event.copy(imageUrl = finalImageUrl))
             _state.value = EventCreationState.Saved
         }
     }

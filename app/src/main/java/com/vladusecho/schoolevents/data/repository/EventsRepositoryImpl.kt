@@ -1,6 +1,7 @@
 package com.vladusecho.schoolevents.data.repository
 
 import android.content.Context
+import androidx.core.net.toUri
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.vladusecho.schoolevents.data.local.EventsAppDao
 import com.vladusecho.schoolevents.data.local.model.FavouriteEventModel
@@ -11,12 +12,15 @@ import com.vladusecho.schoolevents.data.mapper.toEventWithStatusEntityListFlow
 import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.domain.repository.EventsRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
+import java.io.File
 import javax.inject.Inject
 
 class EventsRepositoryImpl @Inject constructor(
@@ -81,7 +85,6 @@ class EventsRepositoryImpl @Inject constructor(
     }
 
     override fun getConfirmationEvents(): Flow<List<Event>> {
-        // Not implemented on UI yet, returning empty flow for now
         return flowOf(emptyList())
     }
 
@@ -94,5 +97,21 @@ class EventsRepositoryImpl @Inject constructor(
 
     override suspend fun addNewEvent(event: Event) {
         dao.insertEvent(event.toEventModel())
+    }
+
+    override suspend fun saveImageToInternalStorage(uri: String): String {
+        return withContext(Dispatchers.IO) {
+            val uri = uri.toUri()
+            val inputStream = context.contentResolver.openInputStream(uri)
+            val fileName = "event_${System.currentTimeMillis()}.jpg"
+            val file = File(context.filesDir, fileName)
+
+            inputStream?.use { input ->
+                file.outputStream().use { output ->
+                    input.copyTo(output)
+                }
+            }
+            file.absolutePath
+        }
     }
 }

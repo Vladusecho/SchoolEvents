@@ -1,6 +1,10 @@
 package com.vladusecho.schoolevents.presentation.screen
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,12 +23,18 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -48,6 +58,9 @@ import com.vladusecho.schoolevents.R
 import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.viewModel.EventEditingViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun EventEditingScreen(
@@ -78,8 +91,8 @@ fun EventEditingScreen(
                 EventEditingContent(
                     event = currentState.event,
                     onBackClick = onBackClick,
-                    onSaveClick = { updatedEvent ->
-                        viewModel.updateEvent(updatedEvent)
+                    onSaveClick = { updatedEvent, uri ->
+                        viewModel.updateEvent(updatedEvent, uri)
                     }
                 )
             }
@@ -94,19 +107,92 @@ fun EventEditingScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun EventEditingContent(
     event: Event,
     onBackClick: () -> Unit,
-    onSaveClick: (Event) -> Unit
+    onSaveClick: (Event, String?) -> Unit
 ) {
     var title by remember { mutableStateOf(event.title) }
-    var date by remember { mutableStateOf(event.eventDate) }
+    var dateText by remember { mutableStateOf(event.eventDate) }
     var durationStart by remember { mutableStateOf(event.eventDuration.split(" - ").getOrElse(0) { "" }) }
     var durationEnd by remember { mutableStateOf(event.eventDuration.split(" - ").getOrElse(1) { "" }) }
     var place by remember { mutableStateOf(event.eventPlace) }
     var address by remember { mutableStateOf(event.eventAddress) }
     var description by remember { mutableStateOf(event.description) }
+    var imageUrl by remember { mutableStateOf(event.imageUrl) }
+    var newImageUri by remember { mutableStateOf<String?>(null) }
+
+    var showDatePicker by remember { mutableStateOf(false) }
+    var showTimePickerStart by remember { mutableStateOf(false) }
+    var showTimePickerEnd by remember { mutableStateOf(false) }
+
+    val sdf = SimpleDateFormat("d MMMM", Locale("ru"))
+    val initialDate = try { sdf.parse(dateText)?.time } catch (e: Exception) { null }
+    val datePickerState = rememberDatePickerState(initialSelectedDateMillis = initialDate)
+
+    val startParts = durationStart.split(":")
+    val timePickerStateStart = rememberTimePickerState(
+        initialHour = startParts.getOrNull(0)?.toIntOrNull() ?: 0,
+        initialMinute = startParts.getOrNull(1)?.toIntOrNull() ?: 0
+    )
+    
+    val endParts = durationEnd.split(":")
+    val timePickerStateEnd = rememberTimePickerState(
+        initialHour = endParts.getOrNull(0)?.toIntOrNull() ?: 0,
+        initialMinute = endParts.getOrNull(1)?.toIntOrNull() ?: 0
+    )
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        uri?.let {
+            imageUrl = it.toString()
+            newImageUri = it.toString()
+        }
+    }
+
+    if (showDatePicker) {
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                Button(onClick = {
+                    datePickerState.selectedDateMillis?.let {
+                        val date = Date(it)
+                        dateText = sdf.format(date)
+                    }
+                    showDatePicker = false
+                }) { Text("OK") }
+            }
+        ) {
+            DatePicker(state = datePickerState)
+        }
+    }
+
+    if (showTimePickerStart) {
+        TimePickerDialog(
+            onDismissRequest = { showTimePickerStart = false },
+            onConfirm = {
+                durationStart = String.format(Locale.getDefault(), "%02d:%02d", timePickerStateStart.hour, timePickerStateStart.minute)
+                showTimePickerStart = false
+            }
+        ) {
+            TimePicker(state = timePickerStateStart)
+        }
+    }
+
+    if (showTimePickerEnd) {
+        TimePickerDialog(
+            onDismissRequest = { showTimePickerEnd = false },
+            onConfirm = {
+                durationEnd = String.format(Locale.getDefault(), "%02d:%02d", timePickerStateEnd.hour, timePickerStateEnd.minute)
+                showTimePickerEnd = false
+            }
+        ) {
+            TimePicker(state = timePickerStateEnd)
+        }
+    }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -114,13 +200,16 @@ private fun EventEditingContent(
     ) {
         item {
             AsyncImage(
-                model = event.imageUrl,
+                model = imageUrl,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)
                     .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp))
+                    .clickable {
+                        launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                    }
             )
             
             Spacer(modifier = Modifier.height(16.dp))
@@ -153,11 +242,18 @@ private fun EventEditingContent(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(painterResource(R.drawable.ic_date), null, modifier = Modifier.size(24.dp), tint = Color.Gray)
-                EditField(value = date, onValueChange = { date = it }, modifier = Modifier.width(100.dp))
-                EditField(value = durationStart, onValueChange = { durationStart = it }, modifier = Modifier.weight(1f))
+                IconButton(onClick = { showDatePicker = true }) {
+                    Icon(painterResource(R.drawable.ic_date), null, tint = Color(0xFF0DCDAA))
+                }
+                Text(text = dateText, modifier = Modifier.width(100.dp), fontFamily = EventsFontFamily)
+                
+                Button(onClick = { showTimePickerStart = true }, colors = ButtonDefaults.buttonColors(containerColor = Color.White), shape = RoundedCornerShape(8.dp)) {
+                    Text(text = durationStart, color = Color.Black, fontFamily = EventsFontFamily)
+                }
                 Text("-")
-                EditField(value = durationEnd, onValueChange = { durationEnd = it }, modifier = Modifier.weight(1f))
+                Button(onClick = { showTimePickerEnd = true }, colors = ButtonDefaults.buttonColors(containerColor = Color.White), shape = RoundedCornerShape(8.dp)) {
+                    Text(text = durationEnd, color = Color.Black, fontFamily = EventsFontFamily)
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -168,7 +264,7 @@ private fun EventEditingContent(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(painterResource(R.drawable.ic_location), null, modifier = Modifier.size(24.dp), tint = Color.Gray)
+                Icon(painterResource(R.drawable.ic_location), null, modifier = Modifier.size(24.dp), tint = Color(0xFF0DCDAA))
                 EditField(value = place, onValueChange = { place = it }, modifier = Modifier.weight(1f))
                 EditField(value = address, onValueChange = { address = it }, modifier = Modifier.weight(1f))
             }
@@ -226,12 +322,14 @@ private fun EventEditingContent(
                         onSaveClick(
                             event.copy(
                                 title = title,
-                                eventDate = date,
+                                eventDate = dateText,
                                 eventDuration = "$durationStart - $durationEnd",
                                 eventPlace = place,
                                 eventAddress = address,
-                                description = description
-                            )
+                                description = description,
+                                imageUrl = imageUrl
+                            ),
+                            newImageUri
                         )
                     },
                     modifier = Modifier.weight(1f),

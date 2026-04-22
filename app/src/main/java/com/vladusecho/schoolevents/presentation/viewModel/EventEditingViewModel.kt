@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.domain.usecase.events.GetEventByIdUseCase
+import com.vladusecho.schoolevents.domain.usecase.events.SaveEventImageUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.UpdateEventUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -19,6 +20,7 @@ import kotlinx.coroutines.launch
 class EventEditingViewModel @AssistedInject constructor(
     private val getEventByIdUseCase: GetEventByIdUseCase,
     private val updateEventUseCase: UpdateEventUseCase,
+    private val saveEventImageUseCase: SaveEventImageUseCase,
     @Assisted("eventId") private val eventId: Int
 ) : ViewModel() {
 
@@ -41,9 +43,10 @@ class EventEditingViewModel @AssistedInject constructor(
         }
     }
 
-    fun updateEvent(event: Event) {
+    fun updateEvent(event: Event, imageUri: String?) {
         viewModelScope.launch {
-            updateEventUseCase(event)
+            val finalImageUrl = imageUri?.let { saveEventImageUseCase(it) } ?: event.imageUrl
+            updateEventUseCase(event.copy(imageUrl = finalImageUrl))
             _state.value = EventEditingState.Saved
         }
     }

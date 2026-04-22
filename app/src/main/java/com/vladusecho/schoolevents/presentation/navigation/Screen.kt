@@ -41,6 +41,12 @@ sealed class Screen {
     data class EventDetails(
         val id: Int
     ) : Screen()
+
+    @Serializable
+    data class EventEditing(
+        val id: Int
+    ) : Screen()
+
     @Serializable
     object ArchiveGraph : Screen()
     @Serializable

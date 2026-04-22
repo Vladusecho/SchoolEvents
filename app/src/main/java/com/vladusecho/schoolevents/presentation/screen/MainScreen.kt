@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.vladusecho.schoolevents.presentation.activity.LocalUserRole
 import com.vladusecho.schoolevents.presentation.entity.StudentEventCard
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.viewModel.MainViewModel
@@ -41,6 +43,7 @@ fun MainScreen(
 ) {
 
     val state = viewModel.state.collectAsState()
+    val userRole = LocalUserRole.current
 
     Box(
         modifier = modifier
@@ -51,7 +54,7 @@ fun MainScreen(
             is MainViewModel.MainState.Content -> {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
-                    contentPadding = PaddingValues(vertical = 128.dp),
+                    contentPadding = PaddingValues(top = 128.dp, bottom = 200.dp),
                 ) {
                     items(
                         items = currentState.events,
@@ -74,11 +77,6 @@ fun MainScreen(
                             )
                         }
                     }
-                }
-                Box(
-                    modifier = Modifier.fillMaxSize().padding(bottom = 128.dp),
-                    contentAlignment = Alignment.BottomCenter
-                ) {
                 }
             }
 

@@ -84,7 +84,9 @@ class MainActivity : ComponentActivity() {
                                 Column() {
                                     if (userRole != UserRole.STUDENT) {
                                         Button(
-                                            onClick = {},
+                                            onClick = {
+                                                navState.navigateToEventCreation()
+                                            },
                                             colors = ButtonDefaults.buttonColors(
                                                 containerColor = MaterialTheme.colorScheme.primary
                                             ),

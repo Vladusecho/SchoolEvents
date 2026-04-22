@@ -8,6 +8,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.vladusecho.schoolevents.presentation.navigation.NavigationState
 import com.vladusecho.schoolevents.presentation.navigation.Screen
+import com.vladusecho.schoolevents.presentation.screen.EventCreationScreen
 import com.vladusecho.schoolevents.presentation.screen.EventDetailsScreen
 import com.vladusecho.schoolevents.presentation.screen.EventEditingScreen
 import com.vladusecho.schoolevents.presentation.screen.MainScreen
@@ -33,7 +34,7 @@ fun NavGraphBuilder.mainNavigation(
                     }
                 },
                 onAddClick = {
-
+                    navigationState.navigateToEventCreation()
                 }
             )
         }
@@ -50,6 +51,11 @@ fun NavGraphBuilder.mainNavigation(
             val args = backStackEntry.toRoute<Screen.EventEditing>()
             EventEditingScreen(
                 eventId = args.id,
+                onBackClick = { navigationState.navHostController.navigateUp() }
+            )
+        }
+        composable<Screen.EventCreation> {
+            EventCreationScreen(
                 onBackClick = { navigationState.navHostController.navigateUp() }
             )
         }

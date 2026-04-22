@@ -48,6 +48,9 @@ sealed class Screen {
     ) : Screen()
 
     @Serializable
+    object EventCreation : Screen()
+
+    @Serializable
     object ArchiveGraph : Screen()
     @Serializable
     object Archive : Screen()

@@ -8,7 +8,10 @@ import com.vladusecho.schoolevents.domain.usecase.auth.ChangeUserIsAuthUseCase
 import com.vladusecho.schoolevents.domain.usecase.auth.CheckUserExistsUseCase
 import com.vladusecho.schoolevents.domain.usecase.auth.CheckUserIsAuthUseCase
 import com.vladusecho.schoolevents.domain.usecase.auth.CheckUserPasswordUseCase
+import com.vladusecho.schoolevents.domain.usecase.auth.GetCurrentUserRoleUseCase
+import com.vladusecho.schoolevents.domain.usecase.auth.SetCurrentUserRoleUseCase
 import com.vladusecho.schoolevents.domain.usecase.profile.SaveProfileUseCase
+import com.vladusecho.schoolevents.presentation.screen.UserRole
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,7 +29,9 @@ class AuthViewModel @Inject constructor(
     private val checkUserPasswordUseCase: CheckUserPasswordUseCase,
     private val saveProfileUseCase: SaveProfileUseCase,
     private val checkUserIsAuthUseCase: CheckUserIsAuthUseCase,
-    private val changeUserIsAuthUseCase: ChangeUserIsAuthUseCase
+    private val changeUserIsAuthUseCase: ChangeUserIsAuthUseCase,
+    private val setCurrentUserRoleUseCase: SetCurrentUserRoleUseCase,
+    private val getCurrentUserRoleUseCase: GetCurrentUserRoleUseCase
 ) : ViewModel() {
 
     private val _isLoading = MutableStateFlow(false)
@@ -43,6 +48,13 @@ class AuthViewModel @Inject constructor(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = null
+        )
+
+    val userRole: StateFlow<UserRole> = getCurrentUserRoleUseCase()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = UserRole.STUDENT
         )
 
     fun checkPassword(email: String, password: String) {
@@ -67,6 +79,8 @@ class AuthViewModel @Inject constructor(
             try {
                 saveProfileUseCase(profile)
                 changeUserIsAuthUseCase()
+                val role = UserRole.entries.find { it.label == profile.role } ?: UserRole.STUDENT
+                setCurrentUserRoleUseCase(role)
                 _authResult.emit(true)
             } catch (e: Exception) {
                 Log.e("tag", "registerUser: ", e)

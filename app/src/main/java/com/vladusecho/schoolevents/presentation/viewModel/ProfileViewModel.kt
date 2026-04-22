@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.domain.entity.Profile
 import com.vladusecho.schoolevents.domain.usecase.auth.ChangeUserIsAuthUseCase
+import com.vladusecho.schoolevents.domain.usecase.auth.GetCurrentUserRoleUseCase
+import com.vladusecho.schoolevents.domain.usecase.auth.SetCurrentUserRoleUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.GetSubscribedEventsUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.SwitchEventFavouriteStatusUseCase
 import com.vladusecho.schoolevents.domain.usecase.profile.GetProfileUseCase
@@ -22,7 +24,8 @@ class ProfileViewModel @Inject constructor(
     private val getProfileUseCase: GetProfileUseCase,
     private val getSubscribedEventsUseCase: GetSubscribedEventsUseCase,
     private val switchFavouriteStatusUseCase: SwitchEventFavouriteStatusUseCase,
-    private val changeUserIsAuthUseCase: ChangeUserIsAuthUseCase
+    private val changeUserIsAuthUseCase: ChangeUserIsAuthUseCase,
+    private val getCurrentUserRoleUseCase: GetCurrentUserRoleUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<ProfileState>(ProfileState.Initial)

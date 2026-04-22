@@ -196,7 +196,7 @@ fun RegistrationScreen(
                 val isSelected = selectedRole == role
 
                 Button(
-                    enabled = !(role == UserRole.ORGANIZER || role == UserRole.DIRECTOR),
+                    enabled = role != UserRole.DIRECTOR,
                     onClick = { selectedRole = role },
                     modifier = Modifier
                         .fillMaxWidth()

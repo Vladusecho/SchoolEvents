@@ -1,11 +1,14 @@
 package com.vladusecho.schoolevents.data.repository
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.vladusecho.schoolevents.data.local.EventsAppDao
 import com.vladusecho.schoolevents.domain.repository.AuthRepository
+import com.vladusecho.schoolevents.presentation.screen.UserRole
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -19,6 +22,7 @@ class AuthRepositoryImpl @Inject constructor(
 ) : AuthRepository {
 
     private val currentUserAuthKey = booleanPreferencesKey("current_user_auth")
+    private val currentUserRoleKey = stringPreferencesKey("current_user_role")
 
     override suspend fun checkUserExists(email: String): Boolean {
         return dao.checkUserExists(email)
@@ -41,6 +45,20 @@ class AuthRepositoryImpl @Inject constructor(
     override fun checkUserIsAuth(): Flow<Boolean> {
         return context.dataStoreAuth.data.map { preferences ->
             preferences[currentUserAuthKey] ?: false
+        }
+    }
+
+    override suspend fun setCurrentUserRole(role: UserRole) {
+        context.dataStoreAuth.edit {  preferences ->
+            preferences[currentUserRoleKey] = role.name
+        }
+    }
+
+    override fun getCurrentUserRole(): Flow<UserRole> {
+        return context.dataStoreAuth.data.map { preferences ->
+            val roleName = preferences[currentUserRoleKey] ?: UserRole.STUDENT.name
+            Log.d("tag", "getCurrentUserRole: $roleName")
+            UserRole.valueOf(roleName)
         }
     }
 }

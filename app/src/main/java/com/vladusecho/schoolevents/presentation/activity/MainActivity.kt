@@ -40,6 +40,7 @@ import com.vladusecho.schoolevents.presentation.navigation.NavigationState
 import com.vladusecho.schoolevents.presentation.navigation.Screen
 import com.vladusecho.schoolevents.presentation.navigation.StudentNavItem
 import com.vladusecho.schoolevents.presentation.navigation.rememberNavigationState
+import com.vladusecho.schoolevents.presentation.screen.UserRole
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
 import com.vladusecho.schoolevents.presentation.viewModel.AuthViewModel
@@ -55,6 +56,7 @@ class MainActivity : ComponentActivity() {
 
                 val authViewModel: AuthViewModel = hiltViewModel()
                 val isAuth by authViewModel.isAuth.collectAsState()
+                val userRole by authViewModel.userRole.collectAsState()
 
                 val navState = rememberNavigationState()
                 val navBackStackEntry by navState.navHostController.currentBackStackEntryAsState()
@@ -70,7 +72,9 @@ class MainActivity : ComponentActivity() {
                             } == false
 
                             if (showBottomBar) {
-                                EventsNavigationBottom(navState)
+                                EventsNavigationBottom(
+                                    navState, userRole
+                                )
                             }
                         }
                     ) { paddingValues ->
@@ -102,15 +106,34 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun EventsNavigationBottom(
-    navState: NavigationState
+    navState: NavigationState,
+    userRole: UserRole
 ) {
     val navBackStackEntry by navState.navHostController.currentBackStackEntryAsState()
 
-    val navItems = listOf(
+    val studentNavItems = listOf(
         StudentNavItem.Events,
         StudentNavItem.Favourite,
         StudentNavItem.Profile,
     )
+
+    val organizerNavItems = listOf(
+        StudentNavItem.Events,
+        StudentNavItem.Archive,
+        StudentNavItem.Profile,
+    )
+
+    val directorNavItems = listOf(
+        StudentNavItem.Events,
+        StudentNavItem.Archive,
+        StudentNavItem.Profile,
+    )
+
+    val currentNavItems = when (userRole) {
+        UserRole.STUDENT -> studentNavItems
+        UserRole.ORGANIZER -> organizerNavItems
+        UserRole.DIRECTOR -> directorNavItems
+    }
 
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.primary,
@@ -118,7 +141,7 @@ fun EventsNavigationBottom(
             .fillMaxWidth()
             .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
     ) {
-        navItems.forEach { navItem ->
+        currentNavItems.forEach { navItem ->
 
             val isSelected =
                 navBackStackEntry?.destination?.hierarchy?.any {

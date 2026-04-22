@@ -35,7 +35,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -50,6 +49,7 @@ import com.vladusecho.schoolevents.R
 import com.vladusecho.schoolevents.domain.entity.Profile
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
+import com.vladusecho.schoolevents.presentation.viewModel.AuthViewModel
 import com.vladusecho.schoolevents.presentation.viewModel.EditingProfileViewModel
 
 @Composable
@@ -125,8 +125,6 @@ fun ProfileEditingContent(
     onBackClick: () -> Unit
 ) {
 
-    val context = LocalContext.current
-
     val userClass = remember { mutableStateOf(profile.classNumber) }
     val userName = remember { mutableStateOf(profile.name) }
     val userSurname = remember { mutableStateOf(profile.surname) }
@@ -165,28 +163,30 @@ fun ProfileEditingContent(
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
-        EventsTextField(
-            value = userClass.value,
-            onValueChange = { userClass.value = it },
-            prefix = {
-                Row(
+        if (profile.role == UserRole.STUDENT.label) {
+            EventsTextField(
+                value = userClass.value,
+                onValueChange = { userClass.value = it },
+                prefix = {
+                    Row(
 
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_user),
-                        contentDescription = "",
-                        tint = MaterialTheme.colorScheme.secondary.copy(0.5f)
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_user),
+                            contentDescription = "",
+                            tint = MaterialTheme.colorScheme.secondary.copy(0.5f)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
+                },
+                suffix = {
+                    Text(
+                        text = "класс"
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
                 }
-            },
-            suffix = {
-                Text(
-                    text = "класс"
-                )
-            }
-        )
-        Spacer(modifier = Modifier.height(8.dp))
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
         EventsTextField(
             value = userName.value,
             onValueChange = { userName.value = it },

@@ -44,6 +44,7 @@ import com.vladusecho.schoolevents.domain.entity.Profile
 import com.vladusecho.schoolevents.presentation.entity.StudentEventCard
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
+import com.vladusecho.schoolevents.presentation.viewModel.AuthViewModel
 import com.vladusecho.schoolevents.presentation.viewModel.ProfileViewModel
 
 @Composable
@@ -240,8 +241,9 @@ fun ProfileContent(
                 fontSize = 18.sp,
                 color = MaterialTheme.colorScheme.secondary
             )
+            val classVisible = if (profile.role == UserRole.STUDENT.label) " | " + profile.classNumber + " класс" else ""
             Text(
-                text = profile.role.uppercase() + " | " + profile.classNumber + " класс",
+                text = profile.role.uppercase() + classVisible,
                 fontFamily = EventsFontFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize = 18.sp,

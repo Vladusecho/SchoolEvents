@@ -13,5 +13,6 @@ data class EventModel(
     val eventDate: String,
     val eventDuration: String,
     val imageUrl: String,
-    val isArchived: Boolean
+    val isArchived: Boolean,
+    val creatorEmail: String = ""
 )

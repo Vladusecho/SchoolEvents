@@ -11,5 +11,6 @@ data class Event(
     val eventDuration: String,
     val isArchived: Boolean,
     val isFavourite: Boolean,
-    val isSubscribed: Boolean
+    val isSubscribed: Boolean,
+    val creatorEmail: String = ""
 )

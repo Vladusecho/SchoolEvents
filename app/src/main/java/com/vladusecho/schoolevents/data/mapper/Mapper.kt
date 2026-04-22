@@ -49,7 +49,8 @@ fun Event.toEventModel(): EventModel {
         eventDate = eventDate,
         eventDuration = eventDuration,
         imageUrl = imageUrl,
-        isArchived = isArchived
+        isArchived = isArchived,
+        creatorEmail = creatorEmail
     )
 }
 
@@ -65,7 +66,8 @@ fun EventModel.toEventEntity(isFavourite: Boolean = false, isSubscribed: Boolean
         imageUrl = imageUrl,
         isArchived = isArchived,
         isFavourite = isFavourite,
-        isSubscribed = isSubscribed
+        isSubscribed = isSubscribed,
+        creatorEmail = creatorEmail
     )
 }
 

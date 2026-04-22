@@ -32,7 +32,8 @@ class EventCreationViewModel @Inject constructor(
             try {
                 val profile = getProfileUseCase().first()
                 _state.value = EventCreationState.Content(
-                    organizerName = "${profile.name} ${profile.surname}"
+                    organizerName = "${profile.name} ${profile.surname}",
+                    creatorEmail = profile.email
                 )
             } catch (e: Exception) {
                 _state.value = EventCreationState.Error(e.message ?: "Unknown error")
@@ -42,15 +43,24 @@ class EventCreationViewModel @Inject constructor(
 
     fun createEvent(event: Event, imageUri: String?) {
         viewModelScope.launch {
-            val finalImageUrl = imageUri?.let { saveEventImageUseCase(it) } ?: event.imageUrl
-            addNewEventUseCase(event.copy(imageUrl = finalImageUrl))
-            _state.value = EventCreationState.Saved
+            val currentState = _state.value
+            if (currentState is EventCreationState.Content) {
+                val finalImageUrl = imageUri?.let { saveEventImageUseCase(it) } ?: event.imageUrl
+                addNewEventUseCase(event.copy(
+                    imageUrl = finalImageUrl,
+                    creatorEmail = currentState.creatorEmail
+                ))
+                _state.value = EventCreationState.Saved
+            }
         }
     }
 
     sealed interface EventCreationState {
         object Initial : EventCreationState
-        data class Content(val organizerName: String) : EventCreationState
+        data class Content(
+            val organizerName: String,
+            val creatorEmail: String
+        ) : EventCreationState
         data class Error(val message: String) : EventCreationState
         object Saved : EventCreationState
     }

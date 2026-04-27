@@ -173,6 +173,7 @@ private fun NewsEditingContent(
                 EditField(
                     value = title,
                     onValueChange = { title = it },
+                    placeholder = "Заголовок новости",
                     modifier = Modifier.weight(1f),
                     textStyle = TextStyle(
                         fontFamily = EventsFontFamily,

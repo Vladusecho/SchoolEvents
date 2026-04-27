@@ -7,7 +7,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -223,7 +222,7 @@ private fun EventCreationContent(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
+                    .height(250.dp)
                     .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp))
                     .background(Color.LightGray)
                     .clickable {
@@ -254,13 +253,10 @@ private fun EventCreationContent(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = onBackClick) {
-                    Icon(painterResource(R.drawable.ic_back), contentDescription = null)
-                }
                 EditField(
                     value = title,
                     onValueChange = { title = it },
-                    placeholder = "Название мероприятия",
+                    placeholder = "Заголовок мероприятия",
                     modifier = Modifier.weight(1f),
                     textStyle = TextStyle(
                         fontFamily = EventsFontFamily,
@@ -271,31 +267,52 @@ private fun EventCreationContent(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            // Date and Time
             Row(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { showDatePicker = true }) {
-                    Icon(painterResource(R.drawable.ic_date), null, tint = Color(0xFF0DCDAA))
-                }
-                Text(
-                    text = if (dateText.isEmpty()) "Дата" else dateText,
-                    modifier = Modifier.width(100.dp),
-                    fontFamily = EventsFontFamily
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_date),
+                    "",
+                    tint = Color(0xff0DCDAA)
                 )
-
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(
+                    onClick = { showDatePicker = true },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text(
+                        text = dateText.ifEmpty { "Дата" },
+                        color = Color.Black,
+                        fontFamily = EventsFontFamily,
+                        fontSize = 18.sp
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_date),
+                    "",
+                    tint = Color(0xff0DCDAA)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
                 Button(
                     onClick = { showTimePickerStart = true },
                     colors = ButtonDefaults.buttonColors(containerColor = Color.White),
                     shape = RoundedCornerShape(8.dp)
                 ) {
                     Text(
-                        text = if (durationStart.isEmpty()) "От" else durationStart,
+                        text = durationStart.ifEmpty { "От" },
                         color = Color.Black,
-                        fontFamily = EventsFontFamily
+                        fontFamily = EventsFontFamily,
+                        fontSize = 18.sp
                     )
                 }
                 Text("-")
@@ -305,32 +322,41 @@ private fun EventCreationContent(
                     shape = RoundedCornerShape(8.dp)
                 ) {
                     Text(
-                        text = if (durationEnd.isEmpty()) "До" else durationEnd,
+                        text = durationEnd.ifEmpty { "До" },
                         color = Color.Black,
-                        fontFamily = EventsFontFamily
+                        fontFamily = EventsFontFamily,
+                        fontSize = 18.sp
                     )
                 }
             }
-
             Spacer(modifier = Modifier.height(16.dp))
-
-            // Location
             Row(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    painterResource(R.drawable.ic_location),
-                    null,
-                    modifier = Modifier.size(24.dp),
-                    tint = Color(0xFF0DCDAA)
+                    painter = painterResource(id = R.drawable.ic_location),
+                    "",
+                    tint = Color(0xff0DCDAA)
                 )
                 EditField(
                     value = place,
                     onValueChange = { place = it },
+                    modifier = Modifier.weight(1f),
                     placeholder = "Место",
-                    modifier = Modifier.weight(1f)
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_location),
+                    "",
+                    tint = Color(0xff0DCDAA)
                 )
                 EditField(
                     value = address,
@@ -339,31 +365,45 @@ private fun EventCreationContent(
                     modifier = Modifier.weight(1f)
                 )
             }
-
             Spacer(modifier = Modifier.height(24.dp))
-
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(MaterialTheme.colorScheme.primary),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Организатор:",
+                    fontFamily = EventsFontFamily,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 16.sp,
+                    color = Color.White
+                )
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = organizerName,
+                    fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Bold,
-                    fontFamily = EventsFontFamily
-                )
-                Text(
-                    text = "Организатор",
-                    fontSize = 12.sp,
-                    color = Color.Gray,
-                    fontFamily = EventsFontFamily
+                    fontSize = 16.sp,
+                    color = Color.White
                 )
             }
-
             Spacer(modifier = Modifier.height(24.dp))
 
-            Text(
-                text = "О мероприятии:",
-                modifier = Modifier.padding(horizontal = 16.dp),
-                fontWeight = FontWeight.Bold,
-                fontFamily = EventsFontFamily
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "О мероприятии:",
+                    fontFamily = EventsFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+            }
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -373,7 +413,6 @@ private fun EventCreationContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-                    .height(150.dp)
                     .clip(RoundedCornerShape(12.dp)),
                 colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Transparent,
@@ -381,48 +420,64 @@ private fun EventCreationContent(
                 ),
                 placeholder = { Text("Описание мероприятия...") }
             )
+        }
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        contentAlignment = Alignment.BottomCenter
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(bottom = 108.dp)
+                .clip(RoundedCornerShape(20.dp))
+                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
 
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Row(
+        ) {
+            IconButton(onClick = onBackClick) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_back),
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.primary)
+                        .size(128.dp)
+                )
+            }
+            Button(
+                onClick = {
+                    onSaveClick(
+                        Event(
+                            id = (System.currentTimeMillis() % Int.MAX_VALUE).toInt(),
+                            title = title,
+                            description = description,
+                            eventAddress = address,
+                            eventPlace = place,
+                            eventDate = dateText,
+                            eventDuration = "$durationStart - $durationEnd",
+                            imageUrl = imageUrl,
+                            isArchived = false,
+                            isFavourite = false,
+                            isSubscribed = false
+                        ),
+                        if (imageUrl.isNotEmpty()) imageUrl else null
+                    )
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                ),
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    .padding(horizontal = 8.dp)
+                    .weight(1f)
             ) {
-                Button(
-                    onClick = onBackClick,
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Text("ОТМЕНИТЬ", color = Color.White, fontWeight = FontWeight.Bold)
-                }
-                Button(
-                    onClick = {
-                        onSaveClick(
-                            Event(
-                                id = (System.currentTimeMillis() % Int.MAX_VALUE).toInt(),
-                                title = title,
-                                description = description,
-                                eventAddress = address,
-                                eventPlace = place,
-                                eventDate = dateText,
-                                eventDuration = "$durationStart - $durationEnd",
-                                imageUrl = imageUrl,
-                                isArchived = false,
-                                isFavourite = false,
-                                isSubscribed = false
-                            ),
-                            if (imageUrl.isNotEmpty()) imageUrl else null
-                        )
-                    },
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0DCDAA)),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Text("СОЗДАТЬ", color = Color.White, fontWeight = FontWeight.Bold)
-                }
+                Text(
+                    text = "СОЗДАТЬ",
+                    fontFamily = EventsFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    color = Color.White
+                )
             }
         }
     }
@@ -449,7 +504,9 @@ fun CustomTimePickerDialog(
         }
     ) {
         Box(
-            modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
             contentAlignment = Alignment.Center
         ) {
             content()
@@ -486,7 +543,9 @@ fun EditField(
 @Preview(showBackground = true)
 @Composable
 fun PreviewCreation() {
-    SchoolEventsTheme() {
+    SchoolEventsTheme(
+        darkTheme = true
+    ) {
         EventCreationContent(
             organizerName = "Vladusecho",
             onBackClick = { },

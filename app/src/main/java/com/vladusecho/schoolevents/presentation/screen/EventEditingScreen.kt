@@ -270,6 +270,7 @@ private fun EventEditingContent(
             ) {
                 EditField(
                     value = title,
+                    placeholder = "Заголовок мероприятия",
                     onValueChange = { title = it },
                     modifier = Modifier.weight(1f),
                     textStyle = TextStyle(
@@ -429,12 +430,12 @@ private fun EventEditingContent(
                 onValueChange = { description = it },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = 8.dp)
                     .clip(RoundedCornerShape(12.dp)),
                 colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent
-                )
+                ),
             )
         }
     }

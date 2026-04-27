@@ -140,6 +140,7 @@ fun EventDetailsContent(
                     modifier = Modifier
                         .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp))
                         .fillMaxWidth()
+                        .height(250.dp)
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -330,7 +331,7 @@ fun EventDetailsContent(
                         .padding(horizontal = 8.dp)
                 ) {
                     Text(
-                        text = if (!event.isSubscribed) "Посетить" else "Не пойду",
+                        text = if (!event.isSubscribed) "ПОСЕТИТЬ" else "НЕ ПОЙДУ",
                         fontFamily = EventsFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,

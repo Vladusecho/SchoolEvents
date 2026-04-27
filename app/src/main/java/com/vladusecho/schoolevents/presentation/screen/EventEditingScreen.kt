@@ -3,11 +3,11 @@ package com.vladusecho.schoolevents.presentation.screen
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -51,6 +51,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -58,6 +59,7 @@ import coil3.compose.AsyncImage
 import com.vladusecho.schoolevents.R
 import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
+import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
 import com.vladusecho.schoolevents.presentation.viewModel.EventEditingViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -101,12 +103,19 @@ fun EventEditingScreen(
                     }
                 )
             }
+
             is EventEditingViewModel.EventEditingState.Loading -> {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
+
             is EventEditingViewModel.EventEditingState.Error -> {
-                Text(text = currentState.message, modifier = Modifier.align(Alignment.Center), color = Color.Red)
+                Text(
+                    text = currentState.message,
+                    modifier = Modifier.align(Alignment.Center),
+                    color = Color.Red
+                )
             }
+
             else -> {}
         }
     }
@@ -123,8 +132,14 @@ private fun EventEditingContent(
 ) {
     var title by remember { mutableStateOf(event.title) }
     var dateText by remember { mutableStateOf(event.eventDate) }
-    var durationStart by remember { mutableStateOf(event.eventDuration.split(" - ").getOrElse(0) { "" }) }
-    var durationEnd by remember { mutableStateOf(event.eventDuration.split(" - ").getOrElse(1) { "" }) }
+    var durationStart by remember {
+        mutableStateOf(
+            event.eventDuration.split(" - ").getOrElse(0) { "" })
+    }
+    var durationEnd by remember {
+        mutableStateOf(
+            event.eventDuration.split(" - ").getOrElse(1) { "" })
+    }
     var place by remember { mutableStateOf(event.eventPlace) }
     var address by remember { mutableStateOf(event.eventAddress) }
     var description by remember { mutableStateOf(event.description) }
@@ -136,7 +151,11 @@ private fun EventEditingContent(
     var showTimePickerEnd by remember { mutableStateOf(false) }
 
     val sdf = SimpleDateFormat("d MMMM", Locale("ru"))
-    val initialDate = try { sdf.parse(dateText)?.time } catch (e: Exception) { null }
+    val initialDate = try {
+        sdf.parse(dateText)?.time
+    } catch (e: Exception) {
+        null
+    }
     val datePickerState = rememberDatePickerState(initialSelectedDateMillis = initialDate)
 
     val startParts = durationStart.split(":")
@@ -144,7 +163,7 @@ private fun EventEditingContent(
         initialHour = startParts.getOrNull(0)?.toIntOrNull() ?: 0,
         initialMinute = startParts.getOrNull(1)?.toIntOrNull() ?: 0
     )
-    
+
     val endParts = durationEnd.split(":")
     val timePickerStateEnd = rememberTimePickerState(
         initialHour = endParts.getOrNull(0)?.toIntOrNull() ?: 0,
@@ -170,10 +189,14 @@ private fun EventEditingContent(
                         dateText = sdf.format(date)
                     }
                     showDatePicker = false
-                }) { Text("OK",
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = EventsFontFamily,
-                    color = MaterialTheme.colorScheme.secondary) }
+                }) {
+                    Text(
+                        "OK",
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = EventsFontFamily,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                }
             }
         ) {
             DatePicker(
@@ -188,10 +211,15 @@ private fun EventEditingContent(
     }
 
     if (showTimePickerStart) {
-        CustomTimePickerDialog (
+        CustomTimePickerDialog(
             onDismissRequest = { showTimePickerStart = false },
             onConfirm = {
-                durationStart = String.format(Locale.getDefault(), "%02d:%02d", timePickerStateStart.hour, timePickerStateStart.minute)
+                durationStart = String.format(
+                    Locale.getDefault(),
+                    "%02d:%02d",
+                    timePickerStateStart.hour,
+                    timePickerStateStart.minute
+                )
                 showTimePickerStart = false
             }
         ) {
@@ -200,10 +228,15 @@ private fun EventEditingContent(
     }
 
     if (showTimePickerEnd) {
-        CustomTimePickerDialog (
+        CustomTimePickerDialog(
             onDismissRequest = { showTimePickerEnd = false },
             onConfirm = {
-                durationEnd = String.format(Locale.getDefault(), "%02d:%02d", timePickerStateEnd.hour, timePickerStateEnd.minute)
+                durationEnd = String.format(
+                    Locale.getDefault(),
+                    "%02d:%02d",
+                    timePickerStateEnd.hour,
+                    timePickerStateEnd.minute
+                )
                 showTimePickerEnd = false
             }
         ) {
@@ -213,7 +246,7 @@ private fun EventEditingContent(
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = 32.dp)
+        contentPadding = PaddingValues(bottom = 156.dp)
     ) {
         item {
             AsyncImage(
@@ -222,23 +255,19 @@ private fun EventEditingContent(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
+                    .height(250.dp)
                     .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp))
                     .clickable {
                         launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                     }
             )
-            
+
             Spacer(modifier = Modifier.height(16.dp))
 
             Row(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = onBackClick) {
-                    Icon(painterResource(R.drawable.ic_back), contentDescription = null)
-                }
-                
                 EditField(
                     value = title,
                     onValueChange = { title = it },
@@ -252,55 +281,146 @@ private fun EventEditingContent(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            // Date and Time
             Row(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { showDatePicker = true }) {
-                    Icon(painterResource(R.drawable.ic_date), null, tint = Color(0xFF0DCDAA))
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_date),
+                    "",
+                    tint = Color(0xff0DCDAA)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(
+                    onClick = { showDatePicker = true },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text(
+                        text = dateText,
+                        color = Color.Black,
+                        fontFamily = EventsFontFamily,
+                        fontSize = 18.sp
+                    )
                 }
-                Text(text = dateText, modifier = Modifier.width(100.dp), fontFamily = EventsFontFamily)
-                
-                Button(onClick = { showTimePickerStart = true }, colors = ButtonDefaults.buttonColors(containerColor = Color.White), shape = RoundedCornerShape(8.dp)) {
-                    Text(text = durationStart, color = Color.Black, fontFamily = EventsFontFamily)
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_date),
+                    "",
+                    tint = Color(0xff0DCDAA)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(
+                    onClick = { showTimePickerStart = true },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text(
+                        text = durationStart,
+                        color = Color.Black,
+                        fontFamily = EventsFontFamily,
+                        fontSize = 18.sp
+                    )
                 }
                 Text("-")
-                Button(onClick = { showTimePickerEnd = true }, colors = ButtonDefaults.buttonColors(containerColor = Color.White), shape = RoundedCornerShape(8.dp)) {
-                    Text(text = durationEnd, color = Color.Black, fontFamily = EventsFontFamily)
+                Button(
+                    onClick = { showTimePickerEnd = true },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text(
+                        text = durationEnd,
+                        color = Color.Black,
+                        fontFamily = EventsFontFamily,
+                        fontSize = 18.sp
+                    )
                 }
             }
-
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Location
             Row(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(painterResource(R.drawable.ic_location), null, modifier = Modifier.size(24.dp), tint = Color(0xFF0DCDAA))
-                EditField(value = place, onValueChange = { place = it }, modifier = Modifier.weight(1f))
-                EditField(value = address, onValueChange = { address = it }, modifier = Modifier.weight(1f))
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_location),
+                    "",
+                    tint = Color(0xff0DCDAA)
+                )
+                EditField(
+                    value = place,
+                    onValueChange = { place = it },
+                    modifier = Modifier.weight(1f)
+                )
             }
+            Spacer(modifier = Modifier.height(8.dp))
 
-            Spacer(modifier = Modifier.height(24.dp))
-            
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                Text(text = organizerName, fontWeight = FontWeight.Bold, fontFamily = EventsFontFamily)
-                Text(text = "Организатор", fontSize = 12.sp, color = Color.Gray, fontFamily = EventsFontFamily)
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Text(
-                text = "О мероприятии:",
+            Row(
                 modifier = Modifier.padding(horizontal = 16.dp),
-                fontWeight = FontWeight.Bold,
-                fontFamily = EventsFontFamily
-            )
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_location),
+                    "",
+                    tint = Color(0xff0DCDAA)
+                )
+                EditField(
+                    value = address,
+                    onValueChange = { address = it },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(MaterialTheme.colorScheme.primary),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Организатор:",
+                    fontFamily = EventsFontFamily,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 16.sp,
+                    color = Color.White
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = organizerName,
+                    fontFamily = EventsFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    color = Color.White
+                )
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "О мероприятии:",
+                    fontFamily = EventsFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+            }
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -317,44 +437,70 @@ private fun EventEditingContent(
                     unfocusedIndicatorColor = Color.Transparent
                 )
             )
+        }
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        contentAlignment = Alignment.BottomCenter
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(bottom = 108.dp)
+                .clip(RoundedCornerShape(20.dp))
+                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
 
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Row(
+        ) {
+            IconButton(onClick = onBackClick) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_back),
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.primary)
+                        .size(128.dp)
+                )
+            }
+            Button(
+                onClick = { onArchiveClick() },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Red
+                ),
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    .padding(horizontal = 8.dp)
+                    .weight(1f)
             ) {
-                Button(
-                    onClick = onArchiveClick,
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Text("ЗАКОНЧИТЬ", color = Color.White, fontWeight = FontWeight.Bold)
-                }
-                Button(
-                    onClick = {
-                        onSaveClick(
-                            event.copy(
-                                title = title,
-                                eventDate = dateText,
-                                eventDuration = "$durationStart - $durationEnd",
-                                eventPlace = place,
-                                eventAddress = address,
-                                description = description,
-                                imageUrl = imageUrl
-                            ),
-                            newImageUri
-                        )
-                    },
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0DCDAA)),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Text("СОХРАНИТЬ", color = Color.White, fontWeight = FontWeight.Bold)
-                }
+                Text(
+                    text = "ЗАКОНЧИТЬ",
+                    fontFamily = EventsFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    color = Color.White
+                )
+            }
+            IconButton(onClick = {
+                onSaveClick(
+                    event.copy(
+                        title = title,
+                        eventDate = dateText,
+                        eventDuration = "$durationStart - $durationEnd",
+                        eventPlace = place,
+                        eventAddress = address,
+                        description = description,
+                        imageUrl = imageUrl
+                    ),
+                    newImageUri
+                )
+            }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_check),
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.primary)
+                        .size(128.dp)
+                )
             }
         }
     }
@@ -365,7 +511,7 @@ fun EditField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    textStyle: TextStyle = TextStyle(fontFamily = EventsFontFamily)
+    textStyle: TextStyle = TextStyle(fontFamily = EventsFontFamily, fontSize = 18.sp)
 ) {
     Box(
         modifier = modifier
@@ -377,7 +523,36 @@ fun EditField(
             value = value,
             onValueChange = onValueChange,
             textStyle = textStyle,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            maxLines = 1
+        )
+    }
+}
+
+@Preview
+@Composable
+fun EditPreview() {
+    SchoolEventsTheme(
+        darkTheme = true
+    ) {
+        EventEditingContent(
+            event = Event(
+                id = 1,
+                title = "Школьные мероприятия",
+                description = "Школьные мероприятия",
+                imageUrl = "null",
+                eventAddress = "ул. Ленина, д.80, Актовый зал",
+                eventDate = "12 марта",
+                eventPlace = "ул. Ленина, д.80, Актовый зал",
+                eventDuration = "8:00 - 13:00",
+                isArchived = false,
+                isFavourite = false,
+                isSubscribed = false
+            ),
+            organizerName = "Иванов Иван Иванович",
+            onBackClick = {},
+            onSaveClick = { _, _ -> },
+            onArchiveClick = {}
         )
     }
 }

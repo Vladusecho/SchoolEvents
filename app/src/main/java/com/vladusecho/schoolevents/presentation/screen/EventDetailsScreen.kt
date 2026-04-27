@@ -1,6 +1,5 @@
 package com.vladusecho.schoolevents.presentation.screen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,12 +17,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -55,50 +57,58 @@ fun EventDetailsScreen(
     ),
     onBackClick: () -> Unit
 ) {
+    val state by viewModel.state.collectAsState()
 
-    val state = viewModel.state.collectAsState()
-    val currentState = state.value
+    LaunchedEffect(state) {
+        if (state is EventDetailsViewModel.EventDetailsState.Deleted) {
+            onBackClick()
+        }
+    }
 
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        when (currentState) {
+        when (val currentState = state) {
             is EventDetailsViewModel.EventDetailsState.Content -> {
                 EventDetailsContent(
                     event = currentState.event,
                     organizerName = currentState.organizerName,
                     onBackClick = onBackClick,
-                    onFavouriteClick = { isFavourite, eventId ->
+                    onFavouriteClick = { isFavourite, id ->
                         viewModel.processCommand(
                             EventDetailsViewModel.EventDetailsCommand.SwitchFavouriteStatus(
                                 isFavourite = isFavourite,
-                                eventId = eventId
+                                eventId = id
                             )
                         )
                     },
-                    onSubscribeClick = { isSubscribed, eventId ->
+                    onSubscribeClick = { isSubscribed, id ->
                         viewModel.processCommand(
                             EventDetailsViewModel.EventDetailsCommand.SubscribeToEvent(
-                                isSubscribed, eventId
+                                isSubscribed, id
                             )
                         )
+                    },
+                    onDeleteClick = {
+                        viewModel.processCommand(EventDetailsViewModel.EventDetailsCommand.DeleteEvent)
                     }
                 )
             }
 
+            is EventDetailsViewModel.EventDetailsState.Loading -> {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+
             is EventDetailsViewModel.EventDetailsState.Error -> {
-
+                Text(
+                    text = currentState.message,
+                    color = Color.Red,
+                    modifier = Modifier.align(Alignment.Center)
+                )
             }
-
-            EventDetailsViewModel.EventDetailsState.Initial -> {
-
-            }
-
-            EventDetailsViewModel.EventDetailsState.Loading -> {
-
-            }
+            else -> {}
         }
     }
 }
@@ -110,9 +120,9 @@ fun EventDetailsContent(
     organizerName: String,
     onBackClick: () -> Unit,
     onFavouriteClick: (isFavourite: Boolean, eventId: Int) -> Unit,
-    onSubscribeClick: (isSubscribed: Boolean ,eventId: Int) -> Unit
+    onSubscribeClick: (isSubscribed: Boolean, eventId: Int) -> Unit,
+    onDeleteClick: () -> Unit
 ) {
-
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -130,7 +140,6 @@ fun EventDetailsContent(
                     modifier = Modifier
                         .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp))
                         .fillMaxWidth()
-
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -163,9 +172,7 @@ fun EventDetailsContent(
                     "",
                     tint = Color(0xff0DCDAA)
                 )
-                Column(
-
-                ) {
+                Column {
                     Text(
                         text = event.eventDate,
                         fontFamily = EventsFontFamily,
@@ -195,7 +202,7 @@ fun EventDetailsContent(
                     "",
                     tint = Color(0xff0DCDAA)
                 )
-                Column() {
+                Column {
                     Text(
                         text = event.eventPlace,
                         fontFamily = EventsFontFamily,
@@ -278,51 +285,69 @@ fun EventDetailsContent(
             .padding(16.dp),
         contentAlignment = Alignment.BottomCenter
     ) {
-        Row(
-            modifier = Modifier
-                .padding(bottom = 108.dp)
-                .clip(RoundedCornerShape(20.dp))
-                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
-
-        ) {
-            IconButton(onClick = onBackClick) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_back),
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.primary)
-                        .size(128.dp)
-                )
-            }
+        if (event.isArchived) {
             Button(
-                onClick = { onSubscribeClick(event.isSubscribed, event.id) },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor =  if (event.isSubscribed) Color.Red else MaterialTheme.colorScheme.primary
-                ),
+                onClick = onDeleteClick,
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
                 modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 8.dp)
+                    .fillMaxWidth()
+                    .padding(bottom = 108.dp)
+                    .height(56.dp),
+                shape = RoundedCornerShape(20.dp)
             ) {
                 Text(
-                    text = if (!event.isSubscribed) "Посетить" else "Не пойду",
+                    "УДАЛИТЬ ИЗ АРХИВА НАВСЕГДА",
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
                     color = Color.White
                 )
             }
-            IconButton(onClick = { onFavouriteClick(event.isFavourite, event.id) }) {
-                Icon(
-                    imageVector =
-                        ImageVector.vectorResource(R.drawable.ic_not_fav),
-                    contentDescription = null,
-                    tint = if (event.isFavourite) Color.Red else Color.White,
+        } else {
+            Row(
+                modifier = Modifier
+                    .padding(bottom = 108.dp)
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
+
+            ) {
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_back),
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.primary)
+                            .size(128.dp)
+                    )
+                }
+                Button(
+                    onClick = { onSubscribeClick(event.isSubscribed, event.id) },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (event.isSubscribed) Color.Red else MaterialTheme.colorScheme.primary
+                    ),
                     modifier = Modifier
-                        .background(color = MaterialTheme.colorScheme.primary)
-                        .padding(8.dp)
-                        .size(128.dp)
-                )
+                        .weight(1f)
+                        .padding(horizontal = 8.dp)
+                ) {
+                    Text(
+                        text = if (!event.isSubscribed) "Посетить" else "Не пойду",
+                        fontFamily = EventsFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        color = Color.White
+                    )
+                }
+                IconButton(onClick = { onFavouriteClick(event.isFavourite, event.id) }) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_not_fav),
+                        contentDescription = null,
+                        tint = if (event.isFavourite) Color.Red else Color.White,
+                        modifier = Modifier
+                            .background(color = MaterialTheme.colorScheme.primary)
+                            .padding(8.dp)
+                            .size(128.dp)
+                    )
+                }
             }
         }
     }

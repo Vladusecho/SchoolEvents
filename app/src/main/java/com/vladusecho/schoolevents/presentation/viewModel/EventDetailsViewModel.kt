@@ -3,6 +3,7 @@ package com.vladusecho.schoolevents.presentation.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vladusecho.schoolevents.domain.entity.Event
+import com.vladusecho.schoolevents.domain.usecase.events.DeleteEventUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.GetEventByIdUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.SubscribeToEventUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.SwitchEventFavouriteStatusUseCase
@@ -26,23 +27,32 @@ class EventDetailsViewModel @AssistedInject constructor(
     private val subscribeToEventUseCase: SubscribeToEventUseCase,
     private val unsubscribeFromEventUseCase: UnsubscribeFromEventUseCase,
     private val getProfileByEmailUseCase: GetProfileByEmailUseCase,
-    @Assisted("eventId") eventId: Int
+    private val deleteEventUseCase: DeleteEventUseCase,
+    @Assisted("eventId") private val eventId: Int
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<EventDetailsState>(EventDetailsState.Initial)
     val state = _state.asStateFlow()
 
     init {
+        loadEvent()
+    }
+
+    private fun loadEvent() {
         viewModelScope.launch {
             _state.value = EventDetailsState.Loading
-            val event = getEventByIdUseCase(eventId)
-            val organizerName = try {
-                val profile = getProfileByEmailUseCase(event.creatorEmail)
-                "${profile.name} ${profile.surname}"
+            try {
+                val event = getEventByIdUseCase(eventId)
+                val organizerName = try {
+                    val profile = getProfileByEmailUseCase(event.creatorEmail)
+                    "${profile.name} ${profile.surname}"
+                } catch (e: Exception) {
+                    "Организатор не указан"
+                }
+                _state.value = EventDetailsState.Content(event, organizerName)
             } catch (e: Exception) {
-                "Организатор не указан"
+                _state.value = EventDetailsState.Error(e.message ?: "Unknown error")
             }
-            _state.value = EventDetailsState.Content(event, organizerName)
         }
     }
 
@@ -77,6 +87,13 @@ class EventDetailsViewModel @AssistedInject constructor(
                     }
                 }
             }
+
+            is EventDetailsCommand.DeleteEvent -> {
+                viewModelScope.launch {
+                    deleteEventUseCase(eventId)
+                    _state.value = EventDetailsState.Deleted
+                }
+            }
         }
     }
 
@@ -98,6 +115,8 @@ class EventDetailsViewModel @AssistedInject constructor(
             val event: Event,
             val organizerName: String
         ) : EventDetailsState
+
+        object Deleted : EventDetailsState
     }
 
     sealed interface EventDetailsCommand {
@@ -110,5 +129,7 @@ class EventDetailsViewModel @AssistedInject constructor(
             val isSubscribed: Boolean,
             val eventId: Int
         ) : EventDetailsCommand
+
+        object DeleteEvent : EventDetailsCommand
     }
 }

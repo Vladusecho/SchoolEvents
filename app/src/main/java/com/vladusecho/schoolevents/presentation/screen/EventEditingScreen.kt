@@ -430,7 +430,6 @@ private fun EventEditingContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-                    .height(150.dp)
                     .clip(RoundedCornerShape(12.dp)),
                 colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Transparent,
@@ -472,7 +471,7 @@ private fun EventEditingContent(
                     .weight(1f)
             ) {
                 Text(
-                    text = "ЗАКОНЧИТЬ",
+                    text = "В АРХИВ",
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
@@ -539,7 +538,7 @@ fun EditPreview() {
             event = Event(
                 id = 1,
                 title = "Школьные мероприятия",
-                description = "Школьные мероприятия",
+                description = "Школьные мероприятияШкольные мероприятияШкольные мероприятияШкольные мероприятияШкольные мероприятияШкольные мероприятияШкольные мероприятияШкольные мероприятияШкольные мероприятияШкольные мероприятияШкольные мероприятияШкольные мероприятияШкольные мероприятияШкольные мероприятияШкольные мероприятияШкольные мероприятияШкольные мероприятия",
                 imageUrl = "null",
                 eventAddress = "ул. Ленина, д.80, Актовый зал",
                 eventDate = "12 марта",

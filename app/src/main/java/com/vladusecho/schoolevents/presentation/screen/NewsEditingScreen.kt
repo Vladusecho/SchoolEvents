@@ -7,7 +7,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -90,12 +90,19 @@ fun NewsEditingScreen(
                     }
                 )
             }
+
             is NewsEditingViewModel.NewsEditingState.Loading -> {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
+
             is NewsEditingViewModel.NewsEditingState.Error -> {
-                Text(text = currentState.message, modifier = Modifier.align(Alignment.Center), color = Color.Red)
+                Text(
+                    text = currentState.message,
+                    modifier = Modifier.align(Alignment.Center),
+                    color = Color.Red
+                )
             }
+
             else -> {}
         }
     }
@@ -126,13 +133,13 @@ private fun NewsEditingContent(
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = 32.dp)
+        contentPadding = PaddingValues(bottom = 156.dp)
     ) {
         item {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
+                    .height(250.dp)
                     .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp))
                     .background(Color.LightGray)
                     .clickable {
@@ -163,9 +170,6 @@ private fun NewsEditingContent(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = onBackClick) {
-                    Icon(painterResource(R.drawable.ic_back), contentDescription = null)
-                }
                 EditField(
                     value = title,
                     onValueChange = { title = it },
@@ -178,22 +182,72 @@ private fun NewsEditingContent(
                 )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                Text(text = organizerName, fontWeight = FontWeight.Bold, fontFamily = EventsFontFamily)
-                Text(text = "Автор", fontSize = 12.sp, color = Color.Gray, fontFamily = EventsFontFamily)
-                Text(text = news.date, fontSize = 12.sp, color = Color.Gray, fontFamily = EventsFontFamily)
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_date),
+                    "",
+                    tint = Color(0xff0DCDAA)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(
+                    onClick = { },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+                    shape = RoundedCornerShape(8.dp),
+                    enabled = false
+                ) {
+                    Text(
+                        text = news.date,
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontFamily = EventsFontFamily,
+                        fontSize = 18.sp
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(MaterialTheme.colorScheme.primary),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Организатор:",
+                    fontFamily = EventsFontFamily,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 16.sp,
+                    color = Color.White
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = organizerName,
+                    fontFamily = EventsFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    color = Color.White
+                )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Text(
-                text = "Текст новости:",
-                modifier = Modifier.padding(horizontal = 16.dp),
-                fontWeight = FontWeight.Bold,
-                fontFamily = EventsFontFamily
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Текст новости:",
+                    fontFamily = EventsFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+            }
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -203,47 +257,72 @@ private fun NewsEditingContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-                    .height(250.dp)
                     .clip(RoundedCornerShape(12.dp)),
                 colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent
                 )
             )
+        }
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        contentAlignment = Alignment.BottomCenter
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(bottom = 108.dp)
+                .clip(RoundedCornerShape(20.dp))
+                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
 
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Row(
+        ) {
+            IconButton(onClick = onBackClick) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_back),
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.primary)
+                        .size(128.dp)
+                )
+            }
+            Button(
+                onClick = { onDeleteClick() },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Red
+                ),
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    .padding(horizontal = 8.dp)
+                    .weight(1f)
             ) {
-                Button(
-                    onClick = onDeleteClick,
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Text("УДАЛИТЬ", color = Color.White, fontWeight = FontWeight.Bold)
-                }
-                Button(
-                    onClick = {
-                        onSaveClick(
-                            news.copy(
-                                title = title,
-                                description = description,
-                                imageUrl = imageUrl
-                            ),
-                            newImageUri
-                        )
-                    },
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0DCDAA)),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Text("СОХРАНИТЬ", color = Color.White, fontWeight = FontWeight.Bold)
-                }
+                Text(
+                    text = "УДАЛИТЬ",
+                    fontFamily = EventsFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    color = Color.White
+                )
+            }
+            IconButton(onClick = {
+                onSaveClick(
+                    news.copy(
+                        title = title,
+                        description = description,
+                        imageUrl = imageUrl
+                    ),
+                    newImageUri
+                )
+            }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_check),
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.primary)
+                        .size(128.dp)
+                )
             }
         }
     }

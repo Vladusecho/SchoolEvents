@@ -51,6 +51,9 @@ sealed class Screen {
     object EventCreation : Screen()
 
     @Serializable
+    object NewsCreation : Screen()
+
+    @Serializable
     object ArchiveGraph : Screen()
     @Serializable
     object Archive : Screen()

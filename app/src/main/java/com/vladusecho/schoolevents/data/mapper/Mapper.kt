@@ -2,9 +2,10 @@ package com.vladusecho.schoolevents.data.mapper
 
 import com.vladusecho.schoolevents.data.local.EventWithStatus
 import com.vladusecho.schoolevents.data.local.model.EventModel
+import com.vladusecho.schoolevents.data.local.model.NewsModel
 import com.vladusecho.schoolevents.data.local.model.ProfileModel
-import com.vladusecho.schoolevents.data.local.model.SubscribedEventModel
 import com.vladusecho.schoolevents.domain.entity.Event
+import com.vladusecho.schoolevents.domain.entity.News
 import com.vladusecho.schoolevents.domain.entity.Profile
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -84,5 +85,33 @@ fun Flow<List<EventModel>>.toEventEntityListFlow(): Flow<List<Event>> {
 fun Flow<List<EventWithStatus>>.toEventWithStatusEntityListFlow(): Flow<List<Event>> {
     return map { list ->
         list.map { it.toEventEntity() }
+    }
+}
+
+fun News.toNewsModel(): NewsModel {
+    return NewsModel(
+        id = id,
+        title = title,
+        description = description,
+        imageUrl = imageUrl,
+        date = date,
+        creatorEmail = creatorEmail
+    )
+}
+
+fun NewsModel.toNewsEntity(): News {
+    return News(
+        id = id,
+        title = title,
+        description = description,
+        imageUrl = imageUrl,
+        date = date,
+        creatorEmail = creatorEmail
+    )
+}
+
+fun Flow<List<NewsModel>>.toNewsEntityListFlow(): Flow<List<News>> {
+    return map { list ->
+        list.map { it.toNewsEntity() }
     }
 }

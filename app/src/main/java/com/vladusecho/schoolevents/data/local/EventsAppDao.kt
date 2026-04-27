@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.vladusecho.schoolevents.data.local.model.EventModel
 import com.vladusecho.schoolevents.data.local.model.FavouriteEventModel
+import com.vladusecho.schoolevents.data.local.model.NewsModel
 import com.vladusecho.schoolevents.data.local.model.ProfileModel
 import com.vladusecho.schoolevents.data.local.model.SubscribedEventModel
 import kotlinx.coroutines.flow.Flow
@@ -96,6 +97,12 @@ interface EventsAppDao {
 
     @Query("DELETE FROM favourite_events WHERE userEmail = :userEmail AND eventId = :eventId")
     suspend fun removeFavouriteEvent(userEmail: String, eventId: Int)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertNews(news: NewsModel)
+
+    @Query("SELECT * FROM news ORDER BY id DESC")
+    fun getNews(): Flow<List<NewsModel>>
 }
 
 data class EventWithStatus(

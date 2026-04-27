@@ -5,10 +5,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -38,7 +41,8 @@ fun MainScreen(
     modifier: Modifier = Modifier,
     viewModel: MainViewModel = hiltViewModel(),
     onEventClick: (eventId: Int) -> Unit,
-    onAddClick: () -> Unit,
+    onAddEventClick: () -> Unit,
+    onAddNewsClick: () -> Unit,
 ) {
 
     val state = viewModel.state.collectAsState()
@@ -82,24 +86,46 @@ fun MainScreen(
                     contentAlignment = Alignment.BottomCenter
                 ) {
                     if (userRole != UserRole.STUDENT) {
-                        Button(
-                            onClick = {
-                                onAddClick()
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primary
-                            ),
+                        Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 32.dp)
+                                .padding(horizontal = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            Text(
-                                text = "Добавить мероприятие",
-                                fontFamily = EventsFontFamily,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp,
-                                color = Color.White
-                            )
+                            Button(
+                                onClick = onAddEventClick,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.primary
+                                ),
+                                modifier = Modifier.weight(1f),
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
+                                Text(
+                                    text = "Событие",
+                                    fontFamily = EventsFontFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 14.sp,
+                                    color = Color.White,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                            Button(
+                                onClick = onAddNewsClick,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(0xFF0DCDAA)
+                                ),
+                                modifier = Modifier.weight(1f),
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
+                                Text(
+                                    text = "Новость",
+                                    fontFamily = EventsFontFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 14.sp,
+                                    color = Color.White,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
                         }
                     }
                 }
@@ -145,18 +171,6 @@ fun MainScreen(
                     fontSize = 28.sp,
                     color = Color.White,
                 )
-//                Box(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    contentAlignment = Alignment.Center
-//                ) {
-//                    Text(
-//                        text = "--- Создано Vladusecho (Владислав Корзун) ---",
-//                        fontFamily = EventsFontFamily,
-//                        fontWeight = FontWeight.Bold,
-//                        fontSize = 12.sp,
-//                        color = Color.White
-//                    )
-//                }
             }
         }
     }

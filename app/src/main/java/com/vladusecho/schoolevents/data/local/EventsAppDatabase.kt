@@ -4,6 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.vladusecho.schoolevents.data.local.model.EventModel
 import com.vladusecho.schoolevents.data.local.model.FavouriteEventModel
+import com.vladusecho.schoolevents.data.local.model.NewsModel
 import com.vladusecho.schoolevents.data.local.model.ProfileModel
 import com.vladusecho.schoolevents.data.local.model.SubscribedEventModel
 
@@ -12,9 +13,10 @@ import com.vladusecho.schoolevents.data.local.model.SubscribedEventModel
         ProfileModel::class,
         EventModel::class,
         SubscribedEventModel::class,
-        FavouriteEventModel::class
+        FavouriteEventModel::class,
+        NewsModel::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 abstract class EventsAppDatabase : RoomDatabase()  {

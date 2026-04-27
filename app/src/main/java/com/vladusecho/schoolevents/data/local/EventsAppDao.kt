@@ -103,6 +103,9 @@ interface EventsAppDao {
 
     @Query("SELECT * FROM news ORDER BY id DESC")
     fun getNews(): Flow<List<NewsModel>>
+
+    @Query("DELETE FROM news WHERE id = :newsId")
+    suspend fun deleteNews(newsId: Int)
 }
 
 data class EventWithStatus(

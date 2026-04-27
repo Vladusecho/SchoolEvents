@@ -44,6 +44,7 @@ fun MainScreen(
     modifier: Modifier = Modifier,
     viewModel: MainViewModel = hiltViewModel(),
     onEventClick: (eventId: Int) -> Unit,
+    onNewsClick: (newsId: Int) -> Unit,
     onAddEventClick: () -> Unit,
     onAddNewsClick: () -> Unit,
 ) {
@@ -99,7 +100,7 @@ fun MainScreen(
                                 ) {
                                     NewsCard(
                                         news = it,
-                                        onNewsClick = { /* TODO: News details? */ }
+                                        onNewsClick = onNewsClick
                                     )
                                 }
                             }
@@ -127,7 +128,7 @@ fun MainScreen(
                                 shape = RoundedCornerShape(12.dp)
                             ) {
                                 Text(
-                                    text = "Событие",
+                                    text = "Мероприятие",
                                     fontFamily = EventsFontFamily,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 14.sp,
@@ -138,7 +139,7 @@ fun MainScreen(
                             Button(
                                 onClick = onAddNewsClick,
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color(0xFF0DCDAA)
+                                    containerColor = MaterialTheme.colorScheme.primary
                                 ),
                                 modifier = Modifier.weight(1f),
                                 shape = RoundedCornerShape(12.dp)
@@ -197,7 +198,7 @@ fun MainScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = if (selectedTab == MainViewModel.MainTab.EVENTS) "Мероприятия" else "Новости школы",
+                    text = if (selectedTab == MainViewModel.MainTab.EVENTS) "Школьные мероприятия" else "Новости школы",
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Bold,
                     fontSize = 28.sp,
@@ -215,7 +216,7 @@ fun MainScreen(
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     TabItem(
-                        text = "События",
+                        text = "Мероприятия",
                         isSelected = selectedTab == MainViewModel.MainTab.EVENTS,
                         onClick = { viewModel.selectTab(MainViewModel.MainTab.EVENTS) },
                         modifier = Modifier.weight(1f)

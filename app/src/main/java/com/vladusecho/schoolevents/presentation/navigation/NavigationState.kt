@@ -39,6 +39,14 @@ class NavigationState(
         navigateToSecondary(Screen.NewsCreation)
     }
 
+    fun navigateToNewsDetail(newsId: Int) {
+        navigateToSecondary(Screen.NewsDetails(newsId))
+    }
+
+    fun navigateToNewsEditing(newsId: Int) {
+        navigateToSecondary(Screen.NewsEditing(newsId))
+    }
+
     fun navigateToProfileEditing(profile: Profile) {
         navigateToSecondary(Screen.ProfileEditing(profile))
     }

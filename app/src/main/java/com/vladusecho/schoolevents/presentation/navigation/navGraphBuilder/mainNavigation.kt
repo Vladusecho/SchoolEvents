@@ -13,6 +13,8 @@ import com.vladusecho.schoolevents.presentation.screen.EventDetailsScreen
 import com.vladusecho.schoolevents.presentation.screen.EventEditingScreen
 import com.vladusecho.schoolevents.presentation.screen.MainScreen
 import com.vladusecho.schoolevents.presentation.screen.NewsCreationScreen
+import com.vladusecho.schoolevents.presentation.screen.NewsDetailsScreen
+import com.vladusecho.schoolevents.presentation.screen.NewsEditingScreen
 import com.vladusecho.schoolevents.presentation.screen.UserRole
 import com.vladusecho.schoolevents.presentation.viewModel.AuthViewModel
 
@@ -32,6 +34,13 @@ fun NavGraphBuilder.mainNavigation(
                         navigationState.navigateToDetail(eventId)
                     } else {
                         navigationState.navigateToEventEditing(eventId)
+                    }
+                },
+                onNewsClick = { newsId ->
+                    if (userRole == UserRole.STUDENT) {
+                        navigationState.navigateToNewsDetail(newsId)
+                    } else {
+                        navigationState.navigateToNewsEditing(newsId)
                     }
                 },
                 onAddEventClick = {
@@ -65,6 +74,20 @@ fun NavGraphBuilder.mainNavigation(
         }
         composable<Screen.NewsCreation> {
             NewsCreationScreen(
+                onBackClick = { navigationState.navHostController.navigateUp() }
+            )
+        }
+        composable<Screen.NewsDetails> { backStackEntry ->
+            val args = backStackEntry.toRoute<Screen.NewsDetails>()
+            NewsDetailsScreen(
+                newsId = args.id,
+                onBackClick = { navigationState.navHostController.navigateUp() }
+            )
+        }
+        composable<Screen.NewsEditing> { backStackEntry ->
+            val args = backStackEntry.toRoute<Screen.NewsEditing>()
+            NewsEditingScreen(
+                newsId = args.id,
                 onBackClick = { navigationState.navHostController.navigateUp() }
             )
         }

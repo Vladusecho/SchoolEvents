@@ -54,6 +54,16 @@ sealed class Screen {
     object NewsCreation : Screen()
 
     @Serializable
+    data class NewsDetails(
+        val id: Int
+    ) : Screen()
+
+    @Serializable
+    data class NewsEditing(
+        val id: Int
+    ) : Screen()
+
+    @Serializable
     object ArchiveGraph : Screen()
     @Serializable
     object Archive : Screen()

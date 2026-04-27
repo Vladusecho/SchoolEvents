@@ -231,7 +231,7 @@ private fun NewsCreationContent(
                 }
                 Button(
                     onClick = {
-                        val currentDate = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
+                        val currentDate = SimpleDateFormat("d MMMM", Locale.getDefault()).format(Date())
                         onSaveClick(
                             News(
                                 title = title,

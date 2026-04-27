@@ -72,10 +72,10 @@ fun StudentEventCard(
             AsyncImage(
                 model = event.imageUrl,
                 contentDescription = null,
-                contentScale = ContentScale.FillWidth,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .clip(RoundedCornerShape(20.dp))
-                    .height(120.dp)
+                    .height(150.dp)
                     .fillMaxWidth()
             )
             Column(
@@ -219,7 +219,7 @@ fun StudentEventCard(
 @Preview(showBackground = true)
 fun StudentEventCardPreview() {
     SchoolEventsTheme(
-        darkTheme = true
+        darkTheme = false
     ) {
         StudentEventCard(
             event = Event(

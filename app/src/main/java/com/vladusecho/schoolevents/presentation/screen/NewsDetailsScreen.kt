@@ -103,8 +103,8 @@ private fun NewsDetailsContent(
         item {
             Box {
                 if (news.imageUrl != null) {
-                    Image(
-                        painter = painterResource(R.drawable.img_math),
+                    AsyncImage(
+                        model = news.imageUrl,
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier

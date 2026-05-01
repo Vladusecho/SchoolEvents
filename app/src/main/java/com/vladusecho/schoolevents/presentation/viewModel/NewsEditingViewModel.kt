@@ -45,11 +45,11 @@ class NewsEditingViewModel @AssistedInject constructor(
         }
     }
 
-    fun updateNews(updatedNews: News, imageUri: String?) {
+    fun updateNews(updatedNews: News, newImageUris: List<String>) {
         viewModelScope.launch {
             try {
-                val finalImageUrl = imageUri?.let { newsRepository.saveImageToInternalStorage(it) } ?: updatedNews.imageUrl
-                newsRepository.addNews(updatedNews.copy(imageUrl = finalImageUrl))
+                val finalImageUrls = newsRepository.saveImagesToInternalStorage(newImageUris)
+                newsRepository.addNews(updatedNews.copy(imageUrls = finalImageUrls))
                 _state.value = NewsEditingState.Saved
             } catch (e: Exception) {
                 _state.value = NewsEditingState.Error(e.message ?: "Failed to save news")
@@ -58,8 +58,7 @@ class NewsEditingViewModel @AssistedInject constructor(
     }
 
     fun deleteNews() {
-        // TODO: Implement delete news in repository if needed
-        // For now just back
+        // Implement delete news if needed
         _state.value = NewsEditingState.Saved
     }
 

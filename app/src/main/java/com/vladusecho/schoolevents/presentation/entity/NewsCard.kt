@@ -1,6 +1,5 @@
 package com.vladusecho.schoolevents.presentation.entity
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -18,14 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import com.vladusecho.schoolevents.R
 import com.vladusecho.schoolevents.domain.entity.News
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
@@ -52,9 +49,9 @@ fun NewsCard(
                 },
         ) {
             Box() {
-                if (news.imageUrl != null) {
+                if (news.imageUrls.isNotEmpty()) {
                     AsyncImage(
-                        model = news.imageUrl,
+                        model = news.imageUrls.first(),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
@@ -62,20 +59,27 @@ fun NewsCard(
                             .height(150.dp)
                             .fillMaxWidth()
                     )
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .height(150.dp)
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.2f))
+                    )
                 }
                 Box(
-                    modifier = modifier
+                    modifier = Modifier
                         .padding(8.dp)
                         .clip(RoundedCornerShape(10.dp))
                         .border(1.dp, MaterialTheme.colorScheme.surface, RoundedCornerShape(10.dp))
                         .background(MaterialTheme.colorScheme.onBackground)
-                        .padding(8.dp)
+                        .padding(horizontal = 12.dp, vertical = 6.dp)
                 ) {
                     Text(
                         text = news.date,
                         fontFamily = EventsFontFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
+                        fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.secondary
                     )
                 }
@@ -116,9 +120,9 @@ fun NewsCardPreview() {
         NewsCard(
             news = News(
                 id = 1,
-                title = "Школьные мероприятия",
-                description = "Школьные мероприятия",
-                imageUrl = "null",
+                title = "Школьные новости",
+                description = "Описание школьной новости",
+                imageUrls = listOf(""),
                 date = "12.02.2023"
             )
         )

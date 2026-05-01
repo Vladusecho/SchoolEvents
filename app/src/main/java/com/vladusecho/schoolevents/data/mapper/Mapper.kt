@@ -93,7 +93,7 @@ fun News.toNewsModel(): NewsModel {
         id = id,
         title = title,
         description = description,
-        imageUrl = imageUrl,
+        imageUrls = imageUrls.joinToString("|"),
         date = date,
         creatorEmail = creatorEmail
     )
@@ -104,7 +104,7 @@ fun NewsModel.toNewsEntity(): News {
         id = id,
         title = title,
         description = description,
-        imageUrl = imageUrl,
+        imageUrls = if (imageUrls.isEmpty()) emptyList() else imageUrls.split("|"),
         date = date,
         creatorEmail = creatorEmail
     )

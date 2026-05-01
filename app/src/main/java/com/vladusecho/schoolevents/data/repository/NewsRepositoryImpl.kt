@@ -55,4 +55,10 @@ class NewsRepositoryImpl @Inject constructor(
             file.absolutePath
         }
     }
+
+    override suspend fun saveImagesToInternalStorage(uris: List<String>): List<String> {
+        return uris.map { uri ->
+            if (uri.startsWith("/")) uri else saveImageToInternalStorage(uri)
+        }
+    }
 }

@@ -38,11 +38,11 @@ class NewsCreationViewModel @Inject constructor(
         }
     }
 
-    fun createNews(news: News, imageUri: String?) {
+    fun createNews(news: News, imageUris: List<String>) {
         viewModelScope.launch {
             try {
-                val finalImageUrl = imageUri?.let { newsRepository.saveImageToInternalStorage(it) } ?: news.imageUrl
-                newsRepository.addNews(news.copy(imageUrl = finalImageUrl))
+                val finalImageUrls = newsRepository.saveImagesToInternalStorage(imageUris)
+                newsRepository.addNews(news.copy(imageUrls = finalImageUrls))
                 _state.value = NewsCreationState.Saved
             } catch (e: Exception) {
                 _state.value = NewsCreationState.Error(e.message ?: "Failed to save news")

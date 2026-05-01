@@ -8,7 +8,7 @@ data class NewsModel(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val title: String,
     val description: String,
-    val imageUrl: String?,
+    val imageUrls: String, // Store as JSON or comma-separated string
     val date: String,
     val creatorEmail: String
 )

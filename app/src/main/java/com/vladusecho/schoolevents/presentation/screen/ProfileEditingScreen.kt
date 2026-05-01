@@ -44,6 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.text.isDigitsOnly
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.vladusecho.schoolevents.R
@@ -167,7 +168,7 @@ fun ProfileEditingContent(
         Spacer(modifier = Modifier.height(8.dp))
         if (profile.role == UserRole.STUDENT.label) {
             EventsTextField(
-                value = userClass.value,
+                value = if(!userClass.value.isDigitsOnly()) "" else userClass.value,
                 onValueChange = { userClass.value = it },
                 prefix = {
                     Row(

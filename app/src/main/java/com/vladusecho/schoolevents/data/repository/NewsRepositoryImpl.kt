@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.core.net.toUri
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.vladusecho.schoolevents.data.local.EventsAppDao
+import com.vladusecho.schoolevents.data.mapper.toEventEntity
+import com.vladusecho.schoolevents.data.mapper.toNewsEntity
 import com.vladusecho.schoolevents.data.mapper.toNewsEntityListFlow
 import com.vladusecho.schoolevents.data.mapper.toNewsModel
 import com.vladusecho.schoolevents.domain.entity.News
@@ -38,6 +40,10 @@ class NewsRepositoryImpl @Inject constructor(
     override suspend fun addNews(news: News) {
         val email = getCurrentUserEmail()
         dao.insertNews(news.copy(creatorEmail = email).toNewsModel())
+    }
+
+    override suspend fun getNewsById(newsId: Int): News {
+        return dao.getNewsById(newsId).toNewsEntity()
     }
 
     override suspend fun saveImageToInternalStorage(uri: String): String {

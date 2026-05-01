@@ -49,7 +49,7 @@ fun Event.toEventModel(): EventModel {
         eventPlace = eventPlace,
         eventDate = eventDate,
         eventDuration = eventDuration,
-        imageUrl = imageUrl,
+        imageUrls = imageUrls.joinToString("|"),
         isArchived = isArchived,
         creatorEmail = creatorEmail
     )
@@ -64,7 +64,7 @@ fun EventModel.toEventEntity(isFavourite: Boolean = false, isSubscribed: Boolean
         eventPlace = eventPlace,
         eventDate = eventDate,
         eventDuration = eventDuration,
-        imageUrl = imageUrl,
+        imageUrls = if (imageUrls.isEmpty()) emptyList() else imageUrls.split("|"),
         isArchived = isArchived,
         isFavourite = isFavourite,
         isSubscribed = isSubscribed,

@@ -230,7 +230,6 @@ fun StudentEventCardPreview() {
                 eventDate = "10 июня",
                 eventPlace = "Fr",
                 eventDuration = "Вторник, 8:00 - 13:00",
-                imageUrl = "",
                 isArchived = false,
                 isFavourite = false,
                 isSubscribed = false

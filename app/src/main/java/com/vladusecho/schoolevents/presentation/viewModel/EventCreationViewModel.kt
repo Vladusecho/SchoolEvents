@@ -3,8 +3,8 @@ package com.vladusecho.schoolevents.presentation.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vladusecho.schoolevents.domain.entity.Event
+import com.vladusecho.schoolevents.domain.repository.EventsRepository
 import com.vladusecho.schoolevents.domain.usecase.events.AddNewEventUseCase
-import com.vladusecho.schoolevents.domain.usecase.events.SaveEventImageUseCase
 import com.vladusecho.schoolevents.domain.usecase.profile.GetProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +17,7 @@ import javax.inject.Inject
 class EventCreationViewModel @Inject constructor(
     private val getProfileUseCase: GetProfileUseCase,
     private val addNewEventUseCase: AddNewEventUseCase,
-    private val saveEventImageUseCase: SaveEventImageUseCase
+    private val eventsRepository: EventsRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<EventCreationState>(EventCreationState.Initial)
@@ -41,16 +41,20 @@ class EventCreationViewModel @Inject constructor(
         }
     }
 
-    fun createEvent(event: Event, imageUri: String?) {
+    fun createEvent(event: Event, imageUris: List<String>) {
         viewModelScope.launch {
             val currentState = _state.value
             if (currentState is EventCreationState.Content) {
-                val finalImageUrl = imageUri?.let { saveEventImageUseCase(it) } ?: event.imageUrl
-                addNewEventUseCase(event.copy(
-                    imageUrl = finalImageUrl,
-                    creatorEmail = currentState.creatorEmail
-                ))
-                _state.value = EventCreationState.Saved
+                try {
+                    val finalImageUrls = eventsRepository.saveImagesToInternalStorage(imageUris)
+                    addNewEventUseCase(event.copy(
+                        imageUrls = finalImageUrls,
+                        creatorEmail = currentState.creatorEmail
+                    ))
+                    _state.value = EventCreationState.Saved
+                } catch (e: Exception) {
+                    _state.value = EventCreationState.Error(e.message ?: "Failed to save event")
+                }
             }
         }
     }

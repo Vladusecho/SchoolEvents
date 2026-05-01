@@ -12,7 +12,7 @@ data class EventModel(
     val eventPlace: String,
     val eventDate: String,
     val eventDuration: String,
-    val imageUrl: String,
+    val imageUrls: String, // Store as JSON or pipe-separated string
     val isArchived: Boolean,
     val creatorEmail: String = ""
 )

@@ -101,8 +101,8 @@ class EventsRepositoryImpl @Inject constructor(
 
     override suspend fun saveImageToInternalStorage(uri: String): String {
         return withContext(Dispatchers.IO) {
-            val uri = uri.toUri()
-            val inputStream = context.contentResolver.openInputStream(uri)
+            val contentUri = uri.toUri()
+            val inputStream = context.contentResolver.openInputStream(contentUri)
             val fileName = "event_${System.currentTimeMillis()}.jpg"
             val file = File(context.filesDir, fileName)
 
@@ -112,6 +112,12 @@ class EventsRepositoryImpl @Inject constructor(
                 }
             }
             file.absolutePath
+        }
+    }
+
+    override suspend fun saveImagesToInternalStorage(uris: List<String>): List<String> {
+        return uris.map { uri ->
+            if (uri.startsWith("/")) uri else saveImageToInternalStorage(uri)
         }
     }
 

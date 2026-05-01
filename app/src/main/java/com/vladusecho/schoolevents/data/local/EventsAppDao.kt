@@ -39,6 +39,9 @@ interface EventsAppDao {
     @Query("SELECT * FROM events WHERE id = :eventId")
     suspend fun getEventById(eventId: Int): EventModel
 
+    @Query("SELECT * FROM news WHERE id = :newsId")
+    suspend fun getNewsById(newsId: Int): NewsModel
+
     @Query("""
         SELECT e.*, 
         (SELECT COUNT(*) FROM favourite_events WHERE eventId = e.id AND userEmail = :userEmail) > 0 AS isFavourite,

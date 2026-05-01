@@ -3,9 +3,9 @@ package com.vladusecho.schoolevents.presentation.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vladusecho.schoolevents.domain.entity.Event
+import com.vladusecho.schoolevents.domain.repository.EventsRepository
 import com.vladusecho.schoolevents.domain.usecase.events.DeleteEventUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.GetEventByIdUseCase
-import com.vladusecho.schoolevents.domain.usecase.events.SaveEventImageUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.UpdateEventUseCase
 import com.vladusecho.schoolevents.domain.usecase.profile.GetProfileByEmailUseCase
 import dagger.assisted.Assisted
@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 class EventEditingViewModel @AssistedInject constructor(
     private val getEventByIdUseCase: GetEventByIdUseCase,
     private val updateEventUseCase: UpdateEventUseCase,
-    private val saveEventImageUseCase: SaveEventImageUseCase,
+    private val eventsRepository: EventsRepository,
     private val deleteEventUseCase: DeleteEventUseCase,
     private val getProfileByEmailUseCase: GetProfileByEmailUseCase,
     @Assisted("eventId") private val eventId: Int
@@ -53,11 +53,15 @@ class EventEditingViewModel @AssistedInject constructor(
         }
     }
 
-    fun updateEvent(event: Event, imageUri: String?) {
+    fun updateEvent(event: Event, newImageUris: List<String>) {
         viewModelScope.launch {
-            val finalImageUrl = imageUri?.let { saveEventImageUseCase(it) } ?: event.imageUrl
-            updateEventUseCase(event.copy(imageUrl = finalImageUrl))
-            _state.value = EventEditingState.Saved
+            try {
+                val finalImageUrls = eventsRepository.saveImagesToInternalStorage(newImageUris)
+                updateEventUseCase(event.copy(imageUrls = finalImageUrls))
+                _state.value = EventEditingState.Saved
+            } catch (e: Exception) {
+                _state.value = EventEditingState.Error(e.message ?: "Failed to save event")
+            }
         }
     }
 

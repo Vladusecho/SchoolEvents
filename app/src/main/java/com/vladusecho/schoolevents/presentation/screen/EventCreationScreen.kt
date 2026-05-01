@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +18,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
@@ -39,6 +43,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -89,8 +94,8 @@ fun EventCreationScreen(
                 EventCreationContent(
                     organizerName = currentState.organizerName,
                     onBackClick = onBackClick,
-                    onSaveClick = { event, uri ->
-                        viewModel.createEvent(event, uri)
+                    onSaveClick = { event, uris ->
+                        viewModel.createEvent(event, uris)
                     }
                 )
             }
@@ -113,7 +118,7 @@ fun EventCreationScreen(
 private fun EventCreationContent(
     organizerName: String,
     onBackClick: () -> Unit,
-    onSaveClick: (Event, String?) -> Unit
+    onSaveClick: (Event, List<String>) -> Unit
 ) {
     var title by remember { mutableStateOf("") }
     var dateText by remember { mutableStateOf("") }
@@ -122,7 +127,7 @@ private fun EventCreationContent(
     var place by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
-    var imageUrl by remember { mutableStateOf("") }
+    val imageUris = remember { mutableStateListOf<String>() }
 
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePickerStart by remember { mutableStateOf(false) }
@@ -133,9 +138,9 @@ private fun EventCreationContent(
     val timePickerStateEnd = rememberTimePickerState()
 
     val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia()
-    ) { uri ->
-        uri?.let { imageUrl = it.toString() }
+        contract = ActivityResultContracts.PickMultipleVisualMedia(maxItems = 10)
+    ) { uris ->
+        imageUris.addAll(uris.map { it.toString() })
     }
 
     if (showDatePicker) {
@@ -224,26 +229,68 @@ private fun EventCreationContent(
                     .fillMaxWidth()
                     .height(250.dp)
                     .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp))
-                    .background(Color.LightGray)
-                    .clickable {
-                        launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-                    },
+                    .background(Color.LightGray),
                 contentAlignment = Alignment.Center
             ) {
-                if (imageUrl.isNotEmpty()) {
-                    AsyncImage(
-                        model = imageUrl,
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
-                    )
+                if (imageUris.isEmpty()) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.clickable {
+                            launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_archive_screen),
+                            contentDescription = null,
+                            modifier = Modifier.size(48.dp),
+                            tint = Color.Gray
+                        )
+                        Text("Добавить фото", color = Color.Gray, fontFamily = EventsFontFamily)
+                    }
                 } else {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_archive_screen),
-                        contentDescription = null,
-                        modifier = Modifier.size(48.dp),
-                        tint = Color.Gray
-                    )
+                    LazyRow(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        items(imageUris) { uri ->
+                            Box {
+                                AsyncImage(
+                                    model = uri,
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .size(180.dp, 220.dp)
+                                        .clip(RoundedCornerShape(16.dp))
+                                )
+                                IconButton(
+                                    onClick = { imageUris.remove(uri) },
+                                    modifier = Modifier
+                                        .align(Alignment.TopEnd)
+                                        .padding(4.dp)
+                                        .background(Color.Black.copy(alpha = 0.5f), CircleShape)
+                                        .size(24.dp)
+                                ) {
+                                    Text("✕", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                }
+                            }
+                        }
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .size(60.dp)
+                                    .clip(CircleShape)
+                                    .background(MaterialTheme.colorScheme.primary)
+                                    .clickable {
+                                        launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                                    },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text("+", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
                 }
             }
 
@@ -456,12 +503,12 @@ private fun EventCreationContent(
                             eventPlace = place,
                             eventDate = dateText,
                             eventDuration = "$durationStart - $durationEnd",
-                            imageUrl = imageUrl,
+                            imageUrls = imageUris.toList(),
                             isArchived = false,
                             isFavourite = false,
                             isSubscribed = false
                         ),
-                        if (imageUrl.isNotEmpty()) imageUrl else null
+                        imageUris.toList()
                     )
                 },
                 colors = ButtonDefaults.buttonColors(

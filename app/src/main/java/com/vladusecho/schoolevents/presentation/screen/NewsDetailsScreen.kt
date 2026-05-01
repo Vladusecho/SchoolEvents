@@ -96,7 +96,7 @@ private fun NewsDetailsContent(
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = 32.dp)
+        contentPadding = PaddingValues(bottom = 128.dp)
     ) {
         item {
             Box(
@@ -107,7 +107,7 @@ private fun NewsDetailsContent(
             ) {
                 if (news.imageUrls.isNotEmpty()) {
                     val pagerState = rememberPagerState(pageCount = { news.imageUrls.size })
-                    
+
                     HorizontalPager(
                         state = pagerState,
                         modifier = Modifier.fillMaxSize()
@@ -119,7 +119,7 @@ private fun NewsDetailsContent(
                             modifier = Modifier.fillMaxSize()
                         )
                     }
-                    
+
                     if (news.imageUrls.size > 1) {
                         Row(
                             Modifier
@@ -129,7 +129,10 @@ private fun NewsDetailsContent(
                             horizontalArrangement = Arrangement.Center
                         ) {
                             repeat(news.imageUrls.size) { iteration ->
-                                val color = if (pagerState.currentPage == iteration) Color.White else Color.White.copy(alpha = 0.5f)
+                                val color =
+                                    if (pagerState.currentPage == iteration) Color.White else Color.White.copy(
+                                        alpha = 0.5f
+                                    )
                                 Box(
                                     modifier = Modifier
                                         .padding(4.dp)
@@ -235,30 +238,23 @@ private fun NewsDetailsContent(
                     color = MaterialTheme.colorScheme.secondary
                 )
             }
-        }
-    }
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        contentAlignment = Alignment.BottomStart
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(bottom = 108.dp)
-                .clip(RoundedCornerShape(20.dp))
-                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
+            Row(
+                modifier = Modifier
+                    .padding(start = 16.dp, end = 16.dp, top = 32.dp)
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
 
-        ) {
-            IconButton(onClick = onBackClick) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_back),
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.primary)
-                        .size(128.dp)
-                )
+            ) {
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_back),
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.primary)
+                            .size(128.dp)
+                    )
+                }
             }
         }
     }

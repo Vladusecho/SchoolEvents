@@ -221,7 +221,7 @@ private fun EventCreationContent(
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = 32.dp)
+        contentPadding = PaddingValues(bottom = 128.dp)
     ) {
         item {
             Box(
@@ -272,7 +272,12 @@ private fun EventCreationContent(
                                         .background(Color.Black.copy(alpha = 0.5f), CircleShape)
                                         .size(24.dp)
                                 ) {
-                                    Text("✕", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                    Text(
+                                        "✕",
+                                        color = Color.White,
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
                                 }
                             }
                         }
@@ -283,11 +288,20 @@ private fun EventCreationContent(
                                     .clip(CircleShape)
                                     .background(MaterialTheme.colorScheme.primary)
                                     .clickable {
-                                        launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                                        launcher.launch(
+                                            PickVisualMediaRequest(
+                                                ActivityResultContracts.PickVisualMedia.ImageOnly
+                                            )
+                                        )
                                     },
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text("+", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                                Text(
+                                    "+",
+                                    color = Color.White,
+                                    fontSize = 24.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
                             }
                         }
                     }
@@ -467,64 +481,57 @@ private fun EventCreationContent(
                 ),
                 placeholder = { Text("Описание мероприятия...") }
             )
-        }
-    }
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        contentAlignment = Alignment.BottomCenter
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(bottom = 108.dp)
-                .clip(RoundedCornerShape(20.dp))
-                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
-
-        ) {
-            IconButton(onClick = onBackClick) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_back),
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.primary)
-                        .size(128.dp)
-                )
-            }
-            Button(
-                onClick = {
-                    onSaveClick(
-                        Event(
-                            id = (System.currentTimeMillis() % Int.MAX_VALUE).toInt(),
-                            title = title,
-                            description = description,
-                            eventAddress = address,
-                            eventPlace = place,
-                            eventDate = dateText,
-                            eventDuration = "$durationStart - $durationEnd",
-                            imageUrls = imageUris.toList(),
-                            isArchived = false,
-                            isFavourite = false,
-                            isSubscribed = false
-                        ),
-                        imageUris.toList()
-                    )
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                ),
+            Row(
                 modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .weight(1f)
+                    .padding(start = 16.dp, end = 16.dp, top = 32.dp)
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
+
             ) {
-                Text(
-                    text = "СОЗДАТЬ",
-                    fontFamily = EventsFontFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    color = Color.White
-                )
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_back),
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.primary)
+                            .size(128.dp)
+                    )
+                }
+                Button(
+                    onClick = {
+                        onSaveClick(
+                            Event(
+                                id = (System.currentTimeMillis() % Int.MAX_VALUE).toInt(),
+                                title = title,
+                                description = description,
+                                eventAddress = address,
+                                eventPlace = place,
+                                eventDate = dateText,
+                                eventDuration = "$durationStart - $durationEnd",
+                                imageUrls = imageUris.toList(),
+                                isArchived = false,
+                                isFavourite = false,
+                                isSubscribed = false
+                            ),
+                            imageUris.toList()
+                        )
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    ),
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .weight(1f)
+                ) {
+                    Text(
+                        text = "СОЗДАТЬ",
+                        fontFamily = EventsFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        color = Color.White
+                    )
+                }
             }
         }
     }

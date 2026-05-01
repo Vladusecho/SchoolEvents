@@ -123,7 +123,7 @@ private fun NewsCreationContent(
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = 156.dp)
+        contentPadding = PaddingValues(bottom = 128.dp)
     ) {
         item {
             Box(
@@ -276,58 +276,51 @@ private fun NewsCreationContent(
                 ),
                 placeholder = { Text("О чем хотите рассказать?") }
             )
-        }
-    }
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        contentAlignment = Alignment.BottomCenter
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(bottom = 108.dp)
-                .clip(RoundedCornerShape(20.dp))
-                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
-
-        ) {
-            IconButton(onClick = onBackClick) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_back),
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.primary)
-                        .size(128.dp)
-                )
-            }
-            Button(
-                onClick = {
-                    val currentDate = SimpleDateFormat("d MMMM", Locale.getDefault()).format(Date())
-                    onSaveClick(
-                        News(
-                            title = title,
-                            description = description,
-                            imageUrls = emptyList(),
-                            date = currentDate
-                        ),
-                        imageUris.toList()
-                    )
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                ),
+            Row(
                 modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .weight(1f)
+                    .padding(start = 16.dp, end = 16.dp, top = 32.dp)
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
+
             ) {
-                Text(
-                    text = "ОПУБЛИКОВАТЬ",
-                    fontFamily = EventsFontFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    color = Color.White
-                )
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_back),
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.primary)
+                            .size(128.dp)
+                    )
+                }
+                Button(
+                    onClick = {
+                        val currentDate = SimpleDateFormat("d MMMM", Locale.getDefault()).format(Date())
+                        onSaveClick(
+                            News(
+                                title = title,
+                                description = description,
+                                imageUrls = emptyList(),
+                                date = currentDate
+                            ),
+                            imageUris.toList()
+                        )
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    ),
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .weight(1f)
+                ) {
+                    Text(
+                        text = "ОПУБЛИКОВАТЬ",
+                        fontFamily = EventsFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        color = Color.White
+                    )
+                }
             }
         }
     }

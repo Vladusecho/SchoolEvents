@@ -134,7 +134,7 @@ private fun NewsEditingContent(
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = 156.dp)
+        contentPadding = PaddingValues(bottom = 128.dp)
     ) {
         item {
             Box(
@@ -185,7 +185,12 @@ private fun NewsEditingContent(
                                         .background(Color.Black.copy(alpha = 0.5f), CircleShape)
                                         .size(24.dp)
                                 ) {
-                                    Text("✕", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                    Text(
+                                        "✕",
+                                        color = Color.White,
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
                                 }
                             }
                         }
@@ -196,11 +201,20 @@ private fun NewsEditingContent(
                                     .clip(CircleShape)
                                     .background(MaterialTheme.colorScheme.primary)
                                     .clickable {
-                                        launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                                        launcher.launch(
+                                            PickVisualMediaRequest(
+                                                ActivityResultContracts.PickVisualMedia.ImageOnly
+                                            )
+                                        )
                                     },
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text("+", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                                Text(
+                                    "+",
+                                    color = Color.White,
+                                    fontSize = 24.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
                             }
                         }
                     }
@@ -310,66 +324,59 @@ private fun NewsEditingContent(
                     unfocusedIndicatorColor = Color.Transparent
                 )
             )
-        }
-    }
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        contentAlignment = Alignment.BottomCenter
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(bottom = 108.dp)
-                .clip(RoundedCornerShape(20.dp))
-                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
-
-        ) {
-            IconButton(onClick = onBackClick) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_back),
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.primary)
-                        .size(128.dp)
-                )
-            }
-            Button(
-                onClick = { onDeleteClick() },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red
-                ),
+            Row(
                 modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .weight(1f)
+                    .padding(start = 16.dp, end = 16.dp, top = 32.dp)
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
+
             ) {
-                Text(
-                    text = "УДАЛИТЬ",
-                    fontFamily = EventsFontFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    color = Color.White
-                )
-            }
-            IconButton(onClick = {
-                onSaveClick(
-                    news.copy(
-                        title = title,
-                        description = description,
-                        imageUrls = imageUris.toList()
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_back),
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.primary)
+                            .size(128.dp)
+                    )
+                }
+                Button(
+                    onClick = { onDeleteClick() },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Red
                     ),
-                    imageUris.toList()
-                )
-            }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_check),
-                    contentDescription = null,
-                    tint = Color.White,
                     modifier = Modifier
-                        .background(MaterialTheme.colorScheme.primary)
-                        .size(128.dp)
-                )
+                        .padding(horizontal = 8.dp)
+                        .weight(1f)
+                ) {
+                    Text(
+                        text = "УДАЛИТЬ",
+                        fontFamily = EventsFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        color = Color.White
+                    )
+                }
+                IconButton(onClick = {
+                    onSaveClick(
+                        news.copy(
+                            title = title,
+                            description = description,
+                            imageUrls = imageUris.toList()
+                        ),
+                        imageUris.toList()
+                    )
+                }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_check),
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.primary)
+                            .size(128.dp)
+                    )
+                }
             }
         }
     }

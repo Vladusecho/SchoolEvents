@@ -103,16 +103,26 @@ fun EventEditingScreen(
                         viewModel.updateEvent(updatedEvent, uris)
                     },
                     onArchiveClick = {
-                        viewModel.updateEvent(currentState.event.copy(isArchived = true), currentState.event.imageUrls)
+                        viewModel.updateEvent(
+                            currentState.event.copy(isArchived = true),
+                            currentState.event.imageUrls
+                        )
                     }
                 )
             }
+
             is EventEditingViewModel.EventEditingState.Loading -> {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
+
             is EventEditingViewModel.EventEditingState.Error -> {
-                Text(text = currentState.message, modifier = Modifier.align(Alignment.Center), color = Color.Red)
+                Text(
+                    text = currentState.message,
+                    modifier = Modifier.align(Alignment.Center),
+                    color = Color.Red
+                )
             }
+
             else -> {}
         }
     }
@@ -129,8 +139,14 @@ private fun EventEditingContent(
 ) {
     var title by remember { mutableStateOf(event.title) }
     var dateText by remember { mutableStateOf(event.eventDate) }
-    var durationStart by remember { mutableStateOf(event.eventDuration.split(" - ").getOrElse(0) { "" }) }
-    var durationEnd by remember { mutableStateOf(event.eventDuration.split(" - ").getOrElse(1) { "" }) }
+    var durationStart by remember {
+        mutableStateOf(
+            event.eventDuration.split(" - ").getOrElse(0) { "" })
+    }
+    var durationEnd by remember {
+        mutableStateOf(
+            event.eventDuration.split(" - ").getOrElse(1) { "" })
+    }
     var place by remember { mutableStateOf(event.eventPlace) }
     var address by remember { mutableStateOf(event.eventAddress) }
     var description by remember { mutableStateOf(event.description) }
@@ -141,7 +157,11 @@ private fun EventEditingContent(
     var showTimePickerEnd by remember { mutableStateOf(false) }
 
     val sdf = SimpleDateFormat("d MMMM", Locale("ru"))
-    val initialDate = try { sdf.parse(dateText)?.time } catch (e: Exception) { null }
+    val initialDate = try {
+        sdf.parse(dateText)?.time
+    } catch (e: Exception) {
+        null
+    }
     val datePickerState = rememberDatePickerState(initialSelectedDateMillis = initialDate)
 
     val startParts = durationStart.split(":")
@@ -149,7 +169,7 @@ private fun EventEditingContent(
         initialHour = startParts.getOrNull(0)?.toIntOrNull() ?: 0,
         initialMinute = startParts.getOrNull(1)?.toIntOrNull() ?: 0
     )
-    
+
     val endParts = durationEnd.split(":")
     val timePickerStateEnd = rememberTimePickerState(
         initialHour = endParts.getOrNull(0)?.toIntOrNull() ?: 0,
@@ -172,10 +192,14 @@ private fun EventEditingContent(
                         dateText = sdf.format(date)
                     }
                     showDatePicker = false
-                }) { Text("OK",
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = EventsFontFamily,
-                    color = MaterialTheme.colorScheme.secondary) }
+                }) {
+                    Text(
+                        "OK",
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = EventsFontFamily,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                }
             }
         ) {
             DatePicker(
@@ -190,10 +214,15 @@ private fun EventEditingContent(
     }
 
     if (showTimePickerStart) {
-        CustomTimePickerDialog (
+        CustomTimePickerDialog(
             onDismissRequest = { showTimePickerStart = false },
             onConfirm = {
-                durationStart = String.format(Locale.getDefault(), "%02d:%02d", timePickerStateStart.hour, timePickerStateStart.minute)
+                durationStart = String.format(
+                    Locale.getDefault(),
+                    "%02d:%02d",
+                    timePickerStateStart.hour,
+                    timePickerStateStart.minute
+                )
                 showTimePickerStart = false
             }
         ) {
@@ -202,10 +231,15 @@ private fun EventEditingContent(
     }
 
     if (showTimePickerEnd) {
-        CustomTimePickerDialog (
+        CustomTimePickerDialog(
             onDismissRequest = { showTimePickerEnd = false },
             onConfirm = {
-                durationEnd = String.format(Locale.getDefault(), "%02d:%02d", timePickerStateEnd.hour, timePickerStateEnd.minute)
+                durationEnd = String.format(
+                    Locale.getDefault(),
+                    "%02d:%02d",
+                    timePickerStateEnd.hour,
+                    timePickerStateEnd.minute
+                )
                 showTimePickerEnd = false
             }
         ) {
@@ -215,7 +249,7 @@ private fun EventEditingContent(
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = 156.dp)
+        contentPadding = PaddingValues(bottom = 128.dp)
     ) {
         item {
             Box(
@@ -266,7 +300,12 @@ private fun EventEditingContent(
                                         .background(Color.Black.copy(alpha = 0.5f), CircleShape)
                                         .size(24.dp)
                                 ) {
-                                    Text("✕", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                    Text(
+                                        "✕",
+                                        color = Color.White,
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
                                 }
                             }
                         }
@@ -277,26 +316,32 @@ private fun EventEditingContent(
                                     .clip(CircleShape)
                                     .background(MaterialTheme.colorScheme.primary)
                                     .clickable {
-                                        launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                                        launcher.launch(
+                                            PickVisualMediaRequest(
+                                                ActivityResultContracts.PickVisualMedia.ImageOnly
+                                            )
+                                        )
                                     },
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text("+", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                                Text(
+                                    "+",
+                                    color = Color.White,
+                                    fontSize = 24.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
                             }
                         }
                     }
                 }
             }
-            
+
             Spacer(modifier = Modifier.height(16.dp))
 
             Row(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = onBackClick) {
-                    Icon(painterResource(R.drawable.ic_back), contentDescription = null)
-                }
                 EditField(
                     value = title,
                     placeholder = "Заголовок мероприятия",
@@ -384,8 +429,18 @@ private fun EventEditingContent(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(painterResource(R.drawable.ic_location), null, modifier = Modifier.size(24.dp), tint = Color(0xFF0DCDAA))
-                EditField(value = place, placeholder = "Место", onValueChange = { place = it }, modifier = Modifier.weight(1f))
+                Icon(
+                    painterResource(R.drawable.ic_location),
+                    null,
+                    modifier = Modifier.size(24.dp),
+                    tint = Color(0xFF0DCDAA)
+                )
+                EditField(
+                    value = place,
+                    placeholder = "Место",
+                    onValueChange = { place = it },
+                    modifier = Modifier.weight(1f)
+                )
             }
             Spacer(modifier = Modifier.height(8.dp))
             Row(
@@ -393,12 +448,22 @@ private fun EventEditingContent(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(painterResource(R.drawable.ic_location), null, modifier = Modifier.size(24.dp), tint = Color(0xFF0DCDAA))
-                EditField(value = address, placeholder = "Адрес", onValueChange = { address = it }, modifier = Modifier.weight(1f))
+                Icon(
+                    painterResource(R.drawable.ic_location),
+                    null,
+                    modifier = Modifier.size(24.dp),
+                    tint = Color(0xFF0DCDAA)
+                )
+                EditField(
+                    value = address,
+                    placeholder = "Адрес",
+                    onValueChange = { address = it },
+                    modifier = Modifier.weight(1f)
+                )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
-            
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -407,9 +472,21 @@ private fun EventEditingContent(
                     .background(MaterialTheme.colorScheme.primary),
                 horizontalArrangement = Arrangement.Center
             ) {
-                Text(text = "Организатор:", fontFamily = EventsFontFamily, fontWeight = FontWeight.Normal, fontSize = 16.sp, color = Color.White)
+                Text(
+                    text = "Организатор:",
+                    fontFamily = EventsFontFamily,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 16.sp,
+                    color = Color.White
+                )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(text = organizerName, fontFamily = EventsFontFamily, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color.White)
+                Text(
+                    text = organizerName,
+                    fontFamily = EventsFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    color = Color.White
+                )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -435,7 +512,6 @@ private fun EventEditingContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp)
-                    .height(150.dp)
                     .clip(RoundedCornerShape(12.dp)),
                 colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Transparent,
@@ -443,47 +519,67 @@ private fun EventEditingContent(
                 )
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
-
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    .padding(start = 16.dp, end = 16.dp, top = 32.dp)
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
             ) {
-                Button(
-                    onClick = onArchiveClick,
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Text("В АРХИВ", color = Color.White, fontWeight = FontWeight.Bold)
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_back),
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.primary)
+                            .size(128.dp)
+                    )
                 }
                 Button(
-                    onClick = {
-                        onSaveClick(
-                            event.copy(
-                                title = title,
-                                eventDate = dateText,
-                                eventDuration = "$durationStart - $durationEnd",
-                                eventPlace = place,
-                                eventAddress = address,
-                                description = description,
-                                imageUrls = imageUris.toList()
-                            ),
-                            imageUris.toList()
-                        )
-                    },
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0DCDAA)),
-                    shape = RoundedCornerShape(12.dp)
+                    onClick = { onArchiveClick() },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Red
+                    ),
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .weight(1f)
                 ) {
-                    Text("СОХРАНИТЬ", color = Color.White, fontWeight = FontWeight.Bold)
+                    Text(
+                        text = "ЗАКОНЧИТЬ",
+                        fontFamily = EventsFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        color = Color.White
+                    )
+                }
+                IconButton(onClick = {
+                    onSaveClick(
+                        event.copy(
+                            title = title,
+                            eventDate = dateText,
+                            eventDuration = "$durationStart - $durationEnd",
+                            eventPlace = place,
+                            eventAddress = address,
+                            description = description,
+                            imageUrls = imageUris
+                        ),
+                        imageUris.toList()
+                    )
+                }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_check),
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.primary)
+                            .size(128.dp)
+                    )
                 }
             }
         }
     }
 }
+
 
 @Composable
 fun EditField(

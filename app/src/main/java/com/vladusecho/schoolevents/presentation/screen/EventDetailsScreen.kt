@@ -324,76 +324,69 @@ fun EventDetailsContent(
                 )
             }
             Spacer(modifier = Modifier.height(100.dp))
-        }
-    }
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        contentAlignment = Alignment.BottomCenter
-    ) {
-        if (event.isArchived) {
-            Button(
-                onClick = onDeleteClick,
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 108.dp)
-                    .height(56.dp),
-                shape = RoundedCornerShape(20.dp)
-            ) {
-                Text(
-                    "УДАЛИТЬ ИЗ АРХИВА НАВСЕГДА",
-                    fontFamily = EventsFontFamily,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-            }
-        } else {
-            Row(
-                modifier = Modifier
-                    .padding(bottom = 108.dp)
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
-
-            ) {
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_back),
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier
-                            .background(MaterialTheme.colorScheme.primary)
-                            .size(128.dp)
-                    )
-                }
+            if (event.isArchived) {
                 Button(
-                    onClick = { onSubscribeClick(event.isSubscribed, event.id) },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if (event.isSubscribed) Color.Red else MaterialTheme.colorScheme.primary
-                    ),
+                    onClick = onDeleteClick,
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
                     modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 8.dp)
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp, top = 32.dp)
+                        .height(56.dp),
+                    shape = RoundedCornerShape(20.dp)
                 ) {
                     Text(
-                        text = if (!event.isSubscribed) "ПОСЕТИТЬ" else "НЕ ПОЙДУ",
+                        "УДАЛИТЬ ИЗ АРХИВА НАВСЕГДА",
                         fontFamily = EventsFontFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
                         color = Color.White
                     )
                 }
-                IconButton(onClick = { onFavouriteClick(event.isFavourite, event.id) }) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_not_fav),
-                        contentDescription = null,
-                        tint = if (event.isFavourite) Color.Red else Color.White,
+            } else {
+                Row(
+                    modifier = Modifier
+                        .padding(start = 16.dp, end = 16.dp, top = 32.dp)
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
+
+                ) {
+                    IconButton(onClick = onBackClick) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_back),
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier
+                                .background(MaterialTheme.colorScheme.primary)
+                                .size(128.dp)
+                        )
+                    }
+                    Button(
+                        onClick = { onSubscribeClick(event.isSubscribed, event.id) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (event.isSubscribed) Color.Red else MaterialTheme.colorScheme.primary
+                        ),
                         modifier = Modifier
-                            .background(color = MaterialTheme.colorScheme.primary)
-                            .padding(8.dp)
-                            .size(128.dp)
-                    )
+                            .weight(1f)
+                            .padding(horizontal = 8.dp)
+                    ) {
+                        Text(
+                            text = if (!event.isSubscribed) "ПОСЕТИТЬ" else "НЕ ПОЙДУ",
+                            fontFamily = EventsFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            color = Color.White
+                        )
+                    }
+                    IconButton(onClick = { onFavouriteClick(event.isFavourite, event.id) }) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_not_fav),
+                            contentDescription = null,
+                            tint = if (event.isFavourite) Color.Red else Color.White,
+                            modifier = Modifier
+                                .background(color = MaterialTheme.colorScheme.primary)
+                                .padding(8.dp)
+                                .size(128.dp)
+                        )
+                    }
                 }
             }
         }

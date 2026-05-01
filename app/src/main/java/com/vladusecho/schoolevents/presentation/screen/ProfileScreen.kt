@@ -54,6 +54,7 @@ fun ProfileScreen(
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel(),
     onEventClick: (eventId: Int) -> Unit,
+    onListClick: (eventId: Int) -> Unit = {},
     onEditingClick: (profile: Profile) -> Unit,
     onExitClick: () -> Unit
 ) {
@@ -128,6 +129,7 @@ fun ProfileScreen(
                                     onEventClick = { eventId ->
                                         onEventClick(eventId)
                                     },
+                                    onListClick = onListClick,
                                     onFavouriteClick = { isFavourite, eventId ->
                                         viewModel.processCommand(
                                             ProfileViewModel.ProfileCommand.SwitchFavouriteStatus(
@@ -185,18 +187,6 @@ fun ProfileScreen(
                     color = Color.White,
                     textAlign = TextAlign.Center
                 )
-//                Box(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    contentAlignment = Alignment.Center
-//                ) {
-//                    Text(
-//                        text = "--- Создано Vladusecho (Владислав Корзун) ---",
-//                        fontFamily = EventsFontFamily,
-//                        fontWeight = FontWeight.Bold,
-//                        fontSize = 12.sp,
-//                        color = Color.White
-//                    )
-//                }
             }
         }
     }

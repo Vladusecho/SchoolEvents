@@ -12,6 +12,7 @@ import com.vladusecho.schoolevents.presentation.navigation.ProfileNavType
 import com.vladusecho.schoolevents.presentation.navigation.Screen
 import com.vladusecho.schoolevents.presentation.screen.EventDetailsScreen
 import com.vladusecho.schoolevents.presentation.screen.EventEditingScreen
+import com.vladusecho.schoolevents.presentation.screen.ParticipantsScreen
 import com.vladusecho.schoolevents.presentation.screen.ProfileEditingScreen
 import com.vladusecho.schoolevents.presentation.screen.ProfileScreen
 import com.vladusecho.schoolevents.presentation.screen.UserRole
@@ -36,6 +37,8 @@ fun NavGraphBuilder.profileNavigation(
                     } else {
                         navigationState.navigateToEventEditing(it)
                     }
+                }, onListClick = { eventId: Int ->
+                    navigationState.navigateToParticipants(eventId)
                 },
                 onEditingClick = {
                     navigationState.navigateToProfileEditing(it)
@@ -74,6 +77,15 @@ fun NavGraphBuilder.profileNavigation(
             EventEditingScreen(
                 eventId = args.id,
                 onBackClick = { navigationState.navHostController.navigateUp() }
+            )
+        }
+        composable<Screen.Participants> { backStackEntry ->
+            val args = backStackEntry.toRoute<Screen.Participants>()
+            ParticipantsScreen(
+                eventId = args.eventId,
+                onBackClick = {
+                    navigationState.navHostController.navigateUp()
+                }
             )
         }
     }

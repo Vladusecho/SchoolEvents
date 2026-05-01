@@ -9,7 +9,9 @@ import com.vladusecho.schoolevents.data.local.model.SubscribedEventModel
 import com.vladusecho.schoolevents.data.mapper.toEventEntity
 import com.vladusecho.schoolevents.data.mapper.toEventModel
 import com.vladusecho.schoolevents.data.mapper.toEventWithStatusEntityListFlow
+import com.vladusecho.schoolevents.data.mapper.toProfileEntity
 import com.vladusecho.schoolevents.domain.entity.Event
+import com.vladusecho.schoolevents.domain.entity.Profile
 import com.vladusecho.schoolevents.domain.repository.EventsRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -123,5 +125,11 @@ class EventsRepositoryImpl @Inject constructor(
 
     override suspend fun deleteEvent(eventId: Int) {
         dao.deleteEvent(eventId)
+    }
+
+    override fun getParticipants(eventId: Int): Flow<List<Profile>> {
+        return dao.getParticipants(eventId).map { list ->
+            list.map { it.toProfileEntity() }
+        }
     }
 }

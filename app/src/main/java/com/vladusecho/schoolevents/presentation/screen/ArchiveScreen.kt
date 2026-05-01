@@ -36,6 +36,7 @@ fun ArchiveScreen(
     modifier: Modifier = Modifier,
     viewModel: ArchiveViewModel = hiltViewModel(),
     onEventClick: (Int) -> Unit,
+    onListClick: (Int) -> Unit = {}
 ) {
     val state by viewModel.state.collectAsState()
 
@@ -74,7 +75,8 @@ fun ArchiveScreen(
                             ) {
                                 StudentEventCard(
                                     event = event,
-                                    onEventClick = { onEventClick(event.id) }
+                                    onEventClick = { onEventClick(event.id) },
+                                    onListClick = onListClick
                                 )
                             }
                         }

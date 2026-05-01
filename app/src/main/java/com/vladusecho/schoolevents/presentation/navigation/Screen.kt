@@ -6,6 +6,7 @@ import androidx.navigation.NavType
 import com.vladusecho.schoolevents.domain.entity.Profile
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 sealed class Screen {
@@ -67,6 +68,11 @@ sealed class Screen {
     object ArchiveGraph : Screen()
     @Serializable
     object Archive : Screen()
+
+    @Serializable
+    data class Participants(
+        val eventId: Int
+    ) : Screen()
 }
 
 

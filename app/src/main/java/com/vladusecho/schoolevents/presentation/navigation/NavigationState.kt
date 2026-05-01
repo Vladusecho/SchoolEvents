@@ -51,6 +51,10 @@ class NavigationState(
         navigateToSecondary(Screen.ProfileEditing(profile))
     }
 
+    fun navigateToParticipants(eventId: Int) {
+        navigateToSecondary(Screen.Participants(eventId))
+    }
+
     fun navigateToSecondary(route: Any) {
         navHostController.navigate(route) {
             launchSingleTop = true

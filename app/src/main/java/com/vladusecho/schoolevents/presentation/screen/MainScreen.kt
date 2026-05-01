@@ -44,6 +44,7 @@ fun MainScreen(
     modifier: Modifier = Modifier,
     viewModel: MainViewModel = hiltViewModel(),
     onEventClick: (eventId: Int) -> Unit,
+    onListClick: (eventId: Int) -> Unit,
     onNewsClick: (newsId: Int) -> Unit,
     onAddEventClick: () -> Unit,
     onAddNewsClick: () -> Unit,
@@ -79,6 +80,7 @@ fun MainScreen(
                                     StudentEventCard(
                                         event = it,
                                         onEventClick = onEventClick,
+                                        onListClick = onListClick,
                                         onFavouriteClick = { isFavourite, eventId ->
                                             viewModel.processCommand(
                                                 MainViewModel.MainCommand.SwitchFavouriteStatus(

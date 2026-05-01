@@ -34,7 +34,8 @@ import com.vladusecho.schoolevents.presentation.viewModel.FavouriteViewModel
 fun FavouriteScreen(
     modifier: Modifier = Modifier,
     viewModel: FavouriteViewModel = hiltViewModel(),
-    onEventClick: (eventId: Int) -> Unit
+    onEventClick: (eventId: Int) -> Unit,
+    onListClick: (eventId: Int) -> Unit = {}
 ) {
     val state = viewModel.state.collectAsState()
 
@@ -62,7 +63,7 @@ fun FavouriteScreen(
                 } else {
                     LazyColumn(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
-                        contentPadding = PaddingValues(top = 128.dp),
+                        contentPadding = PaddingValues(top = 128.dp, bottom = 128.dp),
                     ) {
                         items(
                             items = currentState.events,
@@ -74,6 +75,7 @@ fun FavouriteScreen(
                                 StudentEventCard(
                                     event = event,
                                     onEventClick = { onEventClick(event.id) },
+                                    onListClick = onListClick,
                                     onFavouriteClick = { isFavourite, eventId ->
                                         viewModel.processCommand(
                                             FavouriteViewModel.FavouriteCommand.SwitchFavouriteStatus(
@@ -130,18 +132,6 @@ fun FavouriteScreen(
                     color = Color.White,
                     textAlign = TextAlign.Center
                 )
-//                Box(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    contentAlignment = Alignment.Center
-//                ) {
-//                    Text(
-//                        text = "--- Создано Vladusecho (Владислав Корзун) ---",
-//                        fontFamily = EventsFontFamily,
-//                        fontWeight = FontWeight.Bold,
-//                        fontSize = 12.sp,
-//                        color = Color.White
-//                    )
-//                }
             }
         }
     }

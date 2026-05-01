@@ -109,6 +109,13 @@ interface EventsAppDao {
 
     @Query("DELETE FROM news WHERE id = :newsId")
     suspend fun deleteNews(newsId: Int)
+
+    @Query("""
+        SELECT p.* FROM profile p
+        INNER JOIN subscribed_events s ON p.email = s.userEmail
+        WHERE s.eventId = :eventId
+    """)
+    fun getParticipants(eventId: Int): Flow<List<ProfileModel>>
 }
 
 data class EventWithStatus(

@@ -15,6 +15,7 @@ import com.vladusecho.schoolevents.presentation.screen.MainScreen
 import com.vladusecho.schoolevents.presentation.screen.NewsCreationScreen
 import com.vladusecho.schoolevents.presentation.screen.NewsDetailsScreen
 import com.vladusecho.schoolevents.presentation.screen.NewsEditingScreen
+import com.vladusecho.schoolevents.presentation.screen.ParticipantsScreen
 import com.vladusecho.schoolevents.presentation.screen.UserRole
 import com.vladusecho.schoolevents.presentation.viewModel.AuthViewModel
 
@@ -29,14 +30,17 @@ fun NavGraphBuilder.mainNavigation(
             val userRole = authViewModel.userRole.collectAsState().value
 
             MainScreen(
-                onEventClick = { eventId ->
+                onEventClick = { eventId: Int ->
                     if (userRole == UserRole.STUDENT) {
                         navigationState.navigateToDetail(eventId)
                     } else {
                         navigationState.navigateToEventEditing(eventId)
                     }
                 },
-                onNewsClick = { newsId ->
+                onListClick = { eventId: Int ->
+                    navigationState.navigateToParticipants(eventId)
+                },
+                onNewsClick = { newsId: Int ->
                     if (userRole == UserRole.STUDENT) {
                         navigationState.navigateToNewsDetail(newsId)
                     } else {
@@ -89,6 +93,15 @@ fun NavGraphBuilder.mainNavigation(
             NewsEditingScreen(
                 newsId = args.id,
                 onBackClick = { navigationState.navHostController.navigateUp() }
+            )
+        }
+        composable<Screen.Participants> { backStackEntry ->
+            val args = backStackEntry.toRoute<Screen.Participants>()
+            ParticipantsScreen(
+                eventId = args.eventId,
+                onBackClick = {
+                    navigationState.navHostController.navigateUp()
+                }
             )
         }
     }

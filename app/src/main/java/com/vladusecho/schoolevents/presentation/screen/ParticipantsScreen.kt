@@ -91,31 +91,34 @@ fun ParticipantsScreen(
                         items(currentState.participants) { profile ->
                             ParticipantItem(profile)
                         }
-                        item {
-                            Row(
-                                modifier = Modifier
-                                    .padding(start = 16.dp, end = 16.dp, top = 32.dp)
-                                    .clip(RoundedCornerShape(20.dp))
-                                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
-
-                            ) {
-                                IconButton(onClick = onBackClick) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.ic_back),
-                                        contentDescription = null,
-                                        tint = Color.White,
-                                        modifier = Modifier
-                                            .background(MaterialTheme.colorScheme.primary)
-                                            .size(128.dp)
-                                    )
-                                }
-                            }
-                        }
                     }
                 }
             }
 
             else -> {}
+        }
+        Box(
+            modifier = Modifier.fillMaxSize().padding(bottom = 128.dp),
+            contentAlignment = Alignment.BottomStart
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(start = 16.dp, end = 16.dp, top = 32.dp)
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
+
+            ) {
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_back),
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.primary)
+                            .size(128.dp)
+                    )
+                }
+            }
         }
         Box(
             modifier = Modifier

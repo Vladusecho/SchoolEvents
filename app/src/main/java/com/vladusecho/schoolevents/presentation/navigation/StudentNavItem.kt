@@ -32,4 +32,10 @@ sealed class StudentNavItem(
         title = "Архив",
         iconId = R.drawable.ic_archive_screen
     )
+
+    object Approval : StudentNavItem(
+        screen = Screen.ApprovalGraph,
+        title = "Одобрения",
+        iconId = R.drawable.ic_approval
+    )
 }

@@ -138,7 +138,7 @@ fun EventsNavigationBottom(
 
     val directorNavItems = listOf(
         StudentNavItem.Events,
-        StudentNavItem.Archive,
+        StudentNavItem.Approval,
         StudentNavItem.Profile,
     )
 

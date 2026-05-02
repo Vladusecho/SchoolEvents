@@ -46,7 +46,6 @@ import com.vladusecho.schoolevents.presentation.activity.LocalUserRole
 import com.vladusecho.schoolevents.presentation.entity.StudentEventCard
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
-import com.vladusecho.schoolevents.presentation.viewModel.AuthViewModel
 import com.vladusecho.schoolevents.presentation.viewModel.ProfileViewModel
 
 @Composable
@@ -61,7 +60,6 @@ fun ProfileScreen(
 
     val state = viewModel.state.collectAsState()
     val role = LocalUserRole.current
-    val isNotStudent = role != UserRole.STUDENT
 
     LaunchedEffect(Unit) {
         viewModel.isExit.collect {
@@ -93,7 +91,11 @@ fun ProfileScreen(
                     }
                     item {
                         Text(
-                            text = if (!isNotStudent) "Вы записаны на мероприятия:" else "Ваши мероприятия:",
+                            text = when (role) {
+                                UserRole.STUDENT -> "Вы записаны на мероприятия:"
+                                UserRole.ORGANIZER -> "Ваши мероприятия:"
+                                UserRole.DIRECTOR -> ""
+                            },
                             fontFamily = EventsFontFamily,
                             fontWeight = FontWeight.Normal,
                             fontSize = 20.sp,
@@ -102,7 +104,7 @@ fun ProfileScreen(
                             color = MaterialTheme.colorScheme.secondary
                         )
                     }
-                    if (currentState.events.isEmpty()) {
+                    if (currentState.events.isEmpty() && role != UserRole.DIRECTOR) {
                         item {
                             Box(
                                 modifier = Modifier.fillMaxWidth(),
@@ -237,7 +239,8 @@ fun ProfileContent(
                 fontSize = 18.sp,
                 color = MaterialTheme.colorScheme.secondary
             )
-            val classVisible = if (profile.role == UserRole.STUDENT.label) " | " + profile.classNumber + " класс" else ""
+            val classVisible =
+                if (profile.role == UserRole.STUDENT.label) " | " + profile.classNumber + " класс" else ""
             Text(
                 text = profile.role.uppercase() + classVisible,
                 fontFamily = EventsFontFamily,

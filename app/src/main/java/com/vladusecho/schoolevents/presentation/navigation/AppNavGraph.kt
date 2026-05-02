@@ -11,6 +11,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.vladusecho.schoolevents.domain.entity.Profile
 import com.vladusecho.schoolevents.presentation.navigation.ProfileNavType
+import com.vladusecho.schoolevents.presentation.navigation.navGraphBuilder.approvalNavigation
 import com.vladusecho.schoolevents.presentation.navigation.navGraphBuilder.archiveNavigation
 import com.vladusecho.schoolevents.presentation.navigation.navGraphBuilder.authNavigation
 import com.vladusecho.schoolevents.presentation.navigation.navGraphBuilder.favouriteNavigation
@@ -47,6 +48,7 @@ fun AppNavGraph(
         favouriteNavigation(navigationState)
         profileNavigation(navigationState)
         archiveNavigation(navigationState)
+        approvalNavigation(navigationState)
     }
 }
 

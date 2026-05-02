@@ -66,6 +66,13 @@ sealed class Screen {
 
     @Serializable
     object ArchiveGraph : Screen()
+
+    @Serializable
+    object ApprovalGraph : Screen()
+
+    @Serializable
+    object Approval : Screen()
+
     @Serializable
     object Archive : Screen()
 

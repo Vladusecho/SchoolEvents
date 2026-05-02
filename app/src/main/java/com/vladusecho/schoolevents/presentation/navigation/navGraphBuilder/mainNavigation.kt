@@ -31,7 +31,7 @@ fun NavGraphBuilder.mainNavigation(
 
             MainScreen(
                 onEventClick = { eventId: Int ->
-                    if (userRole == UserRole.STUDENT) {
+                    if (userRole == UserRole.STUDENT || userRole == UserRole.DIRECTOR) {
                         navigationState.navigateToDetail(eventId)
                     } else {
                         navigationState.navigateToEventEditing(eventId)
@@ -41,7 +41,7 @@ fun NavGraphBuilder.mainNavigation(
                     navigationState.navigateToParticipants(eventId)
                 },
                 onNewsClick = { newsId: Int ->
-                    if (userRole == UserRole.STUDENT) {
+                    if (userRole == UserRole.STUDENT || userRole == UserRole.DIRECTOR) {
                         navigationState.navigateToNewsDetail(newsId)
                     } else {
                         navigationState.navigateToNewsEditing(newsId)

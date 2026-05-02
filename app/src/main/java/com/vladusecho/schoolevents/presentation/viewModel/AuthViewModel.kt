@@ -86,16 +86,22 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun registerUser(profile: Profile) {
+    fun registerUser(profile: Profile, code: String? = "0000") {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                saveProfileUseCase(profile)
-                setCurrentUserEmailUseCase(profile.email)
-                val role = UserRole.entries.find { it.label == profile.role } ?: UserRole.STUDENT
-                setCurrentUserRoleUseCase(role)
-                changeUserIsAuthUseCase()
-                _authResult.emit(true)
+                code?.let { code ->
+                    if (code != "1991") {
+                        _authResult.emit(false)
+                    } else {
+                        saveProfileUseCase(profile)
+                        setCurrentUserEmailUseCase(profile.email)
+                        val role = UserRole.entries.find { it.label == profile.role } ?: UserRole.STUDENT
+                        setCurrentUserRoleUseCase(role)
+                        changeUserIsAuthUseCase()
+                        _authResult.emit(true)
+                    }
+                }
             } catch (e: Exception) {
                 Log.e("tag", "registerUser: ", e)
             } finally {

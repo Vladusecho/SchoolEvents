@@ -61,10 +61,14 @@ fun RegistrationScreen(
 
     var selectedRole by remember { mutableStateOf(UserRole.STUDENT) }
 
+    val incorrectCode = remember { mutableStateOf("") }
+
     LaunchedEffect(Unit) {
         viewModel.authResult.collect { result ->
             if (result) {
                 onRegistrationClick()
+            } else {
+                incorrectCode.value = "Неверный код"
             }
         }
     }
@@ -84,7 +88,7 @@ fun RegistrationScreen(
             .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(100.dp))
+        Spacer(modifier = Modifier.height(70.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -126,7 +130,8 @@ fun RegistrationScreen(
         EventsTextField(
             value = name.value,
             onValueChange = { input ->
-                name.value = input.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+                name.value =
+                    input.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
             },
             prefix = {
                 Row(
@@ -154,7 +159,8 @@ fun RegistrationScreen(
         EventsTextField(
             value = surname.value,
             onValueChange = { input ->
-                surname.value = input.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+                surname.value =
+                    input.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
             },
             prefix = {
                 Row(
@@ -196,7 +202,6 @@ fun RegistrationScreen(
                 val isSelected = selectedRole == role
 
                 Button(
-                    enabled = role != UserRole.DIRECTOR,
                     onClick = { selectedRole = role },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -278,32 +283,44 @@ fun RegistrationScreen(
         )
         Spacer(modifier = Modifier.height(16.dp))
         if (selectedRole == UserRole.ORGANIZER || selectedRole == UserRole.DIRECTOR) {
-            EventsTextField(
-                value = organizationCode.value,
-                onValueChange = { organizationCode.value = it },
-                visualTransformation = PasswordVisualTransformation(),
-                prefix = {
-                    Row(
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                EventsTextField(
+                    value = organizationCode.value,
+                    onValueChange = { organizationCode.value = it },
+                    visualTransformation = PasswordVisualTransformation(),
+                    prefix = {
+                        Row(
 
-                    ) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_lock),
-                            contentDescription = "",
-                            tint = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
+                        ) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(R.drawable.ic_lock),
+                                contentDescription = "",
+                                tint = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                        }
+                    },
+                    placeholder = {
+                        Text(
+                            text = "Код организации",
+                            fontFamily = EventsFontFamily,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 18.sp,
+                            color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
                         )
-                        Spacer(modifier = Modifier.width(4.dp))
                     }
-                },
-                placeholder = {
-                    Text(
-                        text = "Код организации",
-                        fontFamily = EventsFontFamily,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 18.sp,
-                        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
-                    )
-                }
-            )
+                )
+                Text(
+                    text = incorrectCode.value,
+                    fontFamily = EventsFontFamily,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 14.sp,
+                    color = Color.Red
+                )
+            }
         }
         Spacer(modifier = Modifier.weight(1f))
         if (isLoading) {
@@ -325,7 +342,8 @@ fun RegistrationScreen(
                             role = selectedRole.label,
                             imageUrl = ""
                         )
-                        viewModel.registerUser(profile)
+                        incorrectCode.value = ""
+                        viewModel.registerUser(profile, organizationCode.value)
                     }
                 },
                 colors = ButtonDefaults.buttonColors(

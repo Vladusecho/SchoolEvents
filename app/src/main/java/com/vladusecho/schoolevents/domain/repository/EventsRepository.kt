@@ -12,6 +12,14 @@ interface EventsRepository {
 
     suspend fun subscribeToEvent(eventId: Int)
 
+    fun getPendingEvents(): Flow<List<Event>>
+
+    fun getEventsByCreator(creatorEmail: String): Flow<List<Event>>
+
+    suspend fun approveEvent(eventId: Int)
+
+    suspend fun rejectEvent(eventId: Int)
+
     suspend fun unsubscribeFromEvent(eventId: Int)
 
     suspend fun switchFavouriteStatus(isFavourite: Boolean, eventId: Int)

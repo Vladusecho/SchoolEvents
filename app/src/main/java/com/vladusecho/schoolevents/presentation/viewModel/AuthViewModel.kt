@@ -71,7 +71,8 @@ class AuthViewModel @Inject constructor(
                     setCurrentUserEmailUseCase(email)
                     // 2. Получаем профиль именно для этого email
                     val profile = getProfileByEmailUseCase(email)
-                    val role = UserRole.entries.find { it.label == profile.role } ?: UserRole.STUDENT
+                    val role =
+                        UserRole.entries.find { it.label == profile.role } ?: UserRole.STUDENT
                     // 3. Сохраняем роль
                     setCurrentUserRoleUseCase(role)
                     // 4. И только в самом конце — авторизация
@@ -91,12 +92,13 @@ class AuthViewModel @Inject constructor(
             _isLoading.value = true
             try {
                 code?.let { code ->
-                    if (code != "1991") {
+                    if (profile.role != UserRole.STUDENT.label && code != "1991") {
                         _authResult.emit(false)
                     } else {
                         saveProfileUseCase(profile)
                         setCurrentUserEmailUseCase(profile.email)
-                        val role = UserRole.entries.find { it.label == profile.role } ?: UserRole.STUDENT
+                        val role =
+                            UserRole.entries.find { it.label == profile.role } ?: UserRole.STUDENT
                         setCurrentUserRoleUseCase(role)
                         changeUserIsAuthUseCase()
                         _authResult.emit(true)

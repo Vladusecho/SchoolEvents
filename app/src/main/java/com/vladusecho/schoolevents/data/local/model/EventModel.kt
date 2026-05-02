@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "events")
 data class EventModel(
-    @PrimaryKey val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val title: String,
     val description: String,
     val eventAddress: String,
@@ -14,5 +14,6 @@ data class EventModel(
     val eventDuration: String,
     val imageUrls: String, // Store as JSON or pipe-separated string
     val isArchived: Boolean,
-    val creatorEmail: String = ""
+    val creatorEmail: String = "",
+    val status: String = "PENDING" // PENDING, APPROVED, REJECTED
 )

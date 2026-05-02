@@ -56,9 +56,18 @@ interface EventsAppDao {
         (SELECT COUNT(*) FROM favourite_events WHERE eventId = e.id AND userEmail = :userEmail) > 0 AS isFavourite,
         (SELECT COUNT(*) FROM subscribed_events WHERE eventId = e.id AND userEmail = :userEmail) > 0 AS isSubscribed
         FROM events e
-        WHERE e.isArchived = 0
+        WHERE e.isArchived = 0 AND e.status = 'APPROVED'
     """)
     fun getEvents(userEmail: String): Flow<List<EventWithStatus>>
+
+    @Query("""
+        SELECT e.*, 
+        (SELECT COUNT(*) FROM favourite_events WHERE eventId = e.id AND userEmail = :userEmail) > 0 AS isFavourite,
+        (SELECT COUNT(*) FROM subscribed_events WHERE eventId = e.id AND userEmail = :userEmail) > 0 AS isSubscribed
+        FROM events e
+        WHERE e.creatorEmail = :creatorEmail
+    """)
+    fun getEventsByCreator(creatorEmail: String, userEmail: String): Flow<List<EventWithStatus>>
 
     @Query("""
         SELECT e.*, 
@@ -88,6 +97,18 @@ interface EventsAppDao {
         WHERE e.isArchived = 1
     """)
     fun getArchivedEvents(userEmail: String): Flow<List<EventWithStatus>>
+
+    @Query("""
+        SELECT e.*, 
+        (SELECT COUNT(*) FROM favourite_events WHERE eventId = e.id AND userEmail = :userEmail) > 0 AS isFavourite,
+        (SELECT COUNT(*) FROM subscribed_events WHERE eventId = e.id AND userEmail = :userEmail) > 0 AS isSubscribed
+        FROM events e
+        WHERE e.status = 'PENDING'
+    """)
+    fun getPendingEvents(userEmail: String): Flow<List<EventWithStatus>>
+
+    @Query("UPDATE events SET status = :status WHERE id = :eventId")
+    suspend fun updateEventStatus(eventId: Int, status: String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun subscribeToEvent(subscribedEvent: SubscribedEventModel)

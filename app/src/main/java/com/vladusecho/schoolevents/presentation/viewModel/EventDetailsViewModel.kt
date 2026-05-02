@@ -3,8 +3,10 @@ package com.vladusecho.schoolevents.presentation.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vladusecho.schoolevents.domain.entity.Event
+import com.vladusecho.schoolevents.domain.usecase.events.ApproveEventUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.DeleteEventUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.GetEventByIdUseCase
+import com.vladusecho.schoolevents.domain.usecase.events.RejectEventUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.SubscribeToEventUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.SwitchEventFavouriteStatusUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.UnsubscribeFromEventUseCase
@@ -28,6 +30,8 @@ class EventDetailsViewModel @AssistedInject constructor(
     private val unsubscribeFromEventUseCase: UnsubscribeFromEventUseCase,
     private val getProfileByEmailUseCase: GetProfileByEmailUseCase,
     private val deleteEventUseCase: DeleteEventUseCase,
+    private val approveEventUseCase: ApproveEventUseCase,
+    private val rejectEventUseCase: RejectEventUseCase,
     @Assisted("eventId") private val eventId: Int
 ) : ViewModel() {
 
@@ -94,6 +98,20 @@ class EventDetailsViewModel @AssistedInject constructor(
                     _state.value = EventDetailsState.Deleted
                 }
             }
+
+            is EventDetailsCommand.ApproveEvent -> {
+                viewModelScope.launch {
+                    approveEventUseCase(eventId)
+                    _state.value = EventDetailsState.Deleted // Nav back after action
+                }
+            }
+
+            is EventDetailsCommand.RejectEvent -> {
+                viewModelScope.launch {
+                    rejectEventUseCase(eventId)
+                    _state.value = EventDetailsState.Deleted // Nav back after action
+                }
+            }
         }
     }
 
@@ -131,5 +149,7 @@ class EventDetailsViewModel @AssistedInject constructor(
         ) : EventDetailsCommand
 
         object DeleteEvent : EventDetailsCommand
+        object ApproveEvent : EventDetailsCommand
+        object RejectEvent : EventDetailsCommand
     }
 }

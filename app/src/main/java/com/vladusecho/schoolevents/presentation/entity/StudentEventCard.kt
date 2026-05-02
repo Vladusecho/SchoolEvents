@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.vladusecho.schoolevents.R
 import com.vladusecho.schoolevents.domain.entity.Event
+import com.vladusecho.schoolevents.domain.entity.EventStatus
 import com.vladusecho.schoolevents.presentation.activity.LocalUserRole
 import com.vladusecho.schoolevents.presentation.screen.UserRole
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
@@ -49,6 +50,7 @@ fun StudentEventCard(
 ) {
 
     val role = LocalUserRole.current
+    val isOrganizer = role == UserRole.ORGANIZER
     val isNotStudent = role != UserRole.STUDENT
 
     Box(
@@ -66,15 +68,45 @@ fun StudentEventCard(
                     onEventClick(event.id)
                 },
         ) {
-            AsyncImage(
-                model = event.imageUrl,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .clip(RoundedCornerShape(20.dp))
-                    .height(150.dp)
-                    .fillMaxWidth()
-            )
+            Box {
+                AsyncImage(
+                    model = event.imageUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(20.dp))
+                        .height(150.dp)
+                        .fillMaxWidth()
+                )
+                
+                // Отображение статуса для Организатора
+                if (isOrganizer && event.status != EventStatus.APPROVED) {
+                    val (statusText, statusColor) = when (event.status) {
+                        EventStatus.REJECTED -> "ОТКЛОНЕНО" to Color.Red
+                        EventStatus.PENDING -> "НА ПРОВЕРКЕ" to MaterialTheme.colorScheme.background
+                        else -> "" to Color.Transparent
+                    }
+                    
+                    if (statusText.isNotEmpty()) {
+                        Box(
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .align(Alignment.BottomEnd)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(statusColor)
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = statusText,
+                                color = Color.White,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = EventsFontFamily
+                            )
+                        }
+                    }
+                }
+            }
             Column(
                 modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
             ) {
@@ -129,7 +161,7 @@ fun StudentEventCard(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Box(
-                modifier = modifier
+                modifier = Modifier
                     .padding(8.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .border(1.dp, MaterialTheme.colorScheme.surface, RoundedCornerShape(10.dp))
@@ -149,7 +181,7 @@ fun StudentEventCard(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Box(
-                    modifier = modifier
+                    modifier = Modifier
                         .padding(top = 8.dp)
                         .clip(RoundedCornerShape(10.dp))
                         .clickable {
@@ -162,7 +194,7 @@ fun StudentEventCard(
                                 )
                             }
                         }
-                        .background(MaterialTheme.colorScheme.background)
+                        .background(MaterialTheme.colorScheme.onBackground)
                         .size(42.dp)
                         .border(1.dp, MaterialTheme.colorScheme.surface, RoundedCornerShape(10.dp)),
                     contentAlignment = Alignment.Center

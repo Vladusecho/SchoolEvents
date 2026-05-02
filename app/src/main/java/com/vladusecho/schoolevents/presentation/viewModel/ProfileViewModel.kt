@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.domain.entity.Profile
 import com.vladusecho.schoolevents.domain.usecase.auth.ChangeUserIsAuthUseCase
-import com.vladusecho.schoolevents.domain.usecase.events.GetEventsUseCase
+import com.vladusecho.schoolevents.domain.usecase.events.GetEventsByCreatorUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.GetSubscribedEventsUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.SwitchEventFavouriteStatusUseCase
 import com.vladusecho.schoolevents.domain.usecase.profile.GetProfileUseCase
@@ -26,7 +26,7 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val getProfileUseCase: GetProfileUseCase,
     private val getSubscribedEventsUseCase: GetSubscribedEventsUseCase,
-    private val getEventsUseCase: GetEventsUseCase,
+    private val getEventsByCreatorUseCase: GetEventsByCreatorUseCase,
     private val changeUserIsAuthUseCase: ChangeUserIsAuthUseCase,
     private val switchEventFavouriteStatusUseCase: SwitchEventFavouriteStatusUseCase
 ) : ViewModel() {
@@ -48,8 +48,7 @@ class ProfileViewModel @Inject constructor(
                 if (profile.role == UserRole.STUDENT.label) {
                     getSubscribedEventsUseCase().map { events -> profile to events }
                 } else {
-                    getEventsUseCase().map { allEvents ->
-                        val myEvents = allEvents.filter { it.creatorEmail == profile.email }
+                    getEventsByCreatorUseCase(profile.email).map { myEvents ->
                         profile to myEvents
                     }
                 }

@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,9 +42,11 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.vladusecho.schoolevents.R
 import com.vladusecho.schoolevents.domain.entity.Profile
+import com.vladusecho.schoolevents.presentation.activity.LocalUserRole
 import com.vladusecho.schoolevents.presentation.entity.StudentEventCard
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
+import com.vladusecho.schoolevents.presentation.viewModel.AuthViewModel
 import com.vladusecho.schoolevents.presentation.viewModel.ProfileViewModel
 
 @Composable
@@ -51,11 +54,14 @@ fun ProfileScreen(
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel(),
     onEventClick: (eventId: Int) -> Unit,
+    onListClick: (eventId: Int) -> Unit = {},
     onEditingClick: (profile: Profile) -> Unit,
     onExitClick: () -> Unit
 ) {
 
     val state = viewModel.state.collectAsState()
+    val role = LocalUserRole.current
+    val isNotStudent = role != UserRole.STUDENT
 
     LaunchedEffect(Unit) {
         viewModel.isExit.collect {
@@ -73,7 +79,8 @@ fun ProfileScreen(
         when (val currentState = state.value) {
             is ProfileViewModel.ProfileState.Content -> {
                 LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(bottom = 128.dp)
                 ) {
                     item {
                         ProfileContent(
@@ -86,7 +93,7 @@ fun ProfileScreen(
                     }
                     item {
                         Text(
-                            text = "Вы записаны на мероприятия:",
+                            text = if (!isNotStudent) "Вы записаны на мероприятия:" else "Ваши мероприятия:",
                             fontFamily = EventsFontFamily,
                             fontWeight = FontWeight.Normal,
                             fontSize = 20.sp,
@@ -122,6 +129,7 @@ fun ProfileScreen(
                                     onEventClick = { eventId ->
                                         onEventClick(eventId)
                                     },
+                                    onListClick = onListClick,
                                     onFavouriteClick = { isFavourite, eventId ->
                                         viewModel.processCommand(
                                             ProfileViewModel.ProfileCommand.SwitchFavouriteStatus(
@@ -168,7 +176,8 @@ fun ProfileScreen(
             contentAlignment = Alignment.BottomCenter
         ) {
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier = Modifier.padding(bottom = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
                     text = "Профиль",
@@ -178,18 +187,6 @@ fun ProfileScreen(
                     color = Color.White,
                     textAlign = TextAlign.Center
                 )
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "--- Создано Vladusecho (Владислав Корзун) ---",
-                        fontFamily = EventsFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 12.sp,
-                        color = Color.White
-                    )
-                }
             }
         }
     }
@@ -240,8 +237,9 @@ fun ProfileContent(
                 fontSize = 18.sp,
                 color = MaterialTheme.colorScheme.secondary
             )
+            val classVisible = if (profile.role == UserRole.STUDENT.label) " | " + profile.classNumber + " класс" else ""
             Text(
-                text = profile.role.uppercase() + " | " + profile.classNumber + " класс",
+                text = profile.role.uppercase() + classVisible,
                 fontFamily = EventsFontFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize = 18.sp,

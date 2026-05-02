@@ -1,17 +1,16 @@
 package com.vladusecho.schoolevents.di
 
 import android.content.Context
-import androidx.room.Database
 import androidx.room.Room
-import androidx.room.RoomDatabase
 import com.vladusecho.schoolevents.data.local.EventsAppDao
 import com.vladusecho.schoolevents.data.local.EventsAppDatabase
 import com.vladusecho.schoolevents.data.repository.AuthRepositoryImpl
 import com.vladusecho.schoolevents.data.repository.EventsRepositoryImpl
-import com.vladusecho.schoolevents.data.repository.ExampleEventsRepositoryImpl
+import com.vladusecho.schoolevents.data.repository.NewsRepositoryImpl
 import com.vladusecho.schoolevents.data.repository.ProfileRepositoryImpl
 import com.vladusecho.schoolevents.domain.repository.AuthRepository
 import com.vladusecho.schoolevents.domain.repository.EventsRepository
+import com.vladusecho.schoolevents.domain.repository.NewsRepository
 import com.vladusecho.schoolevents.domain.repository.ProfileRepository
 import dagger.Binds
 import dagger.Module
@@ -27,7 +26,11 @@ interface DataModule {
 
     @Binds
     @Singleton
-    fun bindEventsRepository(impl: ExampleEventsRepositoryImpl): EventsRepository
+    fun bindEventsRepository(impl: EventsRepositoryImpl): EventsRepository
+
+    @Binds
+    @Singleton
+    fun bindNewsRepository(impl: NewsRepositoryImpl): NewsRepository
 
     @Binds
     @Singleton

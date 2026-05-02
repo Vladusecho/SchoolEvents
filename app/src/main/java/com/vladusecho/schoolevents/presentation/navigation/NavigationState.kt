@@ -27,8 +27,32 @@ class NavigationState(
         navigateToSecondary(Screen.EventDetails(eventId))
     }
 
+    fun navigateToEventEditing(eventId: Int) {
+        navigateToSecondary(Screen.EventEditing(eventId))
+    }
+
+    fun navigateToEventCreation() {
+        navigateToSecondary(Screen.EventCreation)
+    }
+
+    fun navigateToNewsCreation() {
+        navigateToSecondary(Screen.NewsCreation)
+    }
+
+    fun navigateToNewsDetail(newsId: Int) {
+        navigateToSecondary(Screen.NewsDetails(newsId))
+    }
+
+    fun navigateToNewsEditing(newsId: Int) {
+        navigateToSecondary(Screen.NewsEditing(newsId))
+    }
+
     fun navigateToProfileEditing(profile: Profile) {
         navigateToSecondary(Screen.ProfileEditing(profile))
+    }
+
+    fun navigateToParticipants(eventId: Int) {
+        navigateToSecondary(Screen.Participants(eventId))
     }
 
     fun navigateToSecondary(route: Any) {

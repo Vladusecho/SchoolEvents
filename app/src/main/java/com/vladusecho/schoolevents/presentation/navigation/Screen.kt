@@ -6,6 +6,7 @@ import androidx.navigation.NavType
 import com.vladusecho.schoolevents.domain.entity.Profile
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 sealed class Screen {
@@ -40,6 +41,37 @@ sealed class Screen {
     @Serializable
     data class EventDetails(
         val id: Int
+    ) : Screen()
+
+    @Serializable
+    data class EventEditing(
+        val id: Int
+    ) : Screen()
+
+    @Serializable
+    object EventCreation : Screen()
+
+    @Serializable
+    object NewsCreation : Screen()
+
+    @Serializable
+    data class NewsDetails(
+        val id: Int
+    ) : Screen()
+
+    @Serializable
+    data class NewsEditing(
+        val id: Int
+    ) : Screen()
+
+    @Serializable
+    object ArchiveGraph : Screen()
+    @Serializable
+    object Archive : Screen()
+
+    @Serializable
+    data class Participants(
+        val eventId: Int
     ) : Screen()
 }
 

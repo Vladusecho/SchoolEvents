@@ -1,7 +1,5 @@
 package com.vladusecho.schoolevents.presentation.entity
 
-import androidx.collection.intIntMapOf
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -27,15 +25,17 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
 import com.vladusecho.schoolevents.R
 import com.vladusecho.schoolevents.domain.entity.Event
+import com.vladusecho.schoolevents.presentation.activity.LocalUserRole
+import com.vladusecho.schoolevents.presentation.screen.UserRole
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
 
@@ -43,9 +43,14 @@ import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
 fun StudentEventCard(
     modifier: Modifier = Modifier,
     event: Event,
-    onFavouriteClick: (isFavourite: Boolean, eventId: Int) -> Unit,
+    onFavouriteClick: (isFavourite: Boolean, eventId: Int) -> Unit = { _, _ -> },
+    onListClick: (eventId: Int) -> Unit = {},
     onEventClick: (eventId: Int) -> Unit
 ) {
+
+    val role = LocalUserRole.current
+    val isNotStudent = role != UserRole.STUDENT
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -61,19 +66,19 @@ fun StudentEventCard(
                     onEventClick(event.id)
                 },
         ) {
-            Image(
-                painter = painterResource(id = event.imageUrl),
+            AsyncImage(
+                model = event.imageUrl,
                 contentDescription = null,
-                contentScale = ContentScale.FillWidth,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .clip(RoundedCornerShape(20.dp))
-                    .height(120.dp)
+                    .height(150.dp)
                     .fillMaxWidth()
             )
             Column(
                 modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
             ) {
-                Row() {
+                Row {
                     Text(
                         text = event.title,
                         maxLines = 1,
@@ -84,7 +89,7 @@ fun StudentEventCard(
                         color = MaterialTheme.colorScheme.secondary
                     )
                 }
-                Row() {
+                Row {
                     Text(
                         text = event.description,
                         maxLines = 3,
@@ -128,7 +133,7 @@ fun StudentEventCard(
                     .padding(8.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .border(1.dp, MaterialTheme.colorScheme.surface, RoundedCornerShape(10.dp))
-                    .background(MaterialTheme.colorScheme.onBackground)
+                    .background(MaterialTheme.colorScheme.background)
                     .padding(8.dp)
             ) {
                 Text(
@@ -148,37 +153,51 @@ fun StudentEventCard(
                         .padding(top = 8.dp)
                         .clip(RoundedCornerShape(10.dp))
                         .clickable {
-                            onFavouriteClick(
-                                event.isFavourite,
-                                event.id
-                            )
+                            if (isNotStudent) {
+                                onListClick(event.id)
+                            } else {
+                                onFavouriteClick(
+                                    event.isFavourite,
+                                    event.id
+                                )
+                            }
                         }
-                        .background(MaterialTheme.colorScheme.onBackground)
+                        .background(MaterialTheme.colorScheme.background)
                         .size(42.dp)
                         .border(1.dp, MaterialTheme.colorScheme.surface, RoundedCornerShape(10.dp)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_not_fav),
-                        contentDescription = null,
-                        tint = if (!event.isFavourite) {
-                            Color.Gray
-                        } else {
-                            Color.Red
-                        },
-                        modifier = Modifier
-                            .size(24.dp)
+                    val icon = if (isNotStudent) {
+                        ImageVector.vectorResource(R.drawable.ic_users)
+                    } else {
+                        ImageVector.vectorResource(R.drawable.ic_not_fav)
+                    }
+                    
+                    val tint = if (isNotStudent) {
+                        MaterialTheme.colorScheme.secondary
+                    } else {
+                        if (event.isFavourite) Color.Red else Color.Gray
+                    }
 
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = tint,
+                        modifier = Modifier.size(24.dp)
                     )
                 }
                 if (event.isSubscribed) {
                     Box(
-                        modifier = modifier
+                        modifier = Modifier
                             .padding(top = 8.dp)
                             .clip(RoundedCornerShape(10.dp))
                             .background(MaterialTheme.colorScheme.onBackground)
                             .size(42.dp)
-                            .border(1.dp, MaterialTheme.colorScheme.surface, RoundedCornerShape(10.dp)),
+                            .border(
+                                1.dp,
+                                MaterialTheme.colorScheme.surface,
+                                RoundedCornerShape(10.dp)
+                            ),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
@@ -198,25 +217,25 @@ fun StudentEventCard(
 @Preview(showBackground = true)
 fun StudentEventCardPreview() {
     SchoolEventsTheme(
-        darkTheme = true
+        darkTheme = false
     ) {
         StudentEventCard(
             event = Event(
                 id = 1,
-                title = "Концерт 5opka в нашей школе! Не пропустите это невероятное событие",
-                description = "Пострадав в результате несчастного случая на стриме, провинциальный стример 5opka объединяется с лысым негром под псевдонимом MellSher, чтобы отправиться в тур «1+1» по городам России и рассказать всем свою невыдуманную историю, о которой невозможно молчать.",
-                eventAddress = "ул. Ленина, д.80, Актовый зал",
+                title = "Концерт 5opka в нашей школе!",
+                description = "Описание...",
+                eventAddress = "ул. Ленина, д.80",
+                eventPlace = "Актовый зал",
                 eventDate = "10 июня",
+                eventDuration = "8:00 - 13:00",
+                isArchived = false,
                 isFavourite = false,
-                eventPlace = "Fr",
-                eventDuration = "Вторник, 8:00 - 13:00",
-                isSubscribed = true,
-                imageUrl = R.drawable.img_math
+                isSubscribed = false,
+                creatorEmail = "",
+                imageUrls = emptyList()
             ),
             onEventClick = {},
-            onFavouriteClick = { isFav, eventId ->
-                println("isFav: $isFav, eventId: $eventId")
-            }
+            onFavouriteClick = { _, _ -> }
         )
     }
 }

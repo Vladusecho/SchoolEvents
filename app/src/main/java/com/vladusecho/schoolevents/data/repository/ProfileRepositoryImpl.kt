@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.vladusecho.schoolevents.data.local.EventsAppDao
+import com.vladusecho.schoolevents.data.mapper.toProfileEntity
 import com.vladusecho.schoolevents.data.mapper.toProfileEntityFlow
 import com.vladusecho.schoolevents.data.mapper.toProfileModel
 import com.vladusecho.schoolevents.domain.entity.Profile
@@ -30,10 +31,6 @@ class ProfileRepositoryImpl @Inject constructor(
     private val currentUserEmailKey = stringPreferencesKey("current_user_email")
 
     override suspend fun saveProfile(profile: Profile) {
-        context.dataStoreSettings.edit { preferences ->
-            preferences[currentUserEmailKey] = profile.email
-        }
-        Log.d("tag", "saveProfile: $profile")
         dao.saveProfile(profile.toProfileModel())
     }
 
@@ -43,6 +40,10 @@ class ProfileRepositoryImpl @Inject constructor(
             val email = preferences[currentUserEmailKey] ?: ""
             dao.getProfile(email).toProfileEntityFlow()
         }
+    }
+
+    override suspend fun getProfileByEmail(email: String): Profile {
+        return dao.getProfileOnce(email).toProfileEntity()
     }
 
     override suspend fun saveImageToInternalStorage(uri: String): String {
@@ -58,6 +59,12 @@ class ProfileRepositoryImpl @Inject constructor(
                 }
             }
             file.absolutePath
+        }
+    }
+
+    override suspend fun setCurrentUserEmail(email: String) {
+        context.dataStoreSettings.edit { preferences ->
+            preferences[currentUserEmailKey] = email
         }
     }
 }

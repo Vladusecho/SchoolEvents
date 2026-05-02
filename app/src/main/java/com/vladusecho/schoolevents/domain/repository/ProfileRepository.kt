@@ -9,5 +9,9 @@ interface ProfileRepository {
 
     fun getProfile(): Flow<Profile>
 
+    suspend fun getProfileByEmail(email: String): Profile
+
     suspend fun saveImageToInternalStorage(uri: String): String
+
+    suspend fun setCurrentUserEmail(email: String)
 }

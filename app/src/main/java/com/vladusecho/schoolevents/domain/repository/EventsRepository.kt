@@ -26,6 +26,12 @@ interface EventsRepository {
 
     suspend fun addNewEvent(event: Event)
 
+    suspend fun saveImageToInternalStorage(uri: String): String
+
+    suspend fun saveImagesToInternalStorage(uris: List<String>): List<String>
+
+    suspend fun deleteEvent(eventId: Int)
+
+    fun getParticipants(eventId: Int): Flow<List<Profile>>
+
 }
-
-

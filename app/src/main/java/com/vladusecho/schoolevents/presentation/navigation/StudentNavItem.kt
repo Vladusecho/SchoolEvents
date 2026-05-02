@@ -26,4 +26,10 @@ sealed class StudentNavItem(
         title = "Профиль",
         iconId = R.drawable.ic_profile_screen
     )
+
+    object Archive : StudentNavItem(
+        screen = Screen.ArchiveGraph,
+        title = "Архив",
+        iconId = R.drawable.ic_archive_screen
+    )
 }

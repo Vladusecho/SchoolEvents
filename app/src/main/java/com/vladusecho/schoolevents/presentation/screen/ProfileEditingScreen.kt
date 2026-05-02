@@ -5,6 +5,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,7 +36,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -44,12 +44,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.text.isDigitsOnly
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.vladusecho.schoolevents.R
 import com.vladusecho.schoolevents.domain.entity.Profile
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
+import com.vladusecho.schoolevents.presentation.viewModel.AuthViewModel
 import com.vladusecho.schoolevents.presentation.viewModel.EditingProfileViewModel
 
 @Composable
@@ -89,7 +91,8 @@ fun ProfileEditingScreen(
             contentAlignment = Alignment.BottomCenter
         ) {
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(bottom = 16.dp),
             ) {
                 Text(
                     text = "Редактирование",
@@ -99,18 +102,18 @@ fun ProfileEditingScreen(
                     color = Color.White,
                     textAlign = TextAlign.Center
                 )
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "--- Создано Vladusecho (Владислав Корзун) ---",
-                        fontFamily = EventsFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 12.sp,
-                        color = Color.White
-                    )
-                }
+//                Box(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    contentAlignment = Alignment.Center
+//                ) {
+//                    Text(
+//                        text = "--- Создано Vladusecho (Владислав Корзун) ---",
+//                        fontFamily = EventsFontFamily,
+//                        fontWeight = FontWeight.Bold,
+//                        fontSize = 12.sp,
+//                        color = Color.White
+//                    )
+//                }
             }
         }
     }
@@ -124,8 +127,6 @@ fun ProfileEditingContent(
     onSaveClick: (newProfile: Profile) -> Unit,
     onBackClick: () -> Unit
 ) {
-
-    val context = LocalContext.current
 
     val userClass = remember { mutableStateOf(profile.classNumber) }
     val userName = remember { mutableStateOf(profile.name) }
@@ -165,28 +166,30 @@ fun ProfileEditingContent(
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
-        EventsTextField(
-            value = userClass.value,
-            onValueChange = { userClass.value = it },
-            prefix = {
-                Row(
+        if (profile.role == UserRole.STUDENT.label) {
+            EventsTextField(
+                value = if(!userClass.value.isDigitsOnly()) "" else userClass.value,
+                onValueChange = { userClass.value = it },
+                prefix = {
+                    Row(
 
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_user),
-                        contentDescription = "",
-                        tint = MaterialTheme.colorScheme.secondary.copy(0.5f)
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_user),
+                            contentDescription = "",
+                            tint = MaterialTheme.colorScheme.secondary.copy(0.5f)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
+                },
+                suffix = {
+                    Text(
+                        text = "класс"
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
                 }
-            },
-            suffix = {
-                Text(
-                    text = "класс"
-                )
-            }
-        )
-        Spacer(modifier = Modifier.height(8.dp))
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
         EventsTextField(
             value = userName.value,
             onValueChange = { userName.value = it },

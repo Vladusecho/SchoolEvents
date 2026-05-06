@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -83,6 +84,8 @@ fun ProfileScreen(
                     item {
                         ProfileContent(
                             profile = currentState.profile,
+                            attendedCount = currentState.attendedCount,
+                            absentCount = currentState.absentCount,
                             onEditingClick = { onEditingClick(currentState.profile) },
                             onExitClick = {
                                 viewModel.processCommand(ProfileViewModel.ProfileCommand.Exit)
@@ -199,6 +202,8 @@ fun ProfileContent(
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel(),
     profile: Profile,
+    attendedCount: Int,
+    absentCount: Int,
     onEditingClick: () -> Unit,
     onExitClick: () -> Unit
 ) {
@@ -248,6 +253,48 @@ fun ProfileContent(
                 fontSize = 18.sp,
                 color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
             )
+
+            if (profile.role == UserRole.STUDENT.label) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 32.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = attendedCount.toString(),
+                            fontFamily = EventsFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 24.sp,
+                            color = Color(0xff0DCDAA)
+                        )
+                        Text(
+                            text = "Посещено",
+                            fontFamily = EventsFontFamily,
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = absentCount.toString(),
+                            fontFamily = EventsFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 24.sp,
+                            color = Color.Red
+                        )
+                        Text(
+                            text = "Пропущено",
+                            fontFamily = EventsFontFamily,
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+                }
+            }
+
             Spacer(modifier = Modifier.height(16.dp))
             Column(
                 modifier = Modifier
@@ -313,6 +360,8 @@ fun ProfPrev() {
                 role = "Ученик",
                 imageUrl = "",
             ),
+            attendedCount = 5,
+            absentCount = 2,
             onEditingClick = {},
             onExitClick = {}
         )

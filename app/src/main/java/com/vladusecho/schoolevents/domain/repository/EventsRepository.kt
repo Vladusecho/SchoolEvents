@@ -1,5 +1,6 @@
 package com.vladusecho.schoolevents.domain.repository
 
+import com.vladusecho.schoolevents.data.local.ParticipantWithAbsence
 import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.domain.entity.Profile
 import kotlinx.coroutines.flow.Flow
@@ -41,5 +42,13 @@ interface EventsRepository {
     suspend fun deleteEvent(eventId: Int)
 
     fun getParticipants(eventId: Int): Flow<List<Profile>>
+
+    fun getParticipantsWithAbsence(eventId: Int): Flow<List<ParticipantWithAbsence>>
+
+    suspend fun updateAbsenceStatus(userEmail: String, eventId: Int, wasAbsent: Boolean)
+
+    fun getAttendedEventsCount(userEmail: String): Flow<Int>
+
+    fun getAbsentEventsCount(userEmail: String): Flow<Int>
 
 }

@@ -16,7 +16,7 @@ import com.vladusecho.schoolevents.data.local.model.SubscribedEventModel
         FavouriteEventModel::class,
         NewsModel::class
     ],
-    version = 7,
+    version = 8,
     exportSchema = false
 )
 abstract class EventsAppDatabase : RoomDatabase()  {

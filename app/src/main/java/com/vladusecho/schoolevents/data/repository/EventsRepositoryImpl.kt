@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.core.net.toUri
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.vladusecho.schoolevents.data.local.EventsAppDao
+import com.vladusecho.schoolevents.data.local.ParticipantWithAbsence
 import com.vladusecho.schoolevents.data.local.model.FavouriteEventModel
 import com.vladusecho.schoolevents.data.local.model.SubscribedEventModel
 import com.vladusecho.schoolevents.data.mapper.toEventEntity
@@ -151,8 +152,24 @@ class EventsRepositoryImpl @Inject constructor(
     }
 
     override fun getParticipants(eventId: Int): Flow<List<Profile>> {
-        return dao.getParticipants(eventId).map { list ->
-            list.map { it.toProfileEntity() }
+        return dao.getParticipantsWithAbsence(eventId).map { list ->
+            list.map { it.profile.toProfileEntity() }
         }
+    }
+
+    override fun getParticipantsWithAbsence(eventId: Int): Flow<List<ParticipantWithAbsence>> {
+        return dao.getParticipantsWithAbsence(eventId)
+    }
+
+    override suspend fun updateAbsenceStatus(userEmail: String, eventId: Int, wasAbsent: Boolean) {
+        dao.updateAbsenceStatus(userEmail, eventId, wasAbsent)
+    }
+
+    override fun getAttendedEventsCount(userEmail: String): Flow<Int> {
+        return dao.getAttendedEventsCount(userEmail)
+    }
+
+    override fun getAbsentEventsCount(userEmail: String): Flow<Int> {
+        return dao.getAbsentEventsCount(userEmail)
     }
 }

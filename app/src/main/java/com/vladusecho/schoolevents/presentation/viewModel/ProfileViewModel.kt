@@ -9,6 +9,7 @@ import com.vladusecho.schoolevents.domain.usecase.events.GetEventsByCreatorUseCa
 import com.vladusecho.schoolevents.domain.usecase.events.GetSubscribedEventsUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.SwitchEventFavouriteStatusUseCase
 import com.vladusecho.schoolevents.domain.usecase.profile.GetProfileUseCase
+import com.vladusecho.schoolevents.domain.repository.EventsRepository
 import com.vladusecho.schoolevents.presentation.screen.UserRole
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,7 +17,9 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -28,7 +31,8 @@ class ProfileViewModel @Inject constructor(
     private val getSubscribedEventsUseCase: GetSubscribedEventsUseCase,
     private val getEventsByCreatorUseCase: GetEventsByCreatorUseCase,
     private val changeUserIsAuthUseCase: ChangeUserIsAuthUseCase,
-    private val switchEventFavouriteStatusUseCase: SwitchEventFavouriteStatusUseCase
+    private val switchEventFavouriteStatusUseCase: SwitchEventFavouriteStatusUseCase,
+    private val eventsRepository: EventsRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<ProfileState>(ProfileState.Initial)
@@ -45,15 +49,31 @@ class ProfileViewModel @Inject constructor(
             _state.value = ProfileState.Loading
 
             getProfileUseCase().flatMapLatest { profile ->
-                if (profile.role == UserRole.STUDENT.label) {
-                    getSubscribedEventsUseCase().map { events -> profile to events }
+                val statsFlow = if (profile.role == UserRole.STUDENT.label) {
+                    combine(
+                        eventsRepository.getAttendedEventsCount(profile.email),
+                        eventsRepository.getAbsentEventsCount(profile.email)
+                    ) { attended, absent -> attended to absent }
                 } else {
-                    getEventsByCreatorUseCase(profile.email).map { myEvents ->
-                        profile to myEvents
-                    }
+                    flowOf(0 to 0)
                 }
-            }.collect { (profile, events) ->
-                _state.value = ProfileState.Content(profile, events)
+
+                val eventsFlow = if (profile.role == UserRole.STUDENT.label) {
+                    getSubscribedEventsUseCase()
+                } else {
+                    getEventsByCreatorUseCase(profile.email)
+                }
+
+                combine(eventsFlow, statsFlow) { events, stats ->
+                    Triple(profile, events, stats)
+                }
+            }.collect { (profile, events, stats) ->
+                _state.value = ProfileState.Content(
+                    profile = profile,
+                    events = events,
+                    attendedCount = stats.first,
+                    absentCount = stats.second
+                )
             }
         }
     }
@@ -81,7 +101,12 @@ class ProfileViewModel @Inject constructor(
         object Initial : ProfileState
         object Loading : ProfileState
         data class Error(val message: String) : ProfileState
-        data class Content(val profile: Profile, val events: List<Event>) : ProfileState
+        data class Content(
+            val profile: Profile,
+            val events: List<Event>,
+            val attendedCount: Int = 0,
+            val absentCount: Int = 0
+        ) : ProfileState
     }
 
     sealed interface ProfileCommand {

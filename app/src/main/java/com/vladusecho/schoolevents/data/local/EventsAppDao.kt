@@ -132,15 +132,29 @@ interface EventsAppDao {
     suspend fun deleteNews(newsId: Int)
 
     @Query("""
-        SELECT p.* FROM profile p
+        SELECT p.*, s.wasAbsent FROM profile p
         INNER JOIN subscribed_events s ON p.email = s.userEmail
         WHERE s.eventId = :eventId
     """)
-    fun getParticipants(eventId: Int): Flow<List<ProfileModel>>
+    fun getParticipantsWithAbsence(eventId: Int): Flow<List<ParticipantWithAbsence>>
+
+    @Query("UPDATE subscribed_events SET wasAbsent = :wasAbsent WHERE userEmail = :userEmail AND eventId = :eventId")
+    suspend fun updateAbsenceStatus(userEmail: String, eventId: Int, wasAbsent: Boolean)
+
+    @Query("SELECT COUNT(*) FROM subscribed_events WHERE userEmail = :userEmail AND wasAbsent = 0")
+    fun getAttendedEventsCount(userEmail: String): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM subscribed_events WHERE userEmail = :userEmail AND wasAbsent = 1")
+    fun getAbsentEventsCount(userEmail: String): Flow<Int>
 }
 
 data class EventWithStatus(
     @Embedded val event: EventModel,
     val isFavourite: Boolean,
     val isSubscribed: Boolean
+)
+
+data class ParticipantWithAbsence(
+    @Embedded val profile: ProfileModel,
+    val wasAbsent: Boolean
 )

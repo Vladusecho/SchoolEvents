@@ -80,10 +80,11 @@ fun StudentEventCard(
                 )
                 
                 // Отображение статуса для Организатора
-                if (isOrganizer && event.status != EventStatus.APPROVED) {
-                    val (statusText, statusColor) = when (event.status) {
-                        EventStatus.REJECTED -> "ОТКЛОНЕНО" to Color.Red
-                        EventStatus.PENDING -> "НА ПРОВЕРКЕ" to MaterialTheme.colorScheme.background
+                if (isOrganizer) {
+                    val (statusText, statusColor) = when {
+                        event.isArchived -> "ЗАКОНЧЕНО" to Color.Red
+                        event.status == EventStatus.REJECTED -> "ОТКЛОНЕНО" to Color.Red
+                        event.status == EventStatus.PENDING -> "НА ПРОВЕРКЕ" to MaterialTheme.colorScheme.background
                         else -> "" to Color.Transparent
                     }
                     

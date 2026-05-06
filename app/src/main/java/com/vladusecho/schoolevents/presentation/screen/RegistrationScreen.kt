@@ -45,7 +45,6 @@ import kotlin.random.Random
 @Composable
 fun RegistrationScreen(
     modifier: Modifier = Modifier,
-    email: String,
     viewModel: AuthViewModel = hiltViewModel(),
     onRegistrationClick: () -> Unit,
     onBackClick: () -> Unit
@@ -114,14 +113,6 @@ fun RegistrationScreen(
                 fontFamily = EventsFontFamily,
                 fontWeight = FontWeight.Bold,
                 fontSize = 40.sp,
-                color = MaterialTheme.colorScheme.secondary,
-                lineHeight = 30.sp
-            )
-            Text(
-                text = email,
-                fontFamily = EventsFontFamily,
-                fontWeight = FontWeight.Normal,
-                fontSize = 20.sp,
                 color = MaterialTheme.colorScheme.secondary,
                 lineHeight = 30.sp
             )
@@ -336,7 +327,7 @@ fun RegistrationScreen(
                             id = Random.nextInt(100, 10000000),
                             name = name.value,
                             surname = surname.value,
-                            email = email,
+                            email = "",
                             password = password.value,
                             classNumber = "Не указан",
                             role = selectedRole.label,
@@ -380,7 +371,6 @@ enum class UserRole(val label: String) {
 private fun RegistrationScreenPreview() {
     SchoolEventsTheme() {
         RegistrationScreen(
-            email = "",
             onRegistrationClick = {},
             onBackClick = {}
         )

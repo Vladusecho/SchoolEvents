@@ -21,10 +21,10 @@ sealed class Screen {
     object Profile : Screen()
 
     @Serializable
-    data class Login(val email: String) : Screen()
+    data object Login : Screen()
 
     @Serializable
-    data class Registration(val email: String) : Screen()
+    data object Registration : Screen()
 
     @Serializable
     object StartApp : Screen()

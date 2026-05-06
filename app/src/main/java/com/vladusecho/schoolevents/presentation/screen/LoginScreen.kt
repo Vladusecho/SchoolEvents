@@ -43,7 +43,6 @@ import com.vladusecho.schoolevents.presentation.viewModel.AuthViewModel
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    email: String,
     viewModel: AuthViewModel = hiltViewModel(),
     onLoginClick: () -> Unit,
     onBackClick: () -> Unit
@@ -93,14 +92,6 @@ fun LoginScreen(
                 fontFamily = EventsFontFamily,
                 fontWeight = FontWeight.Bold,
                 fontSize = 40.sp,
-                color = MaterialTheme.colorScheme.secondary,
-                lineHeight = 30.sp
-            )
-            Text(
-                text = email,
-                fontFamily = EventsFontFamily,
-                fontWeight = FontWeight.Normal,
-                fontSize = 20.sp,
                 color = MaterialTheme.colorScheme.secondary,
                 lineHeight = 30.sp
             )
@@ -158,7 +149,7 @@ fun LoginScreen(
                 enabled = isValidPassword,
                 onClick = {
                     incorrectPassword.value = ""
-                    viewModel.checkPassword(email, password.value)
+                    viewModel.checkPassword("", password.value)
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
@@ -186,7 +177,7 @@ fun LoginScreen(
 fun LoginPreview() {
     SchoolEventsTheme() {
         LoginScreen(
-            onLoginClick = {}, email = "", onBackClick = {}
+            onLoginClick = {}, onBackClick = {}
         )
     }
 }

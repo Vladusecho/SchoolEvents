@@ -16,6 +16,7 @@ navigationCompose = "2.8.0-beta02"
 coil_version = "3.0.4"
 datastorePreferences = "1.2.1"
 room = "2.8.4"
+poi = "5.2.5"
 
 [libraries]
 # ROOM (KSP-COMPILER)
@@ -48,6 +49,7 @@ androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+poi-ooxml = { group = "org.apache.poi", name = "poi-ooxml", version.ref = "poi" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

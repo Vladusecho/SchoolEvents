@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.core.net.toUri
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.vladusecho.schoolevents.data.local.EventsAppDao
+import com.vladusecho.schoolevents.data.local.ParticipantWithAbsence
 import com.vladusecho.schoolevents.data.local.model.FavouriteEventModel
 import com.vladusecho.schoolevents.data.local.model.SubscribedEventModel
 import com.vladusecho.schoolevents.data.mapper.toEventEntity
@@ -11,6 +12,7 @@ import com.vladusecho.schoolevents.data.mapper.toEventModel
 import com.vladusecho.schoolevents.data.mapper.toEventWithStatusEntityListFlow
 import com.vladusecho.schoolevents.data.mapper.toProfileEntity
 import com.vladusecho.schoolevents.domain.entity.Event
+import com.vladusecho.schoolevents.domain.entity.EventStatus
 import com.vladusecho.schoolevents.domain.entity.Profile
 import com.vladusecho.schoolevents.domain.repository.EventsRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -56,6 +58,28 @@ class EventsRepositoryImpl @Inject constructor(
     override suspend fun subscribeToEvent(eventId: Int) {
         val email = getCurrentUserEmail()
         dao.subscribeToEvent(SubscribedEventModel(userEmail = email, eventId = eventId))
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun getPendingEvents(): Flow<List<Event>> {
+        return userEmailFlow.flatMapLatest { email ->
+            dao.getPendingEvents(email).toEventWithStatusEntityListFlow()
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun getEventsByCreator(creatorEmail: String): Flow<List<Event>> {
+        return userEmailFlow.flatMapLatest { email ->
+            dao.getEventsByCreator(creatorEmail, email).toEventWithStatusEntityListFlow()
+        }
+    }
+
+    override suspend fun approveEvent(eventId: Int) {
+        dao.updateEventStatus(eventId, EventStatus.APPROVED.name)
+    }
+
+    override suspend fun rejectEvent(eventId: Int) {
+        dao.updateEventStatus(eventId, EventStatus.REJECTED.name)
     }
 
     override suspend fun unsubscribeFromEvent(eventId: Int) {
@@ -128,8 +152,24 @@ class EventsRepositoryImpl @Inject constructor(
     }
 
     override fun getParticipants(eventId: Int): Flow<List<Profile>> {
-        return dao.getParticipants(eventId).map { list ->
-            list.map { it.toProfileEntity() }
+        return dao.getParticipantsWithAbsence(eventId).map { list ->
+            list.map { it.profile.toProfileEntity() }
         }
+    }
+
+    override fun getParticipantsWithAbsence(eventId: Int): Flow<List<ParticipantWithAbsence>> {
+        return dao.getParticipantsWithAbsence(eventId)
+    }
+
+    override suspend fun updateAbsenceStatus(userEmail: String, eventId: Int, wasAbsent: Boolean) {
+        dao.updateAbsenceStatus(userEmail, eventId, wasAbsent)
+    }
+
+    override fun getAttendedEventsCount(userEmail: String): Flow<Int> {
+        return dao.getAttendedEventsCount(userEmail)
+    }
+
+    override fun getAbsentEventsCount(userEmail: String): Flow<Int> {
+        return dao.getAbsentEventsCount(userEmail)
     }
 }

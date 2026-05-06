@@ -44,8 +44,9 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.vladusecho.schoolevents.R
 import com.vladusecho.schoolevents.domain.entity.Event
+import com.vladusecho.schoolevents.domain.entity.EventStatus
+import com.vladusecho.schoolevents.presentation.activity.LocalUserRole
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
-import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
 import com.vladusecho.schoolevents.presentation.viewModel.EventDetailsViewModel
 
 @Composable
@@ -81,20 +82,27 @@ fun EventDetailsScreen(
                     onFavouriteClick = { isFavourite, id ->
                         viewModel.processCommand(
                             EventDetailsViewModel.EventDetailsCommand.SwitchFavouriteStatus(
-                                isFavourite = isFavourite,
-                                eventId = id
+                                isFavourite,
+                                id
                             )
                         )
                     },
                     onSubscribeClick = { isSubscribed, id ->
                         viewModel.processCommand(
                             EventDetailsViewModel.EventDetailsCommand.SubscribeToEvent(
-                                isSubscribed, id
+                                isSubscribed,
+                                id
                             )
                         )
                     },
                     onDeleteClick = {
                         viewModel.processCommand(EventDetailsViewModel.EventDetailsCommand.DeleteEvent)
+                    },
+                    onApproveClick = {
+                        viewModel.processCommand(EventDetailsViewModel.EventDetailsCommand.ApproveEvent)
+                    },
+                    onRejectClick = {
+                        viewModel.processCommand(EventDetailsViewModel.EventDetailsCommand.RejectEvent)
                     }
                 )
             }
@@ -110,6 +118,7 @@ fun EventDetailsScreen(
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
+
             else -> {}
         }
     }
@@ -121,10 +130,14 @@ fun EventDetailsContent(
     event: Event,
     organizerName: String,
     onBackClick: () -> Unit,
-    onFavouriteClick: (isFavourite: Boolean, eventId: Int) -> Unit,
-    onSubscribeClick: (isSubscribed: Boolean, eventId: Int) -> Unit,
-    onDeleteClick: () -> Unit
+    onFavouriteClick: (Boolean, Int) -> Unit,
+    onSubscribeClick: (Boolean, Int) -> Unit,
+    onDeleteClick: () -> Unit,
+    onApproveClick: () -> Unit,
+    onRejectClick: () -> Unit
 ) {
+    val userRole = LocalUserRole.current
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -132,6 +145,7 @@ fun EventDetailsContent(
         contentPadding = PaddingValues(bottom = 128.dp),
     ) {
         item {
+            // ... (Блок с картинками)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -140,7 +154,7 @@ fun EventDetailsContent(
             ) {
                 if (event.imageUrls.isNotEmpty()) {
                     val pagerState = rememberPagerState(pageCount = { event.imageUrls.size })
-                    
+
                     HorizontalPager(
                         state = pagerState,
                         modifier = Modifier.fillMaxSize()
@@ -152,7 +166,7 @@ fun EventDetailsContent(
                             modifier = Modifier.fillMaxSize()
                         )
                     }
-                    
+
                     if (event.imageUrls.size > 1) {
                         Row(
                             Modifier
@@ -162,7 +176,10 @@ fun EventDetailsContent(
                             horizontalArrangement = Arrangement.Center
                         ) {
                             repeat(event.imageUrls.size) { iteration ->
-                                val color = if (pagerState.currentPage == iteration) Color.White else Color.White.copy(alpha = 0.5f)
+                                val color =
+                                    if (pagerState.currentPage == iteration) Color.White else Color.White.copy(
+                                        alpha = 0.5f
+                                    )
                                 Box(
                                     modifier = Modifier
                                         .padding(4.dp)
@@ -323,7 +340,7 @@ fun EventDetailsContent(
                     color = MaterialTheme.colorScheme.secondary
                 )
             }
-            Spacer(modifier = Modifier.height(100.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             if (event.isArchived) {
                 Button(
                     onClick = onDeleteClick,
@@ -341,7 +358,54 @@ fun EventDetailsContent(
                         color = Color.White
                     )
                 }
-            } else {
+            } else if (event.status == EventStatus.PENDING) {
+                Row(
+                    modifier = Modifier
+                        .padding(start = 16.dp, end = 16.dp, top = 32.dp)
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
+
+                ) {
+                    IconButton(onClick = onBackClick) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_back),
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier
+                                .background(MaterialTheme.colorScheme.primary)
+                                .size(128.dp)
+                        )
+                    }
+                    Button(
+                        onClick = { onRejectClick() },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (event.isSubscribed) Color.Red else MaterialTheme.colorScheme.primary
+                        ),
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = 8.dp)
+                    ) {
+                        Text(
+                            text = "ОТКАЗАТЬ",
+                            fontFamily = EventsFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            color = Color.White
+                        )
+                    }
+                    IconButton(onClick = { onApproveClick() }) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_check),
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier
+                                .background(color = MaterialTheme.colorScheme.primary)
+                                .padding(8.dp)
+                                .size(128.dp)
+                        )
+                    }
+                }
+            } else if (userRole == UserRole.STUDENT){
                 Row(
                     modifier = Modifier
                         .padding(start = 16.dp, end = 16.dp, top = 32.dp)
@@ -384,6 +448,25 @@ fun EventDetailsContent(
                             modifier = Modifier
                                 .background(color = MaterialTheme.colorScheme.primary)
                                 .padding(8.dp)
+                                .size(128.dp)
+                        )
+                    }
+                }
+            } else if (userRole == UserRole.DIRECTOR) {
+                Row(
+                    modifier = Modifier
+                        .padding(start = 16.dp, end = 16.dp, top = 32.dp)
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
+
+                ) {
+                    IconButton(onClick = onBackClick) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_back),
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier
+                                .background(MaterialTheme.colorScheme.primary)
                                 .size(128.dp)
                         )
                     }

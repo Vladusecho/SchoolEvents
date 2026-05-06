@@ -12,7 +12,14 @@ data class Event(
     val isArchived: Boolean,
     val isFavourite: Boolean,
     val isSubscribed: Boolean,
-    val creatorEmail: String = ""
+    val creatorEmail: String = "",
+    val status: EventStatus = EventStatus.PENDING
 ) {
     val imageUrl: String get() = imageUrls.firstOrNull() ?: ""
+}
+
+enum class EventStatus {
+    PENDING,
+    APPROVED,
+    REJECTED
 }

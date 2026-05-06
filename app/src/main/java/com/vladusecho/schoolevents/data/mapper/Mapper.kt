@@ -5,6 +5,7 @@ import com.vladusecho.schoolevents.data.local.model.EventModel
 import com.vladusecho.schoolevents.data.local.model.NewsModel
 import com.vladusecho.schoolevents.data.local.model.ProfileModel
 import com.vladusecho.schoolevents.domain.entity.Event
+import com.vladusecho.schoolevents.domain.entity.EventStatus
 import com.vladusecho.schoolevents.domain.entity.News
 import com.vladusecho.schoolevents.domain.entity.Profile
 import kotlinx.coroutines.flow.Flow
@@ -51,7 +52,8 @@ fun Event.toEventModel(): EventModel {
         eventDuration = eventDuration,
         imageUrls = imageUrls.joinToString("|"),
         isArchived = isArchived,
-        creatorEmail = creatorEmail
+        creatorEmail = creatorEmail,
+        status = status.name
     )
 }
 
@@ -68,7 +70,8 @@ fun EventModel.toEventEntity(isFavourite: Boolean = false, isSubscribed: Boolean
         isArchived = isArchived,
         isFavourite = isFavourite,
         isSubscribed = isSubscribed,
-        creatorEmail = creatorEmail
+        creatorEmail = creatorEmail,
+        status = try { EventStatus.valueOf(status) } catch (e: Exception) { EventStatus.PENDING }
     )
 }
 

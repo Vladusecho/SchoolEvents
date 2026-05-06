@@ -114,7 +114,7 @@ fun MainScreen(
                     modifier = Modifier.fillMaxSize().padding(bottom = 108.dp),
                     contentAlignment = Alignment.BottomCenter
                 ) {
-                    if (userRole != UserRole.STUDENT) {
+                    if (userRole == UserRole.ORGANIZER) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()

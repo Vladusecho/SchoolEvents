@@ -8,5 +8,6 @@ import androidx.room.Entity
 )
 data class SubscribedEventModel(
     val userEmail: String,
-    val eventId: Int
+    val eventId: Int,
+    val wasAbsent: Boolean = false
 )

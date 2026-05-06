@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -46,7 +47,6 @@ import com.vladusecho.schoolevents.presentation.activity.LocalUserRole
 import com.vladusecho.schoolevents.presentation.entity.StudentEventCard
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
-import com.vladusecho.schoolevents.presentation.viewModel.AuthViewModel
 import com.vladusecho.schoolevents.presentation.viewModel.ProfileViewModel
 
 @Composable
@@ -61,7 +61,6 @@ fun ProfileScreen(
 
     val state = viewModel.state.collectAsState()
     val role = LocalUserRole.current
-    val isNotStudent = role != UserRole.STUDENT
 
     LaunchedEffect(Unit) {
         viewModel.isExit.collect {
@@ -85,6 +84,8 @@ fun ProfileScreen(
                     item {
                         ProfileContent(
                             profile = currentState.profile,
+                            attendedCount = currentState.attendedCount,
+                            absentCount = currentState.absentCount,
                             onEditingClick = { onEditingClick(currentState.profile) },
                             onExitClick = {
                                 viewModel.processCommand(ProfileViewModel.ProfileCommand.Exit)
@@ -93,7 +94,11 @@ fun ProfileScreen(
                     }
                     item {
                         Text(
-                            text = if (!isNotStudent) "Вы записаны на мероприятия:" else "Ваши мероприятия:",
+                            text = when (role) {
+                                UserRole.STUDENT -> "Вы записаны на мероприятия:"
+                                UserRole.ORGANIZER -> "Ваши мероприятия:"
+                                UserRole.DIRECTOR -> ""
+                            },
                             fontFamily = EventsFontFamily,
                             fontWeight = FontWeight.Normal,
                             fontSize = 20.sp,
@@ -102,7 +107,7 @@ fun ProfileScreen(
                             color = MaterialTheme.colorScheme.secondary
                         )
                     }
-                    if (currentState.events.isEmpty()) {
+                    if (currentState.events.isEmpty() && role != UserRole.DIRECTOR) {
                         item {
                             Box(
                                 modifier = Modifier.fillMaxWidth(),
@@ -197,6 +202,8 @@ fun ProfileContent(
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel(),
     profile: Profile,
+    attendedCount: Int,
+    absentCount: Int,
     onEditingClick: () -> Unit,
     onExitClick: () -> Unit
 ) {
@@ -237,7 +244,8 @@ fun ProfileContent(
                 fontSize = 18.sp,
                 color = MaterialTheme.colorScheme.secondary
             )
-            val classVisible = if (profile.role == UserRole.STUDENT.label) " | " + profile.classNumber + " класс" else ""
+            val classVisible =
+                if (profile.role == UserRole.STUDENT.label) " | " + profile.classNumber + " класс" else ""
             Text(
                 text = profile.role.uppercase() + classVisible,
                 fontFamily = EventsFontFamily,
@@ -245,6 +253,48 @@ fun ProfileContent(
                 fontSize = 18.sp,
                 color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
             )
+
+            if (profile.role == UserRole.STUDENT.label) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 32.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = attendedCount.toString(),
+                            fontFamily = EventsFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 24.sp,
+                            color = Color(0xff0DCDAA)
+                        )
+                        Text(
+                            text = "Посещено",
+                            fontFamily = EventsFontFamily,
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = absentCount.toString(),
+                            fontFamily = EventsFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 24.sp,
+                            color = Color.Red
+                        )
+                        Text(
+                            text = "Пропущено",
+                            fontFamily = EventsFontFamily,
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+                }
+            }
+
             Spacer(modifier = Modifier.height(16.dp))
             Column(
                 modifier = Modifier
@@ -310,6 +360,8 @@ fun ProfPrev() {
                 role = "Ученик",
                 imageUrl = "",
             ),
+            attendedCount = 5,
+            absentCount = 2,
             onEditingClick = {},
             onExitClick = {}
         )

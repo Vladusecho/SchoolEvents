@@ -93,7 +93,7 @@ fun LoginScreenContent(
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(120.dp))
+        Spacer(modifier = Modifier.height(80.dp))
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {

@@ -62,7 +62,7 @@ fun StartAppContent(
             text = "Внеурочная деятельность",
             fontFamily = EventsFontFamily,
             fontWeight = FontWeight.Bold,
-            fontSize = 56.sp,
+            fontSize = 46.sp,
             textAlign = TextAlign.Center,
             lineHeight = 36.sp
         )

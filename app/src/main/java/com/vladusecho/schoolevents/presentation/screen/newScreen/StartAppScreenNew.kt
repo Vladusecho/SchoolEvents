@@ -37,13 +37,6 @@ fun StartAppScreenNew(
     onLoginClick: () -> Unit,
     onRegistrationClick: () -> Unit
 ) {
-
-    val email = remember { mutableStateOf("") }
-
-    val isEmailValid = remember(email.value) {
-        Patterns.EMAIL_ADDRESS.matcher(email.value).matches()
-    }
-
     StartAppContent(
         modifier = modifier,
         onLoginClick = onLoginClick,
@@ -61,10 +54,10 @@ fun StartAppContent(
         modifier = modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(top = 120.dp, bottom = 32.dp)
-            .padding(horizontal = 8.dp),
+            .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.height(120.dp))
         Text(
             text = "Внеурочная деятельность",
             fontFamily = EventsFontFamily,
@@ -77,7 +70,7 @@ fun StartAppContent(
         Image(
             painter = painterResource(R.drawable.img_startapp),
             contentDescription = "",
-            modifier = Modifier.size(400.dp)
+            modifier = Modifier.size(320.dp)
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
@@ -86,10 +79,10 @@ fun StartAppContent(
             fontFamily = EventsFontFamily,
             fontWeight = FontWeight.Normal,
             textAlign = TextAlign.Center,
-            fontSize = 20.sp,
+            fontSize = 16.sp,
             lineHeight = 20.sp
         )
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.weight(1f))
         Button(
             onClick = onRegistrationClick,
             modifier = Modifier.fillMaxWidth()
@@ -124,6 +117,7 @@ fun StartAppContent(
                 )
             }
         }
+        Spacer(modifier = Modifier.height(48.dp))
     }
 }
 

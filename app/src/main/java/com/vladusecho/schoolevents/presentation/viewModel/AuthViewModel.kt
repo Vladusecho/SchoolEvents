@@ -47,6 +47,12 @@ class AuthViewModel @Inject constructor(
     private val _authResult = MutableSharedFlow<Boolean>()
     val authResult = _authResult.asSharedFlow()
 
+    private val _emailError = MutableStateFlow<String?>(null)
+    val emailError = _emailError.asStateFlow()
+
+    private val _passwordError = MutableStateFlow<String?>(null)
+    val passwordError = _passwordError.asStateFlow()
+
     val isAuth: StateFlow<Boolean?> = checkUserIsAuthUseCase()
         .stateIn(
             scope = viewModelScope,
@@ -60,6 +66,46 @@ class AuthViewModel @Inject constructor(
             started = SharingStarted.Eagerly,
             initialValue = UserRole.STUDENT
         )
+
+    fun login(email: String, password: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _emailError.value = null
+            _passwordError.value = null
+            try {
+                val exists = checkUserExistsUseCase(email)
+                if (!exists) {
+                    _emailError.value = "Пользователь не найден"
+                    _authResult.emit(false)
+                    return@launch
+                }
+
+                val result = checkUserPasswordUseCase(email, password)
+                if (result) {
+                    setCurrentUserEmailUseCase(email)
+                    val profile = getProfileByEmailUseCase(email)
+                    val role =
+                        UserRole.entries.find { it.label == profile.role } ?: UserRole.STUDENT
+                    setCurrentUserRoleUseCase(role)
+                    changeUserIsAuthUseCase()
+                    _authResult.emit(true)
+                } else {
+                    _passwordError.value = "Неверный пароль"
+                    _authResult.emit(false)
+                }
+            } catch (e: Exception) {
+                Log.e("tag", "login: ", e)
+                _authResult.emit(false)
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun clearErrors() {
+        _emailError.value = null
+        _passwordError.value = null
+    }
 
     fun checkPassword(email: String, password: String) {
         viewModelScope.launch {

@@ -7,6 +7,7 @@ import com.vladusecho.schoolevents.presentation.navigation.NavigationState
 import com.vladusecho.schoolevents.presentation.navigation.Screen
 import com.vladusecho.schoolevents.presentation.screen.RegistrationScreen
 import com.vladusecho.schoolevents.presentation.screen.newScreen.LoginScreenNew
+import com.vladusecho.schoolevents.presentation.screen.newScreen.RegistrationScreenNew
 import com.vladusecho.schoolevents.presentation.screen.newScreen.StartAppScreenNew
 
 fun NavGraphBuilder.authNavigation(
@@ -38,7 +39,7 @@ fun NavGraphBuilder.authNavigation(
             )
         }
         composable<Screen.Registration> {
-            RegistrationScreen(
+            RegistrationScreenNew(
                 onRegistrationClick = {
                     navigationState.navHostController.navigate(Screen.MainGraph) {
                         popUpTo(Screen.AuthGraph) { inclusive = true }

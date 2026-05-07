@@ -10,11 +10,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -22,6 +26,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,9 +47,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.vladusecho.schoolevents.R
+import com.vladusecho.schoolevents.domain.entity.Profile
+import com.vladusecho.schoolevents.presentation.screen.UserRole
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
+import com.vladusecho.schoolevents.presentation.viewModel.AuthViewModel
+import kotlin.random.Random
 
 @Composable
 fun RegistrationScreenNew(
@@ -61,6 +72,7 @@ fun RegistrationScreenNew(
 @Composable
 fun RegistrationScreenContent(
     modifier: Modifier = Modifier,
+    viewModel: AuthViewModel = hiltViewModel(),
     onRegistrationClick: () -> Unit,
     onBackClick: () -> Unit
 ) {
@@ -70,6 +82,7 @@ fun RegistrationScreenContent(
     val password = remember { mutableStateOf("") }
     val confirmPassword = remember { mutableStateOf("") }
     val organizationCode = remember { mutableStateOf("") }
+    val isAgreed = remember { mutableStateOf(false) }
 
     val isVisiblePassword = remember { mutableStateOf(false) }
 
@@ -77,13 +90,34 @@ fun RegistrationScreenContent(
 
     val focusManager = LocalFocusManager.current
 
+    val emailError by viewModel.emailError.collectAsState()
+    val passwordError by viewModel.passwordError.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+
+    var orgCodeError by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(Unit) {
+        viewModel.authResult.collect { success ->
+            if (success) {
+                onRegistrationClick()
+            }
+        }
+    }
+
+    val emailPattern = android.util.Patterns.EMAIL_ADDRESS
+    val isEmailValid = emailPattern.matcher(email.value).matches()
+    val isPasswordValid = password.value.length >= 8 &&
+            password.value.any { it.isDigit() } &&
+            password.value.any { it.isLetter() }
+    val isOrgCodeValid = if (selectedRole == UserRole.STUDENT) true else organizationCode.value == "1991"
+
     val isFormValid = name.value.isNotBlank() &&
             surname.value.isNotBlank() &&
-            password.value.isNotBlank() &&
-            email.value.isNotBlank() &&
+            isEmailValid &&
+            isPasswordValid &&
             password.value == confirmPassword.value &&
-            (if (selectedRole == UserRole.ORGANIZER || selectedRole == UserRole.DIRECTOR)
-                organizationCode.value.isNotBlank() else true)
+            isOrgCodeValid &&
+            isAgreed.value
 
     Column(
         modifier = modifier
@@ -119,13 +153,15 @@ fun RegistrationScreenContent(
         )
         Spacer(modifier = Modifier.height(20.dp))
         LazyColumn(
-            contentPadding = PaddingValues(bottom = 64.dp)
+            modifier = Modifier.weight(1f),
+            contentPadding = PaddingValues(bottom = 16.dp)
         ) {
             item {
                 OutlinedTextField(
                     value = email.value,
                     onValueChange = {
                         email.value = it
+                        viewModel.clearErrors()
                     },
                     label = {
                         Text(
@@ -134,6 +170,22 @@ fun RegistrationScreenContent(
                             fontWeight = FontWeight.Normal,
                             fontSize = 16.sp,
                         )
+                    },
+                    isError = emailError != null || (email.value.isNotEmpty() && !isEmailValid),
+                    supportingText = {
+                        if (emailError != null) {
+                            Text(
+                                text = emailError!!,
+                                color = MaterialTheme.colorScheme.error,
+                                fontFamily = EventsFontFamily
+                            )
+                        } else if (email.value.isNotEmpty() && !isEmailValid) {
+                            Text(
+                                text = "Неверный формат почты",
+                                color = MaterialTheme.colorScheme.error,
+                                fontFamily = EventsFontFamily
+                            )
+                        }
                     },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
@@ -165,6 +217,7 @@ fun RegistrationScreenContent(
                     value = password.value,
                     onValueChange = {
                         password.value = it
+                        viewModel.clearErrors()
                     },
                     label = {
                         Text(
@@ -173,6 +226,22 @@ fun RegistrationScreenContent(
                             fontWeight = FontWeight.Normal,
                             fontSize = 16.sp,
                         )
+                    },
+                    isError = passwordError != null || (password.value.isNotEmpty() && !isPasswordValid),
+                    supportingText = {
+                        if (passwordError != null) {
+                            Text(
+                                text = passwordError!!,
+                                color = MaterialTheme.colorScheme.error,
+                                fontFamily = EventsFontFamily
+                            )
+                        } else if (password.value.isNotEmpty() && !isPasswordValid) {
+                            Text(
+                                text = "Минимум 8 символов, буквы и цифры",
+                                color = MaterialTheme.colorScheme.error,
+                                fontFamily = EventsFontFamily
+                            )
+                        }
                     },
                     visualTransformation = if (isVisiblePassword.value) VisualTransformation.None else PasswordVisualTransformation(),
                     singleLine = true,
@@ -228,6 +297,16 @@ fun RegistrationScreenContent(
                             fontSize = 16.sp,
                         )
                     },
+                    isError = confirmPassword.value.isNotEmpty() && confirmPassword.value != password.value,
+                    supportingText = {
+                        if (confirmPassword.value.isNotEmpty() && confirmPassword.value != password.value) {
+                            Text(
+                                text = "Пароли не совпадают",
+                                color = MaterialTheme.colorScheme.error,
+                                fontFamily = EventsFontFamily
+                            )
+                        }
+                    },
                     visualTransformation = if (isVisiblePassword.value) VisualTransformation.None else PasswordVisualTransformation(),
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
@@ -272,7 +351,7 @@ fun RegistrationScreenContent(
                 OutlinedTextField(
                     value = name.value,
                     onValueChange = {
-                        name.value = it
+                        name.value = it.replaceFirstChar { char -> if (char.isLowerCase()) char.titlecase() else char.toString() }
                     },
                     label = {
                         Text(
@@ -311,7 +390,7 @@ fun RegistrationScreenContent(
                 OutlinedTextField(
                     value = surname.value,
                     onValueChange = {
-                        surname.value = it
+                        surname.value = it.replaceFirstChar { char -> if (char.isLowerCase()) char.titlecase() else char.toString() }
                     },
                     label = {
                         Text(
@@ -367,7 +446,10 @@ fun RegistrationScreenContent(
                         val isSelected = selectedRole == role
 
                         Button(
-                            onClick = { selectedRole = role },
+                            onClick = {
+                                selectedRole = role
+                                orgCodeError = null
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 32.dp),
@@ -397,6 +479,7 @@ fun RegistrationScreenContent(
                         value = organizationCode.value,
                         onValueChange = {
                             organizationCode.value = it
+                            orgCodeError = if (it != "1991" && it.isNotEmpty()) "Неверный код" else null
                         },
                         label = {
                             Text(
@@ -405,6 +488,16 @@ fun RegistrationScreenContent(
                                 fontWeight = FontWeight.Normal,
                                 fontSize = 16.sp,
                             )
+                        },
+                        isError = orgCodeError != null,
+                        supportingText = {
+                            if (orgCodeError != null) {
+                                Text(
+                                    text = orgCodeError!!,
+                                    color = MaterialTheme.colorScheme.error,
+                                    fontFamily = EventsFontFamily
+                                )
+                            }
                         },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth(),
@@ -449,30 +542,66 @@ fun RegistrationScreenContent(
                     )
                 }
                 Spacer(modifier = Modifier.height(16.dp))
-                Button(
-                    enabled = isFormValid,
-                    onClick = {},
-                    modifier = Modifier.fillMaxWidth()
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        "Создать аккаунт",
-                        fontFamily = EventsFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
+                    Checkbox(
+                        checked = isAgreed.value,
+                        onCheckedChange = { isAgreed.value = it },
+                        colors = CheckboxDefaults.colors(
+                            checkedColor = MaterialTheme.colorScheme.primary
+                        )
                     )
+                    Text(
+                        text = "Я согласен на обработку и хранение персональных данных",
+                        fontFamily = EventsFontFamily,
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
+                Button(
+                    enabled = !isLoading && isFormValid,
+                    onClick = {
+                        val profile = Profile(
+                            id = Random.nextInt(100, 10000000),
+                            name = name.value,
+                            surname = surname.value,
+                            email = email.value.trim().lowercase(),
+                            password = password.value,
+                            classNumber = "Не указан",
+                            role = selectedRole.label,
+                            imageUrl = ""
+                        )
+                        viewModel.registerUser(profile, organizationCode.value)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 64.dp)
+                ) {
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Text(
+                            "Создать аккаунт",
+                            fontFamily = EventsFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp
+                        )
+                    }
                 }
             }
         }
     }
 }
 
-enum class UserRole(val label: String) {
-    STUDENT("Ученик"),
-    ORGANIZER("Организатор"),
-    DIRECTOR("Директор")
-}
-
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun RegistrationScreenNewPreview() {
     SchoolEventsTheme() {

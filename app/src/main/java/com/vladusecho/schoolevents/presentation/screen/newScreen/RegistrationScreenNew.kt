@@ -650,7 +650,12 @@ fun RegistrationScreenContent(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 64.dp)
+                        .padding(bottom = 64.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(
+                            0xff008A00
+                        )
+                    )
                 ) {
                     if (isLoading) {
                         CircularProgressIndicator(

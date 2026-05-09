@@ -11,6 +11,7 @@ import com.vladusecho.schoolevents.presentation.navigation.NavigationState
 import com.vladusecho.schoolevents.presentation.navigation.ProfileNavType
 import com.vladusecho.schoolevents.presentation.navigation.Screen
 import com.vladusecho.schoolevents.presentation.screen.EventDetailsScreen
+import com.vladusecho.schoolevents.presentation.screen.newScreen.EventDetailsScreenNew
 import com.vladusecho.schoolevents.presentation.screen.newScreen.EventEditingScreenNew
 import com.vladusecho.schoolevents.presentation.screen.newScreen.ParticipantsScreenNew
 import com.vladusecho.schoolevents.presentation.screen.newScreen.ProfileEditingScreenNew
@@ -52,7 +53,7 @@ fun NavGraphBuilder.profileNavigation(
         }
         composable<Screen.EventDetails> { backStackEntry ->
             val args = backStackEntry.toRoute<Screen.EventDetails>()
-            EventDetailsScreen(
+            EventDetailsScreenNew (
                 eventId = args.id,
                 onBackClick = {
                     navigationState.navHostController.navigateUp()

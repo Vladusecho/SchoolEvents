@@ -102,8 +102,11 @@ fun EventEditingScreenNew(
                 onSaveClick = { updatedEvent, uris ->
                     viewModel.updateEvent(updatedEvent, uris)
                 },
-                onDeleteClick = {
-                    viewModel.deleteEvent()
+                onArchiveClick = {
+                    viewModel.updateEvent(
+                        currentState.event.copy(isArchived = true),
+                        currentState.event.imageUrls
+                    )
                 }
             )
         }
@@ -130,7 +133,7 @@ private fun EventEditingContent(
     event: Event,
     onBackClick: () -> Unit,
     onSaveClick: (Event, List<String>) -> Unit,
-    onDeleteClick: () -> Unit
+    onArchiveClick: () -> Unit
 ) {
     var currentStep by remember { mutableStateOf(EventEditingStep.BASIC_DETAILS) }
 
@@ -189,7 +192,7 @@ private fun EventEditingContent(
 
                         Button(
                             onClick = {
-                                onDeleteClick()
+                                onArchiveClick()
                             },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color.White,
@@ -742,6 +745,6 @@ private fun PreviewEventEditing() {
             event = mockEvent,
             onBackClick = {},
             onSaveClick = { _, _ -> },
-            onDeleteClick = {})
+            onArchiveClick = {})
     }
 }

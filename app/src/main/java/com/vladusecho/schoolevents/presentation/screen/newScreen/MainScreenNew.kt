@@ -49,7 +49,6 @@ import com.vladusecho.schoolevents.presentation.viewModel.MainViewModel
 
 @Composable
 fun MainScreenNew(
-    modifier: Modifier = Modifier,
     viewModel: MainViewModel = hiltViewModel(),
     onEventClick: (eventId: Int) -> Unit,
     onListClick: (eventId: Int) -> Unit,
@@ -115,7 +114,7 @@ fun MainScreenContent(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xffEBEBEB))
+            .background(Color.White)
     ) {
         item {
             MainTitle(
@@ -123,7 +122,12 @@ fun MainScreenContent(
                 selectedTab = selectedTab,
                 onTabClick = onTabClick
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(
+                modifier = Modifier
+                    .height(8.dp)
+                    .fillMaxWidth()
+                    .background(Color(0xffEBEBEB))
+            )
         }
 
         when (selectedTab) {
@@ -136,20 +140,43 @@ fun MainScreenContent(
                         onFavouriteClick = onFavouriteClick,
                         onAddEventClick = onAddEventClick
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(
+                        modifier = Modifier
+                            .height(8.dp)
+                            .fillMaxWidth()
+                            .background(Color(0xffEBEBEB))
+                    )
                 }
                 item {
                     MainNewsHeader(
                         onAddNewsClick = onAddNewsClick
                     )
                 }
-                items(news, key = { it.id }) { newsItem ->
-                    Box(
-                        modifier = Modifier
-                            .background(Color.White)
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                    ) {
-                        NewsCard(news = newsItem, onNewsClick = onNewsClick)
+                if (news.isEmpty()) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(Color.White)
+                                .padding(horizontal = 16.dp)
+                        ) {
+                            Text(
+                                text = "Здесь пока ничего нет...",
+                                fontFamily = EventsFontFamily,
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 16.sp,
+                            )
+                        }
+                    }
+                } else {
+                    items(news, key = { it.id }) { newsItem ->
+                        Box(
+                            modifier = Modifier
+                                .background(Color.White)
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                        ) {
+                            NewsCard(news = newsItem, onNewsClick = onNewsClick)
+                        }
                     }
                 }
             }
@@ -193,7 +220,6 @@ fun MainScreenContent(
                 }
             }
         }
-
         item {
             Spacer(
                 modifier = Modifier
@@ -317,14 +343,25 @@ fun MainEventsRow(
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(events, key = { it.id }) { event ->
-                StudentEventCard(
-                    modifier = Modifier.width(280.dp),
-                    event = event,
-                    onEventClick = onEventClick,
-                    onListClick = onListClick,
-                    onFavouriteClick = onFavouriteClick
-                )
+            if (events.isEmpty()) {
+                item {
+                    Text(
+                        text = "Здесь пока ничего нет...",
+                        fontFamily = EventsFontFamily,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 16.sp,
+                    )
+                }
+            } else {
+                items(events, key = { it.id }) { event ->
+                    StudentEventCard(
+                        modifier = Modifier.width(280.dp),
+                        event = event,
+                        onEventClick = onEventClick,
+                        onListClick = onListClick,
+                        onFavouriteClick = onFavouriteClick
+                    )
+                }
             }
         }
         Spacer(modifier = Modifier.height(16.dp))

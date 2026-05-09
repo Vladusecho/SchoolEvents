@@ -14,6 +14,7 @@ import com.vladusecho.schoolevents.presentation.screen.EventEditingScreen
 import com.vladusecho.schoolevents.presentation.screen.NewsCreationScreen
 import com.vladusecho.schoolevents.presentation.screen.NewsDetailsScreen
 import com.vladusecho.schoolevents.presentation.screen.NewsEditingScreen
+import com.vladusecho.schoolevents.presentation.screen.newScreen.EventCreationScreenNew
 import com.vladusecho.schoolevents.presentation.screen.newScreen.MainScreenNew
 import com.vladusecho.schoolevents.presentation.screen.newScreen.ParticipantsScreenNew
 import com.vladusecho.schoolevents.presentation.util.UserRole
@@ -72,7 +73,7 @@ fun NavGraphBuilder.mainNavigation(
             )
         }
         composable<Screen.EventCreation> {
-            EventCreationScreen(
+            EventCreationScreenNew(
                 onBackClick = { navigationState.navHostController.navigateUp() }
             )
         }

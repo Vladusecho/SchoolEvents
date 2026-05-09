@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -174,8 +175,7 @@ fun RegistrationScreenContent(
                         Text(
                             text = "Почта",
                             fontFamily = EventsFontFamily,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Normal
                         )
                     },
                     isError = emailError != null || (email.value.text.isNotEmpty() && !isEmailValid),
@@ -212,6 +212,7 @@ fun RegistrationScreenContent(
                     keyboardOptions = KeyboardOptions(
                         imeAction = ImeAction.Next
                     ),
+                    shape = RoundedCornerShape(12.dp),
                     keyboardActions = KeyboardActions(
                         onNext = {
                             focusManager.moveFocus(FocusDirection.Down)
@@ -239,10 +240,10 @@ fun RegistrationScreenContent(
                         Text(
                             text = "Пароль",
                             fontFamily = EventsFontFamily,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Normal
                         )
                     },
+                    shape = RoundedCornerShape(12.dp),
                     isError = passwordError != null || (password.value.isNotEmpty() && !isPasswordValid),
                     supportingText = {
                         if (passwordError != null) {
@@ -306,12 +307,12 @@ fun RegistrationScreenContent(
                     onValueChange = {
                         confirmPassword.value = it
                     },
+                    shape = RoundedCornerShape(12.dp),
                     label = {
                         Text(
                             text = "Повторите пароль",
                             fontFamily = EventsFontFamily,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Normal
                         )
                     },
                     isError = confirmPassword.value.isNotEmpty() && confirmPassword.value != password.value,
@@ -368,6 +369,8 @@ fun RegistrationScreenContent(
                 )
                 OutlinedTextField(
                     value = name.value,
+
+                    shape = RoundedCornerShape(12.dp),
                     onValueChange = { newValue ->
                         if (newValue.text.length <= 20) {
                             val formattedText = newValue.text.replaceFirstChar { char ->
@@ -380,8 +383,7 @@ fun RegistrationScreenContent(
                         Text(
                             text = "Ваше имя",
                             fontFamily = EventsFontFamily,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Normal
                         )
                     },
                     isError = name.value.text.isNotEmpty() && name.value.text.length > 20,
@@ -430,6 +432,8 @@ fun RegistrationScreenContent(
                     )
                 )
                 OutlinedTextField(
+
+                    shape = RoundedCornerShape(12.dp),
                     value = surname.value,
                     onValueChange = { newValue ->
                         if (newValue.text.length <= 20) {
@@ -443,8 +447,7 @@ fun RegistrationScreenContent(
                         Text(
                             text = "Ваша фамилия",
                             fontFamily = EventsFontFamily,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Normal
                         )
                     },
                     isError = surname.value.text.isNotEmpty() && surname.value.text.length > 20,
@@ -552,8 +555,7 @@ fun RegistrationScreenContent(
                             Text(
                                 text = "Код организации",
                                 fontFamily = EventsFontFamily,
-                                fontWeight = FontWeight.Normal,
-                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Normal
                             )
                         },
                         isError = orgCodeError != null,
@@ -600,6 +602,7 @@ fun RegistrationScreenContent(
                                 )
                             }
                         },
+                        shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             unfocusedBorderColor = Color(0xffEBEBEB),
                             focusedLeadingIconColor = MaterialTheme.colorScheme.primary,

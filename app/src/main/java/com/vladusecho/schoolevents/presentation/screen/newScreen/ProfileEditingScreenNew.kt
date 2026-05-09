@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -180,6 +181,7 @@ fun ProfileEditingContent(
                         }
                     },
                 value = userClass.value,
+                shape = RoundedCornerShape(12.dp),
                 onValueChange = { userClass.value = it },
                 isError = !isClassValid && userClass.value.text.isNotEmpty(),
                 supportingText = {
@@ -237,6 +239,7 @@ fun ProfileEditingContent(
                     }
                 },
             value = userName.value,
+            shape = RoundedCornerShape(12.dp),
             onValueChange = { newValue ->
                 if (newValue.text.length <= 20) {
                     val formattedText = newValue.text.replaceFirstChar { char ->
@@ -285,7 +288,6 @@ fun ProfileEditingContent(
                     text = "Имя",
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Normal,
-                    fontSize = 16.sp,
                 )
             },
         )
@@ -302,6 +304,7 @@ fun ProfileEditingContent(
                     }
                 },
             value = userSurname.value,
+            shape = RoundedCornerShape(12.dp),
             onValueChange = { newValue ->
                 if (newValue.text.length <= 20) {
                     val formattedText = newValue.text.replaceFirstChar { char ->
@@ -350,7 +353,6 @@ fun ProfileEditingContent(
                     text = "Фамилия",
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Normal,
-                    fontSize = 16.sp,
                 )
             },
         )
@@ -366,6 +368,7 @@ fun ProfileEditingContent(
                         )
                     }
                 },
+            shape = RoundedCornerShape(12.dp),
             value = userEmail.value,
             onValueChange = { userEmail.value = it },
             isError = !isEmailValid && userEmail.value.text.isNotEmpty(),
@@ -408,7 +411,6 @@ fun ProfileEditingContent(
                     text = "Почта",
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Normal,
-                    fontSize = 16.sp,
                 )
             },
         )

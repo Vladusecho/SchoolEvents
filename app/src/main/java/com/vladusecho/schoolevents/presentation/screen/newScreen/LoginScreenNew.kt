@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -121,6 +122,7 @@ fun LoginScreenContent(
         Spacer(modifier = Modifier.height(40.dp))
         OutlinedTextField(
             value = email.value,
+            shape = RoundedCornerShape(12.dp),
             onValueChange = {
                 email.value = it
                 viewModel.clearErrors()
@@ -129,8 +131,7 @@ fun LoginScreenContent(
                 Text(
                     text = "Почта",
                     fontFamily = EventsFontFamily,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Normal
                 )
             },
             isError = emailError != null,
@@ -176,12 +177,12 @@ fun LoginScreenContent(
                 password.value = it
                 viewModel.clearErrors()
             },
+            shape = RoundedCornerShape(12.dp),
             label = {
                 Text(
                     text = "Пароль",
                     fontFamily = EventsFontFamily,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Normal
                 )
             },
             isError = passwordError != null,

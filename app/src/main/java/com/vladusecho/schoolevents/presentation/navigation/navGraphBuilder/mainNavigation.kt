@@ -8,13 +8,12 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.vladusecho.schoolevents.presentation.navigation.NavigationState
 import com.vladusecho.schoolevents.presentation.navigation.Screen
-import com.vladusecho.schoolevents.presentation.screen.EventDetailsScreen
-import com.vladusecho.schoolevents.presentation.screen.NewsDetailsScreen
 import com.vladusecho.schoolevents.presentation.screen.newScreen.EventCreationScreenNew
 import com.vladusecho.schoolevents.presentation.screen.newScreen.EventDetailsScreenNew
 import com.vladusecho.schoolevents.presentation.screen.newScreen.EventEditingScreenNew
 import com.vladusecho.schoolevents.presentation.screen.newScreen.MainScreenNew
 import com.vladusecho.schoolevents.presentation.screen.newScreen.NewsCreationScreenNew
+import com.vladusecho.schoolevents.presentation.screen.newScreen.NewsDetailsScreenNew
 import com.vladusecho.schoolevents.presentation.screen.newScreen.NewsEditingScreenNew
 import com.vladusecho.schoolevents.presentation.screen.newScreen.ParticipantsScreenNew
 import com.vladusecho.schoolevents.presentation.util.UserRole
@@ -84,7 +83,7 @@ fun NavGraphBuilder.mainNavigation(
         }
         composable<Screen.NewsDetails> { backStackEntry ->
             val args = backStackEntry.toRoute<Screen.NewsDetails>()
-            NewsDetailsScreen(
+            NewsDetailsScreenNew(
                 newsId = args.id,
                 onBackClick = { navigationState.navHostController.navigateUp() }
             )

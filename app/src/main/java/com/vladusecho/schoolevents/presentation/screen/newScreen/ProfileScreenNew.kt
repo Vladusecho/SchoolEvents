@@ -200,7 +200,8 @@ fun ProfileContent(
             }
         }
 
-        if (events.isEmpty()) {
+
+        if (events.isEmpty() && role != UserRole.DIRECTOR) {
             item {
                 Box(
                     modifier = Modifier.fillMaxWidth(),

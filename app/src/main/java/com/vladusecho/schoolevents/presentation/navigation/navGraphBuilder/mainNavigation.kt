@@ -8,13 +8,10 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.vladusecho.schoolevents.presentation.navigation.NavigationState
 import com.vladusecho.schoolevents.presentation.navigation.Screen
-import com.vladusecho.schoolevents.presentation.screen.EventCreationScreen
 import com.vladusecho.schoolevents.presentation.screen.EventDetailsScreen
-import com.vladusecho.schoolevents.presentation.screen.EventEditingScreen
-import com.vladusecho.schoolevents.presentation.screen.NewsCreationScreen
 import com.vladusecho.schoolevents.presentation.screen.NewsDetailsScreen
-import com.vladusecho.schoolevents.presentation.screen.NewsEditingScreen
 import com.vladusecho.schoolevents.presentation.screen.newScreen.EventCreationScreenNew
+import com.vladusecho.schoolevents.presentation.screen.newScreen.EventEditingScreenNew
 import com.vladusecho.schoolevents.presentation.screen.newScreen.MainScreenNew
 import com.vladusecho.schoolevents.presentation.screen.newScreen.NewsCreationScreenNew
 import com.vladusecho.schoolevents.presentation.screen.newScreen.ParticipantsScreenNew
@@ -68,7 +65,7 @@ fun NavGraphBuilder.mainNavigation(
         }
         composable<Screen.EventEditing> { backStackEntry ->
             val args = backStackEntry.toRoute<Screen.EventEditing>()
-            EventEditingScreen(
+            EventEditingScreenNew(
                 eventId = args.id,
                 onBackClick = { navigationState.navHostController.navigateUp() }
             )
@@ -92,10 +89,7 @@ fun NavGraphBuilder.mainNavigation(
         }
         composable<Screen.NewsEditing> { backStackEntry ->
             val args = backStackEntry.toRoute<Screen.NewsEditing>()
-            NewsEditingScreen(
-                newsId = args.id,
-                onBackClick = { navigationState.navHostController.navigateUp() }
-            )
+
         }
         composable<Screen.Participants> { backStackEntry ->
             val args = backStackEntry.toRoute<Screen.Participants>()

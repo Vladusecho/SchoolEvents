@@ -300,6 +300,11 @@ private fun Step1UI(
                 unfocusedBorderColor = Color(0xffEBEBEB)
             ),
             singleLine = true,
+            textStyle = TextStyle(
+                fontFamily = EventsFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp,
+            ),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
         )
 
@@ -316,7 +321,11 @@ private fun Step1UI(
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedBorderColor = Color(0xffEBEBEB),
             ),
-            textStyle = TextStyle(fontFamily = EventsFontFamily)
+            textStyle = TextStyle(
+                fontFamily = EventsFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp,
+            ),
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -517,7 +526,12 @@ private fun Step2UI(
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedBorderColor = Color(0xffEBEBEB)
             ),
-            singleLine = true
+            singleLine = true,
+            textStyle = TextStyle(
+                fontFamily = EventsFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp,
+            ),
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -536,7 +550,12 @@ private fun Step2UI(
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedBorderColor = Color(0xffEBEBEB)
             ),
-            singleLine = true
+            singleLine = true,
+            textStyle = TextStyle(
+                fontFamily = EventsFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp,
+            ),
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -562,7 +581,12 @@ private fun Step2UI(
                 disabledLabelColor = Color.Gray,
                 disabledTextColor = Color.Black,
                 disabledTrailingIconColor = Color.Black
-            )
+            ),
+            textStyle = TextStyle(
+                fontFamily = EventsFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp,
+            ),
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -588,7 +612,12 @@ private fun Step2UI(
                 disabledLabelColor = Color.Gray,
                 disabledTextColor = Color.Black,
                 disabledTrailingIconColor = Color.Black
-            )
+            ),
+            textStyle = TextStyle(
+                fontFamily = EventsFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp,
+            ),
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -609,6 +638,11 @@ private fun Step2UI(
                     )
                 }
             },
+            textStyle = TextStyle(
+                fontFamily = EventsFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp,
+            ),
             colors = OutlinedTextFieldDefaults.colors(
                 disabledBorderColor = Color(0xffEBEBEB),
                 disabledLabelColor = Color.Gray,

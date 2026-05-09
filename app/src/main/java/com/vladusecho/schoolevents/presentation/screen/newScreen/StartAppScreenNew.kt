@@ -85,7 +85,10 @@ fun StartAppContent(
         Spacer(modifier = Modifier.weight(1f))
         Button(
             onClick = onRegistrationClick,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xff008A00)
+            )
         ) {
             Text(
                 "Создать аккаунт",

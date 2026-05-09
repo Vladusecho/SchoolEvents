@@ -455,8 +455,8 @@ fun ProfileEditingContent(
                     )
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (isFormValid) Color.White else Color.White.copy(alpha = 0.5f),
-                    contentColor = if (isFormValid) Color.Black else Color.Black.copy(alpha = 0.5f)
+                    containerColor = if (isFormValid) Color(0xff008A00) else Color.White.copy(alpha = 0.5f),
+                    contentColor = if (isFormValid) Color.White else Color.Black.copy(alpha = 0.5f)
                 ),
                 border = BorderStroke(1.dp, Color(0xffEBEBEB))
             ) {

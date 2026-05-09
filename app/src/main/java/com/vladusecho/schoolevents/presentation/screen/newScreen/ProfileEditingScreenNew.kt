@@ -32,27 +32,33 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.isDigitsOnly
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.vladusecho.schoolevents.R
 import com.vladusecho.schoolevents.domain.entity.Profile
 import com.vladusecho.schoolevents.presentation.screen.UserRole
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
+import com.vladusecho.schoolevents.presentation.viewModel.EditingProfileViewModel
 
 @Composable
 fun ProfileEditingScreenNew(
     modifier: Modifier = Modifier,
+    viewModel: EditingProfileViewModel = hiltViewModel(),
     profile: Profile,
     onBackClick: () -> Unit
 ) {
@@ -60,7 +66,10 @@ fun ProfileEditingScreenNew(
     ProfileEditingContent(
         profile = profile,
         onSaveClick = { newProfile ->
-
+            viewModel.processCommand(
+                EditingProfileViewModel.EditingProfileCommand.SaveProfile(newProfile)
+            )
+            onBackClick()
         },
         onBackClick = onBackClick
     )
@@ -74,10 +83,10 @@ fun ProfileEditingContent(
     onBackClick: () -> Unit
 ) {
 
-    val userClass = remember { mutableStateOf(profile.classNumber) }
-    val userName = remember { mutableStateOf(profile.name) }
-    val userSurname = remember { mutableStateOf(profile.surname) }
-    val userEmail = remember { mutableStateOf(profile.email) }
+    val userClass = remember { mutableStateOf(TextFieldValue(profile.classNumber)) }
+    val userName = remember { mutableStateOf(TextFieldValue(profile.name)) }
+    val userSurname = remember { mutableStateOf(TextFieldValue(profile.surname)) }
+    val userEmail = remember { mutableStateOf(TextFieldValue(profile.email)) }
 
     val selectedImageUri = remember { mutableStateOf<Uri?>(null) }
 
@@ -92,7 +101,8 @@ fun ProfileEditingContent(
 
     Column(
         modifier = modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .background(Color.White),
     ) {
         Spacer(modifier = Modifier.height(64.dp))
         Text(
@@ -138,8 +148,15 @@ fun ProfileEditingContent(
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                value = if (!userClass.value.isDigitsOnly()) "" else userClass.value,
+                    .padding(horizontal = 16.dp)
+                    .onFocusChanged { focusState ->
+                        if (focusState.isFocused) {
+                            userClass.value = userClass.value.copy(
+                                selection = TextRange(0, userClass.value.text.length)
+                            )
+                        }
+                    },
+                value = userClass.value,
                 onValueChange = { userClass.value = it },
                 leadingIcon = {
                     Icon(
@@ -149,7 +166,8 @@ fun ProfileEditingContent(
                 },
                 suffix = {
                     Text(
-                        text = "класс"
+                        text = "класс",
+                        fontFamily = EventsFontFamily
                     )
                 },
                 singleLine = true,
@@ -177,7 +195,14 @@ fun ProfileEditingContent(
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = 16.dp)
+                .onFocusChanged { focusState ->
+                    if (focusState.isFocused) {
+                        userName.value = userName.value.copy(
+                            selection = TextRange(0, userName.value.text.length)
+                        )
+                    }
+                },
             value = userName.value,
             onValueChange = { userName.value = it },
             leadingIcon = {
@@ -205,12 +230,27 @@ fun ProfileEditingContent(
                     focusManager.moveFocus(FocusDirection.Down)
                 }
             ),
+            label = {
+                Text(
+                    text = "Имя",
+                    fontFamily = EventsFontFamily,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 16.sp,
+                )
+            },
         )
         Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = 16.dp)
+                .onFocusChanged { focusState ->
+                    if (focusState.isFocused) {
+                        userSurname.value = userSurname.value.copy(
+                            selection = TextRange(0, userSurname.value.text.length)
+                        )
+                    }
+                },
             value = userSurname.value,
             onValueChange = { userSurname.value = it },
             leadingIcon = {
@@ -238,12 +278,27 @@ fun ProfileEditingContent(
                     focusManager.moveFocus(FocusDirection.Down)
                 }
             ),
+            label = {
+                Text(
+                    text = "Фамилия",
+                    fontFamily = EventsFontFamily,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 16.sp,
+                )
+            },
         )
         Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = 16.dp)
+                .onFocusChanged { focusState ->
+                    if (focusState.isFocused) {
+                        userEmail.value = userEmail.value.copy(
+                            selection = TextRange(0, userEmail.value.text.length)
+                        )
+                    }
+                },
             value = userEmail.value,
             onValueChange = { userEmail.value = it },
             leadingIcon = {
@@ -267,10 +322,18 @@ fun ProfileEditingContent(
                 imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(
-                onNext = {
+                onDone = {
                     focusManager.clearFocus()
                 }
             ),
+            label = {
+                Text(
+                    text = "Почта",
+                    fontFamily = EventsFontFamily,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 16.sp,
+                )
+            },
         )
         Spacer(modifier = Modifier.height(24.dp))
         Row(
@@ -296,16 +359,18 @@ fun ProfileEditingContent(
                     fontSize = 14.sp
                 )
             }
+            Spacer(modifier = Modifier.size(8.dp))
             Button(
                 modifier = Modifier
                     .weight(1f),
                 onClick = {
                     onSaveClick(
                         profile.copy(
-                            name = userName.value,
-                            surname = userSurname.value,
-                            email = userEmail.value,
-                            classNumber = userClass.value
+                            name = userName.value.text,
+                            surname = userSurname.value.text,
+                            email = userEmail.value.text,
+                            classNumber = userClass.value.text,
+                            imageUrl = selectedImageUri.value?.toString() ?: profile.imageUrl
                         )
                     )
                 },

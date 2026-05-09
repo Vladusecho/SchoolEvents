@@ -17,6 +17,7 @@ import com.vladusecho.schoolevents.presentation.screen.NewsDetailsScreen
 import com.vladusecho.schoolevents.presentation.screen.NewsEditingScreen
 import com.vladusecho.schoolevents.presentation.screen.ParticipantsScreen
 import com.vladusecho.schoolevents.presentation.screen.UserRole
+import com.vladusecho.schoolevents.presentation.screen.newScreen.MainScreenNew
 import com.vladusecho.schoolevents.presentation.viewModel.AuthViewModel
 
 fun NavGraphBuilder.mainNavigation(
@@ -29,7 +30,7 @@ fun NavGraphBuilder.mainNavigation(
             val authViewModel: AuthViewModel = hiltViewModel()
             val userRole = authViewModel.userRole.collectAsState().value
 
-            MainScreen(
+            MainScreenNew(
                 onEventClick = { eventId: Int ->
                     if (userRole == UserRole.STUDENT || userRole == UserRole.DIRECTOR) {
                         navigationState.navigateToDetail(eventId)

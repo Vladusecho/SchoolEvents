@@ -5,18 +5,21 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,9 +30,12 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -79,7 +85,7 @@ class MainActivity : ComponentActivity() {
 
                             if (showBottomBar) {
                                 EventsNavigationBottom(
-                                    navState, userRole
+                                    navState = navState, userRole = userRole
                                 )
                             }
 
@@ -119,6 +125,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun EventsNavigationBottom(
+    modifier: Modifier = Modifier,
     navState: NavigationState,
     userRole: UserRole
 ) {
@@ -148,44 +155,56 @@ fun EventsNavigationBottom(
         UserRole.DIRECTOR -> directorNavItems
     }
 
-    NavigationBar(
-        containerColor = MaterialTheme.colorScheme.primary,
-        modifier = Modifier
+    Box(
+        modifier = modifier
+            .padding(horizontal = 24.dp)
+            .padding(bottom = 60.dp)
             .fillMaxWidth()
-            .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
+            .height(64.dp)
     ) {
-        currentNavItems.forEach { navItem ->
+        Row(
+            modifier = Modifier
+                .shadow(2.dp, RoundedCornerShape(50))
+                .clip(RoundedCornerShape(50))
+                .background(MaterialTheme.colorScheme.background)
+                .fillMaxSize(),
+        ) {
+            currentNavItems.forEach { tab ->
+                // Check if current route matches main screen or any related sub-screens
+                val isSelected =
+                    navBackStackEntry?.destination?.hierarchy?.any {
+                        it.hasRoute(tab.screen::class)
+                    } ?: false
 
-            val isSelected =
-                navBackStackEntry?.destination?.hierarchy?.any {
-                    it.hasRoute(navItem.screen::class)
-                } ?: false
-
-            // Delete default ripple indication
-            CompositionLocalProvider(LocalRippleConfiguration provides null) {
-                NavigationBarItem(
-                    selected = false,
-                    onClick = {
-                        navState.navigateToTab(navItem.screen)
-                    },
-                    icon = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .clip(RoundedCornerShape(50))
+                        .weight(1f)
+                        .background(if (isSelected) Color(0xffF0F5F9) else MaterialTheme.colorScheme.background)
+                        .clickable {
+                            navState.navigateToTab(tab.screen)
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                    ) {
                         Icon(
-                            painter = painterResource(navItem.iconId),
-                            "",
-                            modifier = Modifier.offset(y = (5.dp)),
-                            tint = if (isSelected) Color.White else Color.White.copy(alpha = 0.5f)
+                            imageVector = ImageVector.vectorResource(tab.iconId),
+                            contentDescription = "tab",
+                            tint = MaterialTheme.colorScheme.secondary,
+                            modifier = Modifier.size(22.dp)
                         )
-                    },
-                    label = {
                         Text(
-                            text = navItem.title,
+                            text = tab.title,
                             fontFamily = EventsFontFamily,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp,
-                            color = if (isSelected) Color.White else Color.White.copy(alpha = 0.5f)
+                            fontSize = 11.sp,
                         )
                     }
-                )
+                }
             }
         }
     }

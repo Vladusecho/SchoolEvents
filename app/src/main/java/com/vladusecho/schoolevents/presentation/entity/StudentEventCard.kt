@@ -56,7 +56,6 @@ fun StudentEventCard(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(8.dp)
             .shadow(2.dp, RoundedCornerShape(20.dp)),
     ) {
         Column(

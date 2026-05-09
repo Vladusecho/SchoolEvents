@@ -55,11 +55,13 @@ fun FavouriteScreenNew(
                 }
             )
         }
+
         is FavouriteViewModel.FavouriteState.Error -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(text = currentState.message, color = Color.Red)
             }
         }
+
         FavouriteViewModel.FavouriteState.Initial -> {}
         FavouriteViewModel.FavouriteState.Loading -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -83,15 +85,22 @@ fun FavouriteScreenContent(
             .background(Color.White)
     ) {
         item {
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+            Column(modifier = Modifier) {
                 Spacer(modifier = Modifier.height(64.dp))
                 Text(
                     text = "Избранное",
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Bold,
                     fontSize = 30.sp,
+                    modifier = Modifier.padding(horizontal = 16.dp)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
+                Spacer(
+                    modifier = Modifier
+                        .height(8.dp)
+                        .fillMaxWidth()
+                        .background(Color(0xffEBEBEB))
+                )
             }
         }
 

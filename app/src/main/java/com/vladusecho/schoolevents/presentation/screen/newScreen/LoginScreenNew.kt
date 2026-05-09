@@ -165,6 +165,7 @@ fun LoginScreenContent(
                 )
             },
             colors = OutlinedTextFieldDefaults.colors(
+                unfocusedBorderColor = Color(0xffEBEBEB),
                 focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
                 unfocusedLeadingIconColor = Color.Black
             )
@@ -228,6 +229,7 @@ fun LoginScreenContent(
                 )
             },
             colors = OutlinedTextFieldDefaults.colors(
+                unfocusedBorderColor = Color(0xffEBEBEB),
                 focusedTrailingIconColor = MaterialTheme.colorScheme.primary,
                 unfocusedTrailingIconColor = Color.Black,
                 focusedLeadingIconColor = MaterialTheme.colorScheme.primary,

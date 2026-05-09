@@ -16,6 +16,7 @@ import com.vladusecho.schoolevents.presentation.screen.ParticipantsScreen
 import com.vladusecho.schoolevents.presentation.screen.ProfileEditingScreen
 import com.vladusecho.schoolevents.presentation.screen.ProfileScreen
 import com.vladusecho.schoolevents.presentation.screen.UserRole
+import com.vladusecho.schoolevents.presentation.screen.newScreen.ProfileEditingScreenNew
 import com.vladusecho.schoolevents.presentation.screen.newScreen.ProfileScreenNew
 import com.vladusecho.schoolevents.presentation.viewModel.AuthViewModel
 import kotlin.reflect.typeOf
@@ -66,7 +67,7 @@ fun NavGraphBuilder.profileNavigation(
             )
         ) { backStackEntry ->
             val args = backStackEntry.toRoute<Screen.ProfileEditing>()
-            ProfileEditingScreen(
+            ProfileEditingScreenNew(
                 onBackClick = {
                     navigationState.navHostController.navigateUp()
                 },

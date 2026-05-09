@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.core.net.toUri
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.vladusecho.schoolevents.data.local.EventsAppDao
-import com.vladusecho.schoolevents.data.mapper.toEventEntity
 import com.vladusecho.schoolevents.data.mapper.toNewsEntity
 import com.vladusecho.schoolevents.data.mapper.toNewsEntityListFlow
 import com.vladusecho.schoolevents.data.mapper.toNewsModel
@@ -66,5 +65,9 @@ class NewsRepositoryImpl @Inject constructor(
         return uris.map { uri ->
             if (uri.startsWith("/")) uri else saveImageToInternalStorage(uri)
         }
+    }
+
+    override suspend fun deleteNews(newsId: Int) {
+        dao.deleteNews(newsId)
     }
 }

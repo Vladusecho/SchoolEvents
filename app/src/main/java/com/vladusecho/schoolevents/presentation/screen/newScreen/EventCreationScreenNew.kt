@@ -367,7 +367,8 @@ private fun Step1UI(
                                     .background(Color.Black.copy(alpha = 0.5f), CircleShape)
                             ) {
                                 Text(
-                                    text = "X"
+                                    text = "X",
+                                    color = Color.White
                                 )
                             }
                         }

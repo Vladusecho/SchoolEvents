@@ -14,6 +14,7 @@ import com.vladusecho.schoolevents.presentation.screen.newScreen.EventCreationSc
 import com.vladusecho.schoolevents.presentation.screen.newScreen.EventEditingScreenNew
 import com.vladusecho.schoolevents.presentation.screen.newScreen.MainScreenNew
 import com.vladusecho.schoolevents.presentation.screen.newScreen.NewsCreationScreenNew
+import com.vladusecho.schoolevents.presentation.screen.newScreen.NewsEditingScreenNew
 import com.vladusecho.schoolevents.presentation.screen.newScreen.ParticipantsScreenNew
 import com.vladusecho.schoolevents.presentation.util.UserRole
 import com.vladusecho.schoolevents.presentation.viewModel.AuthViewModel
@@ -89,7 +90,10 @@ fun NavGraphBuilder.mainNavigation(
         }
         composable<Screen.NewsEditing> { backStackEntry ->
             val args = backStackEntry.toRoute<Screen.NewsEditing>()
-
+            NewsEditingScreenNew(
+                newsId = args.id,
+                onBackClick = { navigationState.navHostController.navigateUp() }
+            )
         }
         composable<Screen.Participants> { backStackEntry ->
             val args = backStackEntry.toRoute<Screen.Participants>()

@@ -312,7 +312,7 @@ private fun Step1EditingUI(
 ) {
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Text(
-            text = "Редактирование ивента",
+            text = "Редактирование",
             fontFamily = EventsFontFamily,
             fontWeight = FontWeight.Bold,
             fontSize = 30.sp,
@@ -404,7 +404,8 @@ private fun Step1EditingUI(
                                     .background(Color.Black.copy(alpha = 0.5f), CircleShape)
                             ) {
                                 Text(
-                                    text = "X"
+                                    text = "X",
+                                    color = Color.White
                                 )
                             }
                         }

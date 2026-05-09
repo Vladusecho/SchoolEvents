@@ -4,12 +4,14 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -57,42 +59,49 @@ import com.vladusecho.schoolevents.R
 import com.vladusecho.schoolevents.domain.entity.News
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
-import com.vladusecho.schoolevents.presentation.viewModel.NewsCreationViewModel
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import com.vladusecho.schoolevents.presentation.viewModel.NewsEditingViewModel
 
 @Composable
-fun NewsCreationScreenNew(
+fun NewsEditingScreenNew(
     modifier: Modifier = Modifier,
-    viewModel: NewsCreationViewModel = hiltViewModel(),
+    newsId: Int,
+    viewModel: NewsEditingViewModel = hiltViewModel(
+        creationCallback = { factory: NewsEditingViewModel.Factory ->
+            factory.create(newsId)
+        }
+    ),
     onBackClick: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
 
     LaunchedEffect(state) {
-        if (state is NewsCreationViewModel.NewsCreationState.Saved) {
+        if (state is NewsEditingViewModel.NewsEditingState.Saved) {
             onBackClick()
         }
     }
 
     when (val currentState = state) {
-        is NewsCreationViewModel.NewsCreationState.Content -> {
-            NewsCreationContent(
+        is NewsEditingViewModel.NewsEditingState.Content -> {
+            NewsEditingContent(
+                news = currentState.news,
                 onBackClick = onBackClick,
-                onSaveClick = { news, uris ->
-                    viewModel.createNews(news, uris)
+                onSaveClick = { updatedNews, uris ->
+                    viewModel.updateNews(updatedNews, uris)
+                },
+                onDeleteClick = {
+                    viewModel.deleteNews()
                 }
             )
         }
 
-        is NewsCreationViewModel.NewsCreationState.Error -> {
+        is NewsEditingViewModel.NewsEditingState.Error -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(text = currentState.message, color = Color.Red, fontFamily = EventsFontFamily)
             }
         }
 
-        NewsCreationViewModel.NewsCreationState.Initial -> {
+        NewsEditingViewModel.NewsEditingState.Initial,
+        NewsEditingViewModel.NewsEditingState.Loading -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
@@ -103,13 +112,15 @@ fun NewsCreationScreenNew(
 }
 
 @Composable
-private fun NewsCreationContent(
+private fun NewsEditingContent(
+    news: News,
     onBackClick: () -> Unit,
-    onSaveClick: (News, List<String>) -> Unit
+    onSaveClick: (News, List<String>) -> Unit,
+    onDeleteClick: () -> Unit
 ) {
-    var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var selectedImageUris by remember { mutableStateOf<List<Uri>>(emptyList()) }
+    var title by remember { mutableStateOf(news.title) }
+    var description by remember { mutableStateOf(news.description) }
+    var selectedImageUris by remember { mutableStateOf<List<Uri>>(news.imageUrls.map { Uri.parse(it) }) }
 
     val imagePicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(),
@@ -134,14 +145,34 @@ private fun NewsCreationContent(
             ) {
                 item {
                     Spacer(modifier = Modifier.height(64.dp))
-                    IconButton(
-                        onClick = onBackClick,
-                        modifier = Modifier.padding(horizontal = 8.dp)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_back),
-                            contentDescription = null
-                        )
+                        IconButton(onClick = onBackClick) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_back),
+                                contentDescription = null
+                            )
+                        }
+
+                        Button(
+                            onClick = onDeleteClick,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.White,
+                                contentColor = Color.Red
+                            ),
+                            border = BorderStroke(1.dp, Color(0xffEBEBEB))
+                        ) {
+                            Text(
+                                text = "Удалить новость",
+                                fontFamily = EventsFontFamily,
+                                fontSize = 14.sp
+                            )
+                        }
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                 }
@@ -149,14 +180,14 @@ private fun NewsCreationContent(
                 item {
                     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                         Text(
-                            text = "Детали новости",
+                            text = "Редактирование",
                             fontFamily = EventsFontFamily,
                             fontWeight = FontWeight.Bold,
                             fontSize = 30.sp,
                             color = Color.Black
                         )
                         Text(
-                            text = "Опубликуйте свою новость, указав детали ниже",
+                            text = "Отредактируйте все необходимые поля",
                             fontFamily = EventsFontFamily,
                             fontSize = 16.sp,
                             color = Color.Gray,
@@ -173,13 +204,13 @@ private fun NewsCreationContent(
                             colors = OutlinedTextFieldDefaults.colors(
                                 unfocusedBorderColor = Color(0xffEBEBEB),
                             ),
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                             textStyle = TextStyle(
                                 fontFamily = EventsFontFamily,
                                 fontWeight = FontWeight.Normal,
                                 fontSize = 16.sp,
                             ),
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
                         )
 
                         Spacer(modifier = Modifier.height(16.dp))
@@ -190,7 +221,7 @@ private fun NewsCreationContent(
                             label = { Text("Описание новости *", fontFamily = EventsFontFamily) },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(150.dp),
+                                .height(200.dp),
                             shape = RoundedCornerShape(12.dp),
                             colors = OutlinedTextFieldDefaults.colors(
                                 unfocusedBorderColor = Color(0xffEBEBEB)
@@ -252,7 +283,7 @@ private fun NewsCreationContent(
                                             ) {
                                                 Text(
                                                     text = "X",
-                                                    color = Color.White
+                                                    color =  Color.White
                                                 )
                                             }
                                         }
@@ -293,7 +324,7 @@ private fun NewsCreationContent(
                                     )
                                     Spacer(modifier = Modifier.height(8.dp))
                                     Text(
-                                        text = "Загрузить фотографии *",
+                                        text = "Обновите фотографии *",
                                         modifier = Modifier.padding(
                                             horizontal = 16.dp,
                                             vertical = 8.dp
@@ -318,14 +349,11 @@ private fun NewsCreationContent(
                     Button(
                         onClick = {
                             if (isFormValid) {
-                                val currentDate =
-                                    SimpleDateFormat("d MMMM", Locale.getDefault()).format(Date())
                                 onSaveClick(
-                                    News(
+                                    news.copy(
                                         title = title,
                                         description = description,
-                                        imageUrls = selectedImageUris.map { it.toString() },
-                                        date = currentDate
+                                        imageUrls = selectedImageUris.map { it.toString() }
                                     ),
                                     selectedImageUris.map { it.toString() }
                                 )
@@ -343,7 +371,7 @@ private fun NewsCreationContent(
                         enabled = isFormValid
                     ) {
                         Text(
-                            text = "Опубликовать",
+                            text = "Сохранить",
                             fontFamily = EventsFontFamily,
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp
@@ -365,8 +393,19 @@ private fun NewsCreationContent(
 
 @Preview(showBackground = true)
 @Composable
-private fun PreviewNewsCreation() {
+private fun PreviewNewsEditing() {
     SchoolEventsTheme {
-        NewsCreationContent(onBackClick = {}, onSaveClick = { _, _ -> })
+        val mockNews = News(
+            id = 1,
+            title = "Mock News",
+            description = "Mock description",
+            imageUrls = emptyList(),
+            date = "10 июня"
+        )
+        NewsEditingContent(
+            news = mockNews,
+            onBackClick = {},
+            onSaveClick = { _, _ -> },
+            onDeleteClick = {})
     }
 }

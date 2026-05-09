@@ -7,56 +7,111 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.vladusecho.schoolevents.R
 import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.domain.entity.News
 import com.vladusecho.schoolevents.presentation.activity.LocalUserRole
 import com.vladusecho.schoolevents.presentation.entity.NewsCard
 import com.vladusecho.schoolevents.presentation.entity.StudentEventCard
+import com.vladusecho.schoolevents.presentation.screen.UserRole
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
+import com.vladusecho.schoolevents.presentation.viewModel.MainViewModel
 
 @Composable
 fun MainScreenNew(
     modifier: Modifier = Modifier,
+    viewModel: MainViewModel = hiltViewModel(),
     onEventClick: (eventId: Int) -> Unit,
     onListClick: (eventId: Int) -> Unit,
     onNewsClick: (newsId: Int) -> Unit,
     onAddEventClick: () -> Unit,
     onAddNewsClick: () -> Unit,
 ) {
+    val state by viewModel.state.collectAsState()
+    val selectedTab by viewModel.selectedTab.collectAsState()
 
-    val userRole = LocalUserRole.current
+    when (val currentState = state) {
+        is MainViewModel.MainState.Content -> {
+            MainScreenContent(
+                events = currentState.events,
+                news = currentState.news,
+                selectedTab = selectedTab,
+                onTabClick = { viewModel.selectTab(it) },
+                onEventClick = onEventClick,
+                onListClick = onListClick,
+                onNewsClick = onNewsClick,
+                onFavouriteClick = { isFavourite, eventId ->
+                    viewModel.processCommand(
+                        MainViewModel.MainCommand.SwitchFavouriteStatus(
+                            isFavourite = isFavourite,
+                            eventId = eventId
+                        )
+                    )
+                },
+                onAddEventClick = onAddEventClick,
+                onAddNewsClick = onAddNewsClick
+            )
+        }
 
-    MainScreenContent()
+        is MainViewModel.MainState.Error -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(text = currentState.message, color = Color.Red)
+            }
+        }
+
+        MainViewModel.MainState.Initial -> {}
+        MainViewModel.MainState.Loading -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+            }
+        }
+    }
 }
 
 @Composable
-fun MainScreenContent() {
-    val newsList = remember { List(1) { index ->
-        News(id = index, title = "Новость #$index", description = "Описание...", imageUrls = listOf(""), date = "12.02.2023")
-    } }
+fun MainScreenContent(
+    events: List<Event>,
+    news: List<News>,
+    selectedTab: MainViewModel.MainTab,
+    onTabClick: (MainViewModel.MainTab) -> Unit,
+    onEventClick: (eventId: Int) -> Unit,
+    onListClick: (eventId: Int) -> Unit,
+    onNewsClick: (newsId: Int) -> Unit,
+    onFavouriteClick: (Boolean, Int) -> Unit,
+    onAddEventClick: () -> Unit,
+    onAddNewsClick: () -> Unit,
+
+    ) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -65,38 +120,97 @@ fun MainScreenContent() {
         item {
             MainTitle(
                 text = "Главная лента",
+                selectedTab = selectedTab,
+                onTabClick = onTabClick
             )
             Spacer(modifier = Modifier.height(8.dp))
         }
-        item {
-            MainEvents()
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-        item {
-            MainNews()
-        }
-        items(newsList) { newsItem ->
-            Box(
-                modifier = Modifier
-                    .background(Color.White)
-                    .padding(horizontal = 16.dp, vertical = 8.dp))
-            {
-                NewsCard(news = newsItem)
+
+        when (selectedTab) {
+            MainViewModel.MainTab.DISCOVER -> {
+                item {
+                    MainEventsRow(
+                        events = events,
+                        onEventClick = onEventClick,
+                        onListClick = onListClick,
+                        onFavouriteClick = onFavouriteClick,
+                        onAddEventClick = onAddEventClick
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+                item {
+                    MainNewsHeader(
+                        onAddNewsClick = onAddNewsClick
+                    )
+                }
+                items(news, key = { it.id }) { newsItem ->
+                    Box(
+                        modifier = Modifier
+                            .background(Color.White)
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                    ) {
+                        NewsCard(news = newsItem, onNewsClick = onNewsClick)
+                    }
+                }
+            }
+
+            MainViewModel.MainTab.NEWS -> {
+                item {
+                    MainNewsHeader(
+                        onAddNewsClick = onAddNewsClick
+                    )
+                }
+                items(news, key = { it.id }) { newsItem ->
+                    Box(
+                        modifier = Modifier
+                            .background(Color.White)
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                    ) {
+                        NewsCard(news = newsItem, onNewsClick = onNewsClick)
+                    }
+                }
+            }
+
+            MainViewModel.MainTab.EVENTS -> {
+                item {
+                    MainEventsHeader(
+                        onAddEventClick = onAddEventClick
+                    )
+                }
+                items(events, key = { it.id }) { event ->
+                    Box(
+                        modifier = Modifier
+                            .background(Color.White)
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                    ) {
+                        StudentEventCard(
+                            event = event,
+                            onEventClick = onEventClick,
+                            onListClick = onListClick,
+                            onFavouriteClick = onFavouriteClick
+                        )
+                    }
+                }
             }
         }
+
         item {
-            Spacer(modifier = Modifier
-                .background(Color.White)
-                .height(136.dp)
+            Spacer(
+                modifier = Modifier
+                    .background(Color.White)
+                    .height(136.dp)
+                    .fillMaxWidth()
             )
         }
     }
 }
 
 @Composable
-fun MainNews(
-    modifier: Modifier = Modifier
+fun MainNewsHeader(
+    modifier: Modifier = Modifier,
+    onAddNewsClick: () -> Unit
 ) {
+    val userRole = LocalUserRole.current
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -104,73 +218,113 @@ fun MainNews(
             .padding(horizontal = 16.dp),
     ) {
         Spacer(modifier = Modifier.height(24.dp))
-        Text(
-            text = "Последние новости",
-            fontFamily = EventsFontFamily,
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp,
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Последние новости",
+                fontFamily = EventsFontFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+            )
+            if (userRole == UserRole.ORGANIZER) {
+                IconButton(onAddNewsClick) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_plus_circle),
+                        contentDescription = null,
+                    )
+                }
+            }
+        }
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
 @Composable
-fun MainEvents(
-    modifier: Modifier = Modifier
+fun MainEventsHeader(
+    modifier: Modifier = Modifier,
+    onAddEventClick: () -> Unit
 ) {
+    val userRole = LocalUserRole.current
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(Color.White)
+            .padding(horizontal = 16.dp),
+    ) {
+        Spacer(modifier = Modifier.height(24.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Последние мероприятия",
+                fontFamily = EventsFontFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+            )
+            if (userRole == UserRole.ORGANIZER) {
+                IconButton(onAddEventClick) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_plus_circle),
+                        contentDescription = null,
+                    )
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+@Composable
+fun MainEventsRow(
+    modifier: Modifier = Modifier,
+    events: List<Event>,
+    onEventClick: (eventId: Int) -> Unit,
+    onListClick: (eventId: Int) -> Unit,
+    onFavouriteClick: (Boolean, Int) -> Unit,
+    onAddEventClick: () -> Unit
+) {
+    val userRole = LocalUserRole.current
     Column(
         modifier = modifier
             .fillMaxWidth()
             .background(Color.White)
     ) {
         Spacer(modifier = Modifier.height(24.dp))
-        Text(
-            text = "Последние мероприятия",
-            fontFamily = EventsFontFamily,
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp,
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Последние мероприятия",
+                fontFamily = EventsFontFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+            if (userRole == UserRole.ORGANIZER) {
+                IconButton(onAddEventClick) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_plus_circle),
+                        contentDescription = null,
+                    )
+                }
+            }
+        }
         Spacer(modifier = Modifier.height(16.dp))
         LazyRow(
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            item {
+            items(events, key = { it.id }) { event ->
                 StudentEventCard(
-                    event = Event(
-                        id = 1,
-                        title = "Концерт 5opka в нашей школе!",
-                        description = "Описание...",
-                        eventAddress = "ул. Ленина, д.80",
-                        eventPlace = "Актовый зал",
-                        eventDate = "10 июня",
-                        eventDuration = "8:00 - 13:00",
-                        isArchived = false,
-                        isFavourite = false,
-                        isSubscribed = false,
-                        creatorEmail = "",
-                        imageUrls = emptyList()
-                    )
-                ) { }
-            }
-            item {
-                StudentEventCard(
-                    event = Event(
-                        id = 1,
-                        title = "Концерт 5opka в нашей школе!",
-                        description = "Описание...",
-                        eventAddress = "ул. Ленина, д.80",
-                        eventPlace = "Актовый зал",
-                        eventDate = "10 июня",
-                        eventDuration = "8:00 - 13:00",
-                        isArchived = false,
-                        isFavourite = false,
-                        isSubscribed = false,
-                        creatorEmail = "",
-                        imageUrls = emptyList()
-                    )
-                ) { }
+                    modifier = Modifier.width(280.dp),
+                    event = event,
+                    onEventClick = onEventClick,
+                    onListClick = onListClick,
+                    onFavouriteClick = onFavouriteClick
+                )
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -180,11 +334,11 @@ fun MainEvents(
 @Composable
 fun MainTitle(
     modifier: Modifier = Modifier,
-    text: String
+    text: String,
+    selectedTab: MainViewModel.MainTab,
+    onTabClick: (MainViewModel.MainTab) -> Unit
 ) {
-
-    val tabsEnumEntries = MainTabs.entries
-    var selectedTab by remember { mutableStateOf(MainTabs.DISCOVER) }
+    val tabsEnumEntries = MainViewModel.MainTab.entries
 
     Column(
         modifier = modifier
@@ -208,7 +362,7 @@ fun MainTitle(
                     MainTab(
                         text = it.title,
                         isSelected = it == selectedTab,
-                        onTabClick = { selectedTab = it }
+                        onTabClick = { onTabClick(it) }
                     )
                 }
             }
@@ -244,16 +398,21 @@ fun MainTab(
     }
 }
 
-enum class MainTabs(val title: String) {
-    DISCOVER("Все"),
-    NEWS("Новости"),
-    EVENTS("Ивенты")
-}
-
 @Composable
 @Preview
 fun MainPreview() {
     SchoolEventsTheme() {
-        MainScreenContent()
+        MainScreenContent(
+            events = emptyList(),
+            news = emptyList(),
+            selectedTab = MainViewModel.MainTab.DISCOVER,
+            onTabClick = {},
+            onEventClick = {},
+            onListClick = {},
+            onNewsClick = {},
+            onFavouriteClick = { _, _ -> },
+            onAddEventClick = {},
+            onAddNewsClick = {}
+        )
     }
 }

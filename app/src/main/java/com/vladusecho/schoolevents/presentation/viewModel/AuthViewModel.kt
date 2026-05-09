@@ -13,7 +13,7 @@ import com.vladusecho.schoolevents.domain.usecase.auth.SetCurrentUserRoleUseCase
 import com.vladusecho.schoolevents.domain.usecase.profile.GetProfileByEmailUseCase
 import com.vladusecho.schoolevents.domain.usecase.profile.SaveProfileUseCase
 import com.vladusecho.schoolevents.domain.usecase.profile.SetCurrentUserEmailUseCase
-import com.vladusecho.schoolevents.presentation.screen.UserRole
+import com.vladusecho.schoolevents.presentation.util.UserRole
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

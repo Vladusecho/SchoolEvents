@@ -47,6 +47,7 @@ import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.domain.entity.EventStatus
 import com.vladusecho.schoolevents.presentation.activity.LocalUserRole
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
+import com.vladusecho.schoolevents.presentation.util.UserRole
 import com.vladusecho.schoolevents.presentation.viewModel.EventDetailsViewModel
 
 @Composable
@@ -405,7 +406,7 @@ fun EventDetailsContent(
                         )
                     }
                 }
-            } else if (userRole == UserRole.STUDENT){
+            } else if (userRole == UserRole.STUDENT) {
                 Row(
                     modifier = Modifier
                         .padding(start = 16.dp, end = 16.dp, top = 32.dp)

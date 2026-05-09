@@ -5,7 +5,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.vladusecho.schoolevents.presentation.navigation.NavigationState
 import com.vladusecho.schoolevents.presentation.navigation.Screen
-import com.vladusecho.schoolevents.presentation.screen.RegistrationScreen
 import com.vladusecho.schoolevents.presentation.screen.newScreen.LoginScreenNew
 import com.vladusecho.schoolevents.presentation.screen.newScreen.RegistrationScreenNew
 import com.vladusecho.schoolevents.presentation.screen.newScreen.StartAppScreenNew

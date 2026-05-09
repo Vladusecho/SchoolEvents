@@ -47,9 +47,9 @@ import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.domain.entity.Profile
 import com.vladusecho.schoolevents.presentation.activity.LocalUserRole
 import com.vladusecho.schoolevents.presentation.entity.StudentEventCard
-import com.vladusecho.schoolevents.presentation.screen.UserRole
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
+import com.vladusecho.schoolevents.presentation.util.UserRole
 import com.vladusecho.schoolevents.presentation.viewModel.ProfileViewModel
 
 @Composable
@@ -137,7 +137,9 @@ fun ProfileContent(
             Column() {
                 Spacer(modifier = Modifier.height(64.dp))
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -256,7 +258,8 @@ fun UserProfile(
     ) {
         Spacer(modifier = Modifier.height(16.dp))
         Row(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -291,13 +294,15 @@ fun UserProfile(
         Spacer(modifier = Modifier.height(16.dp))
         if (profile.role == UserRole.STUDENT.label) {
             UserAttendance(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 attendedCount = attendedCount.toString(),
             )
             Spacer(modifier = Modifier.height(8.dp))
             UserAttendance(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 absentCount = absentCount.toString(),
             )

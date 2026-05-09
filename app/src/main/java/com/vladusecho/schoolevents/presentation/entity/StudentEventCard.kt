@@ -36,9 +36,9 @@ import com.vladusecho.schoolevents.R
 import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.domain.entity.EventStatus
 import com.vladusecho.schoolevents.presentation.activity.LocalUserRole
-import com.vladusecho.schoolevents.presentation.screen.UserRole
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
+import com.vladusecho.schoolevents.presentation.util.UserRole
 
 @Composable
 fun StudentEventCard(
@@ -77,7 +77,7 @@ fun StudentEventCard(
                         .height(150.dp)
                         .fillMaxWidth()
                 )
-                
+
                 // Отображение статуса для Организатора
                 if (isOrganizer) {
                     val (statusText, statusColor) = when {
@@ -86,7 +86,7 @@ fun StudentEventCard(
                         event.status == EventStatus.PENDING -> "НА ПРОВЕРКЕ" to MaterialTheme.colorScheme.background
                         else -> "" to Color.Transparent
                     }
-                    
+
                     if (statusText.isNotEmpty()) {
                         Box(
                             modifier = Modifier
@@ -204,7 +204,7 @@ fun StudentEventCard(
                     } else {
                         ImageVector.vectorResource(R.drawable.ic_not_fav)
                     }
-                    
+
                     val tint = if (isNotStudent) {
                         MaterialTheme.colorScheme.secondary
                     } else {

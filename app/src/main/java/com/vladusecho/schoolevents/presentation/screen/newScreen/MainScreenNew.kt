@@ -42,9 +42,9 @@ import com.vladusecho.schoolevents.domain.entity.News
 import com.vladusecho.schoolevents.presentation.activity.LocalUserRole
 import com.vladusecho.schoolevents.presentation.entity.NewsCard
 import com.vladusecho.schoolevents.presentation.entity.StudentEventCard
-import com.vladusecho.schoolevents.presentation.screen.UserRole
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
+import com.vladusecho.schoolevents.presentation.util.UserRole
 import com.vladusecho.schoolevents.presentation.viewModel.MainViewModel
 
 @Composable

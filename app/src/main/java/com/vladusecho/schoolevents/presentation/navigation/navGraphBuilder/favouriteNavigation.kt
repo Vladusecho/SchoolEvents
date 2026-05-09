@@ -7,7 +7,6 @@ import androidx.navigation.toRoute
 import com.vladusecho.schoolevents.presentation.navigation.NavigationState
 import com.vladusecho.schoolevents.presentation.navigation.Screen
 import com.vladusecho.schoolevents.presentation.screen.EventDetailsScreen
-import com.vladusecho.schoolevents.presentation.screen.FavouriteScreen
 import com.vladusecho.schoolevents.presentation.screen.newScreen.FavouriteScreenNew
 
 fun NavGraphBuilder.favouriteNavigation(

@@ -54,9 +54,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.vladusecho.schoolevents.R
 import com.vladusecho.schoolevents.domain.entity.Profile
-import com.vladusecho.schoolevents.presentation.screen.UserRole
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
+import com.vladusecho.schoolevents.presentation.util.UserRole
 import com.vladusecho.schoolevents.presentation.viewModel.AuthViewModel
 import kotlin.random.Random
 
@@ -115,7 +115,8 @@ fun RegistrationScreenContent(
     val isPasswordValid = password.value.length >= 8 &&
             password.value.any { it.isDigit() } &&
             password.value.any { it.isLetter() }
-    val isOrgCodeValid = if (selectedRole == UserRole.STUDENT) true else organizationCode.value == "1991"
+    val isOrgCodeValid =
+        if (selectedRole == UserRole.STUDENT) true else organizationCode.value == "1991"
 
     val isFormValid = name.value.text.isNotBlank() && name.value.text.length <= 20 &&
             surname.value.text.isNotBlank() && surname.value.text.length <= 20 &&
@@ -544,7 +545,8 @@ fun RegistrationScreenContent(
                         value = organizationCode.value,
                         onValueChange = {
                             organizationCode.value = it
-                            orgCodeError = if (it != "1991" && it.isNotEmpty()) "Неверный код" else null
+                            orgCodeError =
+                                if (it != "1991" && it.isNotEmpty()) "Неверный код" else null
                         },
                         label = {
                             Text(

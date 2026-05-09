@@ -4,13 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.domain.entity.Profile
+import com.vladusecho.schoolevents.domain.repository.EventsRepository
 import com.vladusecho.schoolevents.domain.usecase.auth.ChangeUserIsAuthUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.GetEventsByCreatorUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.GetSubscribedEventsUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.SwitchEventFavouriteStatusUseCase
 import com.vladusecho.schoolevents.domain.usecase.profile.GetProfileUseCase
-import com.vladusecho.schoolevents.domain.repository.EventsRepository
-import com.vladusecho.schoolevents.presentation.screen.UserRole
+import com.vladusecho.schoolevents.presentation.util.UserRole
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -20,7 +20,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

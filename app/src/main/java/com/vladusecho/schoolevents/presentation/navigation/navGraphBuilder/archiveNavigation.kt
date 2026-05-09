@@ -5,8 +5,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.vladusecho.schoolevents.presentation.navigation.NavigationState
 import com.vladusecho.schoolevents.presentation.navigation.Screen
-import com.vladusecho.schoolevents.presentation.screen.ArchiveScreen
-import com.vladusecho.schoolevents.presentation.screen.newScreen.ArchiveScreenContent
 import com.vladusecho.schoolevents.presentation.screen.newScreen.ArchiveScreenNew
 
 fun NavGraphBuilder.archiveNavigation(

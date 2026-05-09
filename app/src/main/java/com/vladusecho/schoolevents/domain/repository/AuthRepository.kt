@@ -1,6 +1,6 @@
 package com.vladusecho.schoolevents.domain.repository
 
-import com.vladusecho.schoolevents.presentation.screen.UserRole
+import com.vladusecho.schoolevents.presentation.util.UserRole
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {

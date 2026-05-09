@@ -11,13 +11,12 @@ import com.vladusecho.schoolevents.presentation.navigation.Screen
 import com.vladusecho.schoolevents.presentation.screen.EventCreationScreen
 import com.vladusecho.schoolevents.presentation.screen.EventDetailsScreen
 import com.vladusecho.schoolevents.presentation.screen.EventEditingScreen
-import com.vladusecho.schoolevents.presentation.screen.MainScreen
 import com.vladusecho.schoolevents.presentation.screen.NewsCreationScreen
 import com.vladusecho.schoolevents.presentation.screen.NewsDetailsScreen
 import com.vladusecho.schoolevents.presentation.screen.NewsEditingScreen
 import com.vladusecho.schoolevents.presentation.screen.ParticipantsScreen
-import com.vladusecho.schoolevents.presentation.screen.UserRole
 import com.vladusecho.schoolevents.presentation.screen.newScreen.MainScreenNew
+import com.vladusecho.schoolevents.presentation.util.UserRole
 import com.vladusecho.schoolevents.presentation.viewModel.AuthViewModel
 
 fun NavGraphBuilder.mainNavigation(

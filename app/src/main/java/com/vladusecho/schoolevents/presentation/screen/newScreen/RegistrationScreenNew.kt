@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,13 +36,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -76,9 +80,9 @@ fun RegistrationScreenContent(
     onRegistrationClick: () -> Unit,
     onBackClick: () -> Unit
 ) {
-    val email = remember { mutableStateOf("") }
-    val name = remember { mutableStateOf("") }
-    val surname = remember { mutableStateOf("") }
+    val email = remember { mutableStateOf(TextFieldValue("")) }
+    val name = remember { mutableStateOf(TextFieldValue("")) }
+    val surname = remember { mutableStateOf(TextFieldValue("")) }
     val password = remember { mutableStateOf("") }
     val confirmPassword = remember { mutableStateOf("") }
     val organizationCode = remember { mutableStateOf("") }
@@ -105,14 +109,16 @@ fun RegistrationScreenContent(
     }
 
     val emailPattern = android.util.Patterns.EMAIL_ADDRESS
-    val isEmailValid = emailPattern.matcher(email.value).matches()
+    val isEmailValid by remember {
+        derivedStateOf { emailPattern.matcher(email.value.text).matches() }
+    }
     val isPasswordValid = password.value.length >= 8 &&
             password.value.any { it.isDigit() } &&
             password.value.any { it.isLetter() }
     val isOrgCodeValid = if (selectedRole == UserRole.STUDENT) true else organizationCode.value == "1991"
 
-    val isFormValid = name.value.isNotBlank() &&
-            surname.value.isNotBlank() &&
+    val isFormValid = name.value.text.isNotBlank() && name.value.text.length <= 20 &&
+            surname.value.text.isNotBlank() && surname.value.text.length <= 20 &&
             isEmailValid &&
             isPasswordValid &&
             password.value == confirmPassword.value &&
@@ -171,7 +177,7 @@ fun RegistrationScreenContent(
                             fontSize = 16.sp,
                         )
                     },
-                    isError = emailError != null || (email.value.isNotEmpty() && !isEmailValid),
+                    isError = emailError != null || (email.value.text.isNotEmpty() && !isEmailValid),
                     supportingText = {
                         if (emailError != null) {
                             Text(
@@ -179,7 +185,7 @@ fun RegistrationScreenContent(
                                 color = MaterialTheme.colorScheme.error,
                                 fontFamily = EventsFontFamily
                             )
-                        } else if (email.value.isNotEmpty() && !isEmailValid) {
+                        } else if (email.value.text.isNotEmpty() && !isEmailValid) {
                             Text(
                                 text = "Неверный формат почты",
                                 color = MaterialTheme.colorScheme.error,
@@ -188,7 +194,15 @@ fun RegistrationScreenContent(
                         }
                     },
                     singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .onFocusChanged { focusState ->
+                            if (focusState.isFocused) {
+                                email.value = email.value.copy(
+                                    selection = TextRange(0, email.value.text.length)
+                                )
+                            }
+                        },
                     textStyle = TextStyle(
                         fontFamily = EventsFontFamily,
                         fontWeight = FontWeight.Normal,
@@ -353,8 +367,13 @@ fun RegistrationScreenContent(
                 )
                 OutlinedTextField(
                     value = name.value,
-                    onValueChange = {
-                        name.value = it.replaceFirstChar { char -> if (char.isLowerCase()) char.titlecase() else char.toString() }
+                    onValueChange = { newValue ->
+                        if (newValue.text.length <= 20) {
+                            val formattedText = newValue.text.replaceFirstChar { char ->
+                                if (char.isLowerCase()) char.titlecase() else char.toString()
+                            }
+                            name.value = newValue.copy(text = formattedText)
+                        }
                     },
                     label = {
                         Text(
@@ -364,8 +383,26 @@ fun RegistrationScreenContent(
                             fontSize = 16.sp,
                         )
                     },
+                    isError = name.value.text.isNotEmpty() && name.value.text.length > 20,
+                    supportingText = {
+                        if (name.value.text.isNotEmpty() && name.value.text.length > 20) {
+                            Text(
+                                text = "Максимум 20 символов",
+                                color = MaterialTheme.colorScheme.error,
+                                fontFamily = EventsFontFamily
+                            )
+                        }
+                    },
                     singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .onFocusChanged { focusState ->
+                            if (focusState.isFocused) {
+                                name.value = name.value.copy(
+                                    selection = TextRange(0, name.value.text.length)
+                                )
+                            }
+                        },
                     textStyle = TextStyle(
                         fontFamily = EventsFontFamily,
                         fontWeight = FontWeight.Normal,
@@ -393,8 +430,13 @@ fun RegistrationScreenContent(
                 )
                 OutlinedTextField(
                     value = surname.value,
-                    onValueChange = {
-                        surname.value = it.replaceFirstChar { char -> if (char.isLowerCase()) char.titlecase() else char.toString() }
+                    onValueChange = { newValue ->
+                        if (newValue.text.length <= 20) {
+                            val formattedText = newValue.text.replaceFirstChar { char ->
+                                if (char.isLowerCase()) char.titlecase() else char.toString()
+                            }
+                            surname.value = newValue.copy(text = formattedText)
+                        }
                     },
                     label = {
                         Text(
@@ -404,8 +446,26 @@ fun RegistrationScreenContent(
                             fontSize = 16.sp,
                         )
                     },
+                    isError = surname.value.text.isNotEmpty() && surname.value.text.length > 20,
+                    supportingText = {
+                        if (surname.value.text.isNotEmpty() && surname.value.text.length > 20) {
+                            Text(
+                                text = "Максимум 20 символов",
+                                color = MaterialTheme.colorScheme.error,
+                                fontFamily = EventsFontFamily
+                            )
+                        }
+                    },
                     singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .onFocusChanged { focusState ->
+                            if (focusState.isFocused) {
+                                surname.value = surname.value.copy(
+                                    selection = TextRange(0, surname.value.text.length)
+                                )
+                            }
+                        },
                     textStyle = TextStyle(
                         fontFamily = EventsFontFamily,
                         fontWeight = FontWeight.Normal,
@@ -573,9 +633,9 @@ fun RegistrationScreenContent(
                     onClick = {
                         val profile = Profile(
                             id = Random.nextInt(100, 10000000),
-                            name = name.value,
-                            surname = surname.value,
-                            email = email.value.trim().lowercase(),
+                            name = name.value.text,
+                            surname = surname.value.text,
+                            email = email.value.text.trim().lowercase(),
                             password = password.value,
                             classNumber = "Не указан",
                             role = selectedRole.label,

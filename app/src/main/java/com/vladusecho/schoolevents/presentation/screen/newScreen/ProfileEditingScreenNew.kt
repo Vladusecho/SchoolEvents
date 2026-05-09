@@ -26,6 +26,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -45,7 +47,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.text.isDigitsOnly
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.vladusecho.schoolevents.R
@@ -89,6 +90,28 @@ fun ProfileEditingContent(
     val userEmail = remember { mutableStateOf(TextFieldValue(profile.email)) }
 
     val selectedImageUri = remember { mutableStateOf<Uri?>(null) }
+
+    val emailPattern = android.util.Patterns.EMAIL_ADDRESS
+    val classRegex = Regex("^(1[0-1]|[1-9])[a-яё]?$")
+
+    val isEmailValid by remember {
+        derivedStateOf { emailPattern.matcher(userEmail.value.text).matches() }
+    }
+    val isNameValid by remember {
+        derivedStateOf { userName.value.text.isNotBlank() && userName.value.text.length <= 20 }
+    }
+    val isSurnameValid by remember {
+        derivedStateOf { userSurname.value.text.isNotBlank() && userSurname.value.text.length <= 20 }
+    }
+    val isClassValid by remember {
+        derivedStateOf {
+            if (profile.role == UserRole.STUDENT.label) {
+                classRegex.matches(userClass.value.text.lowercase())
+            } else true
+        }
+    }
+
+    val isFormValid = isEmailValid && isNameValid && isSurnameValid && isClassValid
 
     val imagePicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
@@ -158,6 +181,16 @@ fun ProfileEditingContent(
                     },
                 value = userClass.value,
                 onValueChange = { userClass.value = it },
+                isError = !isClassValid && userClass.value.text.isNotEmpty(),
+                supportingText = {
+                    if (!isClassValid && userClass.value.text.isNotEmpty()) {
+                        Text(
+                            text = "Пример: 9 или 11а",
+                            color = MaterialTheme.colorScheme.error,
+                            fontFamily = EventsFontFamily
+                        )
+                    }
+                },
                 leadingIcon = {
                     Icon(
                         painter = painterResource(R.drawable.ic_user),
@@ -204,7 +237,24 @@ fun ProfileEditingContent(
                     }
                 },
             value = userName.value,
-            onValueChange = { userName.value = it },
+            onValueChange = { newValue ->
+                if (newValue.text.length <= 20) {
+                    val formattedText = newValue.text.replaceFirstChar { char ->
+                        if (char.isLowerCase()) char.titlecase() else char.toString()
+                    }
+                    userName.value = newValue.copy(text = formattedText)
+                }
+            },
+            isError = !isNameValid && userName.value.text.isNotEmpty(),
+            supportingText = {
+                if (!isNameValid && userName.value.text.isNotEmpty()) {
+                    Text(
+                        text = if (userName.value.text.isEmpty()) "Имя не может быть пустым" else "Максимум 20 символов",
+                        color = MaterialTheme.colorScheme.error,
+                        fontFamily = EventsFontFamily
+                    )
+                }
+            },
             leadingIcon = {
                 Icon(
                     painter = painterResource(R.drawable.ic_user),
@@ -252,7 +302,24 @@ fun ProfileEditingContent(
                     }
                 },
             value = userSurname.value,
-            onValueChange = { userSurname.value = it },
+            onValueChange = { newValue ->
+                if (newValue.text.length <= 20) {
+                    val formattedText = newValue.text.replaceFirstChar { char ->
+                        if (char.isLowerCase()) char.titlecase() else char.toString()
+                    }
+                    userSurname.value = newValue.copy(text = formattedText)
+                }
+            },
+            isError = !isSurnameValid && userSurname.value.text.isNotEmpty(),
+            supportingText = {
+                if (!isSurnameValid && userSurname.value.text.isNotEmpty()) {
+                    Text(
+                        text = if (userSurname.value.text.isEmpty()) "Фамилия не может быть пустой" else "Максимум 20 символов",
+                        color = MaterialTheme.colorScheme.error,
+                        fontFamily = EventsFontFamily
+                    )
+                }
+            },
             leadingIcon = {
                 Icon(
                     painter = painterResource(R.drawable.ic_user),
@@ -301,6 +368,16 @@ fun ProfileEditingContent(
                 },
             value = userEmail.value,
             onValueChange = { userEmail.value = it },
+            isError = !isEmailValid && userEmail.value.text.isNotEmpty(),
+            supportingText = {
+                if (!isEmailValid && userEmail.value.text.isNotEmpty()) {
+                    Text(
+                        text = "Некорректный формат почты",
+                        color = MaterialTheme.colorScheme.error,
+                        fontFamily = EventsFontFamily
+                    )
+                }
+            },
             leadingIcon = {
                 Icon(
                     painter = painterResource(R.drawable.ic_mail),
@@ -363,6 +440,7 @@ fun ProfileEditingContent(
             Button(
                 modifier = Modifier
                     .weight(1f),
+                enabled = isFormValid,
                 onClick = {
                     onSaveClick(
                         profile.copy(
@@ -375,8 +453,8 @@ fun ProfileEditingContent(
                     )
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White,
-                    contentColor = Color.Black
+                    containerColor = if (isFormValid) Color.White else Color.White.copy(alpha = 0.5f),
+                    contentColor = if (isFormValid) Color.Black else Color.Black.copy(alpha = 0.5f)
                 ),
                 border = BorderStroke(1.dp, Color(0xffEBEBEB))
             ) {

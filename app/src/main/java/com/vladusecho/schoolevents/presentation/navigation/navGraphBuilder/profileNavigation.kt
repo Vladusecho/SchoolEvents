@@ -16,6 +16,7 @@ import com.vladusecho.schoolevents.presentation.screen.ParticipantsScreen
 import com.vladusecho.schoolevents.presentation.screen.ProfileEditingScreen
 import com.vladusecho.schoolevents.presentation.screen.ProfileScreen
 import com.vladusecho.schoolevents.presentation.screen.UserRole
+import com.vladusecho.schoolevents.presentation.screen.newScreen.ProfileScreenNew
 import com.vladusecho.schoolevents.presentation.viewModel.AuthViewModel
 import kotlin.reflect.typeOf
 
@@ -30,7 +31,7 @@ fun NavGraphBuilder.profileNavigation(
             val authViewModel: AuthViewModel = hiltViewModel()
             val userRole = authViewModel.userRole.collectAsState().value
 
-            ProfileScreen(
+            ProfileScreenNew(
                 onEventClick = {
                     if (userRole == UserRole.STUDENT) {
                         navigationState.navigateToDetail(it)

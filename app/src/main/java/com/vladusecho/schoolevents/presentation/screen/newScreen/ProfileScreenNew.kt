@@ -2,7 +2,6 @@ package com.vladusecho.schoolevents.presentation.screen.newScreen
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,7 +36,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -48,7 +46,6 @@ import com.vladusecho.schoolevents.domain.entity.Profile
 import com.vladusecho.schoolevents.presentation.activity.LocalUserRole
 import com.vladusecho.schoolevents.presentation.entity.StudentEventCard
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
-import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
 import com.vladusecho.schoolevents.presentation.util.UserRole
 import com.vladusecho.schoolevents.presentation.viewModel.ProfileViewModel
 
@@ -79,6 +76,7 @@ fun ProfileScreenNew(
                 events = currentState.events,
                 attendedCount = currentState.attendedCount,
                 absentCount = currentState.absentCount,
+                weeklyStats = currentState.weeklyStats,
                 onExitClick = {
                     viewModel.processCommand(ProfileViewModel.ProfileCommand.Exit)
                 },
@@ -107,7 +105,12 @@ fun ProfileScreenNew(
 
         ProfileViewModel.ProfileState.Initial -> {}
         ProfileViewModel.ProfileState.Loading -> {
-            Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background), contentAlignment = Alignment.Center) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background),
+                contentAlignment = Alignment.Center
+            ) {
                 CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
         }
@@ -121,6 +124,7 @@ fun ProfileContent(
     events: List<Event>,
     attendedCount: Int,
     absentCount: Int,
+    weeklyStats: List<ProfileViewModel.DayStat>,
     onEditingClick: (profile: Profile) -> Unit,
     onThemeToggle: () -> Unit,
     onExitClick: () -> Unit,
@@ -194,7 +198,7 @@ fun ProfileContent(
             val titleText = when (role) {
                 UserRole.STUDENT -> "Вы записаны на мероприятия:"
                 UserRole.ORGANIZER -> "Ваши мероприятия:"
-                UserRole.DIRECTOR -> ""
+                UserRole.DIRECTOR -> "Статистика активности:"
             }
             if (titleText.isNotEmpty()) {
                 Text(
@@ -209,8 +213,14 @@ fun ProfileContent(
             }
         }
 
-
-        if (events.isEmpty() && role != UserRole.DIRECTOR) {
+        if (role == UserRole.DIRECTOR) {
+            item {
+                WeeklyStatsChart(
+                    stats = weeklyStats,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
+        } else if (events.isEmpty()) {
             item {
                 Box(
                     modifier = Modifier.fillMaxWidth(),
@@ -319,7 +329,9 @@ fun UserProfile(
             Spacer(modifier = Modifier.height(16.dp))
         }
         Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Button(
@@ -369,65 +381,30 @@ fun UserProfile(
 @Composable
 fun UserAttendance(
     modifier: Modifier = Modifier,
-    attendedCount: String? = null,
-    absentCount: String? = null
+    attendedCount: String = "",
+    absentCount: String = ""
 ) {
-    Box(
+    Row(
         modifier = modifier
-            .background(MaterialTheme.colorScheme.surface)
-            .clip(RoundedCornerShape(20))
-            .border(1.dp, Color(0xffEBEBEB), RoundedCornerShape(20))
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .fillMaxWidth()
+            .height(50.dp)
+            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(10.dp))
+            .padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = if (attendedCount != null) "Посещено мероприятий:" else "Пропущено мероприятий:",
-                fontFamily = EventsFontFamily,
-                fontWeight = FontWeight.Normal,
-                fontSize = 18.sp,
-                color = MaterialTheme.colorScheme.tertiary
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(
-                text = attendedCount ?: absentCount!!,
-                fontFamily = EventsFontFamily,
-                fontWeight = FontWeight.Bold,
-                fontSize = 24.sp,
-                color = MaterialTheme.colorScheme.tertiary
-            )
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ProfPrev() {
-    SchoolEventsTheme(
-        darkTheme = true
-    ) {
-        ProfileContent(
-            profile = Profile(
-                id = 100,
-                name = "Никита",
-                surname = "Княгинин",
-                email = "nikitaknyaginin@yandex.ru",
-                password = "",
-                classNumber = "9",
-                role = "Ученик",
-                imageUrl = "",
-            ),
-            events = emptyList(),
-            attendedCount = 5,
-            absentCount = 2,
-            onEditingClick = {},
-            onThemeToggle = {},
-            onExitClick = {},
-            onEventClick = {},
-            onListClick = {},
-            onFavouriteClick = { _, _ -> }
+        Text(
+            text = if (attendedCount.isNotEmpty()) "Посещено мероприятий" else "Пропущено мероприятий",
+            fontFamily = EventsFontFamily,
+            fontSize = 16.sp,
+            color = MaterialTheme.colorScheme.tertiary
+        )
+        Text(
+            text = attendedCount.ifEmpty { absentCount },
+            fontFamily = EventsFontFamily,
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
+            color = MaterialTheme.colorScheme.tertiary
         )
     }
 }

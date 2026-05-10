@@ -3,8 +3,10 @@ package com.vladusecho.schoolevents.presentation.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vladusecho.schoolevents.domain.entity.Event
+import com.vladusecho.schoolevents.domain.entity.News
 import com.vladusecho.schoolevents.domain.entity.Profile
 import com.vladusecho.schoolevents.domain.repository.EventsRepository
+import com.vladusecho.schoolevents.domain.repository.NewsRepository
 import com.vladusecho.schoolevents.domain.usecase.auth.ChangeUserIsAuthUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.GetEventsByCreatorUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.GetSubscribedEventsUseCase
@@ -21,6 +23,9 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -31,7 +36,8 @@ class ProfileViewModel @Inject constructor(
     private val getEventsByCreatorUseCase: GetEventsByCreatorUseCase,
     private val changeUserIsAuthUseCase: ChangeUserIsAuthUseCase,
     private val switchEventFavouriteStatusUseCase: SwitchEventFavouriteStatusUseCase,
-    private val eventsRepository: EventsRepository
+    private val eventsRepository: EventsRepository,
+    private val newsRepository: NewsRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<ProfileState>(ProfileState.Initial)
@@ -57,25 +63,67 @@ class ProfileViewModel @Inject constructor(
                     flowOf(0 to 0)
                 }
 
-                val eventsFlow = if (profile.role == UserRole.STUDENT.label) {
-                    getSubscribedEventsUseCase()
-                } else {
-                    getEventsByCreatorUseCase(profile.email)
+                val eventsFlow = when (profile.role) {
+                    UserRole.STUDENT.label -> getSubscribedEventsUseCase()
+                    UserRole.ORGANIZER.label -> getEventsByCreatorUseCase(profile.email)
+                    else -> flowOf(emptyList())
                 }
 
-                combine(eventsFlow, statsFlow) { events, stats ->
-                    Triple(profile, events.sortedByDescending { it.id }, stats)
+                val weeklyStatsFlow = if (profile.role == UserRole.DIRECTOR.label) {
+                    combine(
+                        eventsRepository.getEvents(),
+                        newsRepository.getNews()
+                    ) { events, news ->
+                        calculateWeeklyStats(events, news)
+                    }
+                } else {
+                    flowOf(emptyList())
                 }
-            }.collect { (profile, events, stats) ->
+
+                combine(eventsFlow, statsFlow, weeklyStatsFlow) { events, stats, weeklyStats ->
+                    ProfileData(profile, events.sortedByDescending { it.id }, stats, weeklyStats)
+                }
+            }.collect { data ->
                 _state.value = ProfileState.Content(
-                    profile = profile,
-                    events = events,
-                    attendedCount = stats.first,
-                    absentCount = stats.second
+                    profile = data.profile,
+                    events = data.events,
+                    attendedCount = data.stats.first,
+                    absentCount = data.stats.second,
+                    weeklyStats = data.weeklyStats
                 )
             }
         }
     }
+
+    private fun calculateWeeklyStats(events: List<Event>, news: List<News>): List<DayStat> {
+        val dateFormat = SimpleDateFormat("d MMMM", Locale.forLanguageTag("ru"))
+        val dayFormat = SimpleDateFormat("EE", Locale.forLanguageTag("ru"))
+        
+        val stats = mutableListOf<DayStat>()
+        
+        for (i in 6 downTo 0) {
+            val calendar = Calendar.getInstance()
+            calendar.add(Calendar.DAY_OF_YEAR, -i)
+            val date = calendar.time
+            
+            val dateString = dateFormat.format(date)
+            val dayName = dayFormat.format(date).replaceFirstChar { it.uppercase() }
+            
+            val eventsCount = events.count { it.eventDate == dateString }
+            val newsCount = news.count { it.date == dateString }
+            
+            stats.add(DayStat(dayName, eventsCount, newsCount))
+        }
+        
+        return stats
+    }
+
+    private data class ProfileData(
+        val profile: Profile,
+        val events: List<Event>,
+        val stats: Pair<Int, Int>,
+        val weeklyStats: List<DayStat>
+    )
 
     fun processCommand(command: ProfileCommand) {
         when (command) {
@@ -104,9 +152,16 @@ class ProfileViewModel @Inject constructor(
             val profile: Profile,
             val events: List<Event>,
             val attendedCount: Int = 0,
-            val absentCount: Int = 0
+            val absentCount: Int = 0,
+            val weeklyStats: List<DayStat> = emptyList()
         ) : ProfileState
     }
+
+    data class DayStat(
+        val day: String,
+        val eventsCount: Int,
+        val newsCount: Int
+    )
 
     sealed interface ProfileCommand {
         object Exit : ProfileCommand

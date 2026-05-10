@@ -51,6 +51,7 @@ import coil3.compose.AsyncImage
 import com.vladusecho.schoolevents.R
 import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.domain.entity.EventStatus
+import com.vladusecho.schoolevents.domain.entity.Vote
 import com.vladusecho.schoolevents.presentation.activity.LocalUserRole
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
@@ -111,6 +112,9 @@ fun EventDetailsScreenNew(
                     },
                     onDeleteClick = {
                         viewModel.processCommand(EventDetailsViewModel.EventDetailsCommand.DeleteEvent)
+                    },
+                    onVoteClick = { vote ->
+                        viewModel.processCommand(EventDetailsViewModel.EventDetailsCommand.VoteEvent(vote))
                     }
                 )
             }
@@ -145,7 +149,8 @@ private fun EventDetailsContent(
     onSubscribeClick: (Boolean, Int) -> Unit,
     onApproveClick: () -> Unit,
     onRejectClick: () -> Unit,
-    onDeleteClick: () -> Unit
+    onDeleteClick: () -> Unit,
+    onVoteClick: (Vote) -> Unit
 ) {
     val userRole = LocalUserRole.current
     var isDescriptionExpanded by remember { mutableStateOf(false) }
@@ -266,13 +271,27 @@ private fun EventDetailsContent(
                         .fillMaxWidth()
                         .padding(24.dp)
                 ) {
-                    Text(
-                        text = event.title,
-                        fontFamily = EventsFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 26.sp,
-                        color = MaterialTheme.colorScheme.tertiary
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = event.title,
+                            fontFamily = EventsFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 26.sp,
+                            color = MaterialTheme.colorScheme.tertiary,
+                            modifier = Modifier.weight(1f)
+                        )
+                        
+                        VoteSection(
+                            likes = event.likes,
+                            dislikes = event.dislikes,
+                            userVote = event.userVote,
+                            onVoteClick = onVoteClick
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(12.dp))
 
@@ -510,7 +529,10 @@ fun PreviewEventDetails() {
                 isArchived = false,
                 isFavourite = true,
                 isSubscribed = false,
-                creatorEmail = "test@test.com"
+                creatorEmail = "test@test.com",
+                likes = 10,
+                dislikes = 2,
+                userVote = Vote.LIKE
             ),
             organizerName = "Sponsor name",
             onBackClick = {},
@@ -518,7 +540,8 @@ fun PreviewEventDetails() {
             onSubscribeClick = { _, _ -> },
             onApproveClick = {},
             onRejectClick = {},
-            onDeleteClick = {}
+            onDeleteClick = {},
+            onVoteClick = {}
         )
     }
 }

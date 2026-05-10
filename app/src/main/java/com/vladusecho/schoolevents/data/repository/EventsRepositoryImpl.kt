@@ -5,6 +5,7 @@ import androidx.core.net.toUri
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.vladusecho.schoolevents.data.local.EventsAppDao
 import com.vladusecho.schoolevents.data.local.ParticipantWithAbsence
+import com.vladusecho.schoolevents.data.local.model.EventVoteModel
 import com.vladusecho.schoolevents.data.local.model.FavouriteEventModel
 import com.vladusecho.schoolevents.data.local.model.SubscribedEventModel
 import com.vladusecho.schoolevents.data.mapper.toEventEntity
@@ -14,6 +15,7 @@ import com.vladusecho.schoolevents.data.mapper.toProfileEntity
 import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.domain.entity.EventStatus
 import com.vladusecho.schoolevents.domain.entity.Profile
+import com.vladusecho.schoolevents.domain.entity.Vote
 import com.vladusecho.schoolevents.domain.repository.EventsRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -105,9 +107,7 @@ class EventsRepositoryImpl @Inject constructor(
 
     override suspend fun getEventById(eventId: Int): Event {
         val email = getCurrentUserEmail()
-        return dao.getEventWithStatusById(eventId, email).let { 
-            it.event.toEventEntity(isFavourite = it.isFavourite, isSubscribed = it.isSubscribed)
-        }
+        return dao.getEventWithStatusById(eventId, email).toEventEntity()
     }
 
     override fun getConfirmationEvents(): Flow<List<Event>> {
@@ -171,5 +171,14 @@ class EventsRepositoryImpl @Inject constructor(
 
     override fun getAbsentEventsCount(userEmail: String): Flow<Int> {
         return dao.getAbsentEventsCount(userEmail)
+    }
+
+    override suspend fun voteEvent(eventId: Int, vote: Vote) {
+        val email = getCurrentUserEmail()
+        if (vote == Vote.NONE) {
+            dao.deleteEventVote(email, eventId)
+        } else {
+            dao.insertEventVote(EventVoteModel(userEmail = email, eventId = eventId, voteType = vote.name))
+        }
     }
 }

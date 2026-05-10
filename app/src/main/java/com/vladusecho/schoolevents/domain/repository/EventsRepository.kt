@@ -3,6 +3,7 @@ package com.vladusecho.schoolevents.domain.repository
 import com.vladusecho.schoolevents.data.local.ParticipantWithAbsence
 import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.domain.entity.Profile
+import com.vladusecho.schoolevents.domain.entity.Vote
 import kotlinx.coroutines.flow.Flow
 
 interface EventsRepository {
@@ -51,4 +52,5 @@ interface EventsRepository {
 
     fun getAbsentEventsCount(userEmail: String): Flow<Int>
 
+    suspend fun voteEvent(eventId: Int, vote: Vote)
 }

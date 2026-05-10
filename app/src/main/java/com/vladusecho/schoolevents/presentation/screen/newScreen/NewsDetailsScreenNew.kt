@@ -47,6 +47,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.vladusecho.schoolevents.R
 import com.vladusecho.schoolevents.domain.entity.News
+import com.vladusecho.schoolevents.domain.entity.Vote
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
 import com.vladusecho.schoolevents.presentation.viewModel.NewsDetailsViewModel
@@ -74,7 +75,10 @@ fun NewsDetailsScreenNew(
                 NewsDetailsContent(
                     news = currentState.news,
                     organizerName = currentState.organizerName,
-                    onBackClick = onBackClick
+                    onBackClick = onBackClick,
+                    onVoteClick = { vote ->
+                        viewModel.processCommand(NewsDetailsViewModel.NewsDetailsCommand.VoteNews(vote))
+                    }
                 )
             }
 
@@ -108,7 +112,8 @@ fun NewsDetailsScreenNew(
 private fun NewsDetailsContent(
     news: News,
     organizerName: String,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onVoteClick: (Vote) -> Unit
 ) {
     var isDescriptionExpanded by remember { mutableStateOf(false) }
 
@@ -204,13 +209,27 @@ private fun NewsDetailsContent(
                         .fillMaxWidth()
                         .padding(24.dp)
                 ) {
-                    Text(
-                        text = news.title,
-                        fontFamily = EventsFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 26.sp,
-                        color = MaterialTheme.colorScheme.tertiary
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = news.title,
+                            fontFamily = EventsFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 26.sp,
+                            color = MaterialTheme.colorScheme.tertiary,
+                            modifier = Modifier.weight(1f)
+                        )
+
+                        VoteSection(
+                            likes = news.likes,
+                            dislikes = news.dislikes,
+                            userVote = news.userVote,
+                            onVoteClick = onVoteClick
+                        )
+                    }
                     
                     Spacer(modifier = Modifier.height(12.dp))
 
@@ -319,10 +338,14 @@ private fun PreviewNewsDetails() {
                 title = "Важная школьная новость",
                 description = "Текст новости, который может быть очень длинным и интересным для всех учеников и учителей нашей школы. Мы приглашаем всех принять участие в обсуждении этой новости и поделиться своим мнением в комментариях.",
                 imageUrls = emptyList(),
-                date = "10 июня"
+                date = "10 июня",
+                likes = 42,
+                dislikes = 3,
+                userVote = Vote.LIKE
             ),
             organizerName = "Администрация",
-            onBackClick = {}
+            onBackClick = {},
+            onVoteClick = {}
         )
     }
 }

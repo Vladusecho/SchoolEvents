@@ -3,6 +3,8 @@ package com.vladusecho.schoolevents.presentation.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vladusecho.schoolevents.domain.entity.Event
+import com.vladusecho.schoolevents.domain.entity.Vote
+import com.vladusecho.schoolevents.domain.repository.EventsRepository
 import com.vladusecho.schoolevents.domain.usecase.events.ApproveEventUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.DeleteEventUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.GetEventByIdUseCase
@@ -32,6 +34,7 @@ class EventDetailsViewModel @AssistedInject constructor(
     private val deleteEventUseCase: DeleteEventUseCase,
     private val approveEventUseCase: ApproveEventUseCase,
     private val rejectEventUseCase: RejectEventUseCase,
+    private val eventsRepository: EventsRepository,
     @Assisted("eventId") private val eventId: Int
 ) : ViewModel() {
 
@@ -112,6 +115,13 @@ class EventDetailsViewModel @AssistedInject constructor(
                     _state.value = EventDetailsState.Deleted // Nav back after action
                 }
             }
+
+            is EventDetailsCommand.VoteEvent -> {
+                viewModelScope.launch {
+                    eventsRepository.voteEvent(eventId, command.vote)
+                    loadEvent() // Reload to get updated counts and user vote
+                }
+            }
         }
     }
 
@@ -147,6 +157,8 @@ class EventDetailsViewModel @AssistedInject constructor(
             val isSubscribed: Boolean,
             val eventId: Int
         ) : EventDetailsCommand
+
+        data class VoteEvent(val vote: Vote) : EventDetailsCommand
 
         object DeleteEvent : EventDetailsCommand
         object ApproveEvent : EventDetailsCommand

@@ -13,7 +13,10 @@ data class Event(
     val isFavourite: Boolean,
     val isSubscribed: Boolean,
     val creatorEmail: String = "",
-    val status: EventStatus = EventStatus.PENDING
+    val status: EventStatus = EventStatus.PENDING,
+    val likes: Int = 0,
+    val dislikes: Int = 0,
+    val userVote: Vote = Vote.NONE
 ) {
     val imageUrl: String get() = imageUrls.firstOrNull() ?: ""
 }
@@ -22,4 +25,8 @@ enum class EventStatus {
     PENDING,
     APPROVED,
     REJECTED
+}
+
+enum class Vote {
+    NONE, LIKE, DISLIKE
 }

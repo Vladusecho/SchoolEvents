@@ -4,15 +4,19 @@ import android.content.Context
 import androidx.core.net.toUri
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.vladusecho.schoolevents.data.local.EventsAppDao
+import com.vladusecho.schoolevents.data.local.model.NewsVoteModel
 import com.vladusecho.schoolevents.data.mapper.toNewsEntity
-import com.vladusecho.schoolevents.data.mapper.toNewsEntityListFlow
 import com.vladusecho.schoolevents.data.mapper.toNewsModel
+import com.vladusecho.schoolevents.data.mapper.toNewsWithStatusEntityListFlow
 import com.vladusecho.schoolevents.domain.entity.News
+import com.vladusecho.schoolevents.domain.entity.Vote
 import com.vladusecho.schoolevents.domain.repository.NewsRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -32,8 +36,11 @@ class NewsRepositoryImpl @Inject constructor(
         return userEmailFlow.first()
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun getNews(): Flow<List<News>> {
-        return dao.getNews().toNewsEntityListFlow()
+        return userEmailFlow.flatMapLatest { email ->
+            dao.getNews(email).toNewsWithStatusEntityListFlow()
+        }
     }
 
     override suspend fun addNews(news: News) {
@@ -42,7 +49,8 @@ class NewsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getNewsById(newsId: Int): News {
-        return dao.getNewsById(newsId).toNewsEntity()
+        val email = getCurrentUserEmail()
+        return dao.getNewsWithStatusById(newsId, email).toNewsEntity()
     }
 
     override suspend fun saveImageToInternalStorage(uri: String): String {
@@ -69,5 +77,14 @@ class NewsRepositoryImpl @Inject constructor(
 
     override suspend fun deleteNews(newsId: Int) {
         dao.deleteNews(newsId)
+    }
+
+    override suspend fun voteNews(newsId: Int, vote: Vote) {
+        val email = getCurrentUserEmail()
+        if (vote == Vote.NONE) {
+            dao.deleteNewsVote(email, newsId)
+        } else {
+            dao.insertNewsVote(NewsVoteModel(userEmail = email, newsId = newsId, voteType = vote.name))
+        }
     }
 }

@@ -1,5 +1,8 @@
 package com.vladusecho.schoolevents.presentation.screen.newScreen
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +24,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -60,6 +65,18 @@ fun ProfileScreenNew(
     onExitClick: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
+    val context = LocalContext.current
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
+        onResult = { uri: Uri? ->
+            uri?.let {
+                context.contentResolver.openOutputStream(it)?.use { outputStream ->
+                    viewModel.exportWeeklyStatsToExcel(outputStream)
+                }
+            }
+        }
+    )
 
     LaunchedEffect(Unit) {
         viewModel.isExit.collect {
@@ -86,6 +103,9 @@ fun ProfileScreenNew(
                 },
                 onEventClick = onEventClick,
                 onListClick = onListClick,
+                onExportClick = {
+                    launcher.launch("Weekly_Stats.xlsx")
+                },
                 onFavouriteClick = { isFavourite, eventId ->
                     viewModel.processCommand(
                         ProfileViewModel.ProfileCommand.SwitchFavouriteStatus(
@@ -130,6 +150,7 @@ fun ProfileContent(
     onExitClick: () -> Unit,
     onEventClick: (Int) -> Unit,
     onListClick: (Int) -> Unit,
+    onExportClick: () -> Unit,
     onFavouriteClick: (Boolean, Int) -> Unit
 ) {
 
@@ -219,6 +240,25 @@ fun ProfileContent(
                     stats = weeklyStats,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
+            }
+            item {
+                Button(
+                    onClick = onExportClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = Color.White
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(
+                        text = "Выгрузить статистику в Excel",
+                        fontFamily = EventsFontFamily,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
             }
         } else if (events.isEmpty()) {
             item {

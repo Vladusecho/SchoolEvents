@@ -1,5 +1,6 @@
 package com.vladusecho.schoolevents.presentation.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vladusecho.schoolevents.domain.entity.Event
@@ -23,6 +24,9 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import java.io.ByteArrayOutputStream
+import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -112,10 +116,52 @@ class ProfileViewModel @Inject constructor(
             val eventsCount = events.count { it.eventDate == dateString }
             val newsCount = news.count { it.date == dateString }
             
-            stats.add(DayStat(dayName, eventsCount, newsCount))
+            stats.add(DayStat(dayName, eventsCount, newsCount, dateString))
         }
         
         return stats
+    }
+
+    fun exportWeeklyStatsToExcel(outputStream: OutputStream) {
+        val currentState = _state.value
+        if (currentState is ProfileState.Content && currentState.weeklyStats.isNotEmpty()) {
+            try {
+                val workbook = XSSFWorkbook()
+                val sheet = workbook.createSheet("Статистика активности")
+
+                // 1. Заголовки
+                val headerRow = sheet.createRow(0)
+                val headers = arrayOf("Дата", "День недели", "Создано ивентов", "Создано новостей")
+                
+                headers.forEachIndexed { index, title ->
+                    val cell = headerRow.createCell(index)
+                    cell.setCellValue(title)
+                    // Устанавливаем фиксированную ширину (примерно 20 символов)
+                    sheet.setColumnWidth(index, 20 * 256)
+                }
+
+                // 2. Данные
+                currentState.weeklyStats.forEachIndexed { index, stat ->
+                    val rowNum = index + 1
+                    val row = sheet.createRow(rowNum)
+                    
+                    row.createCell(0).setCellValue(stat.fullDate)
+                    row.createCell(1).setCellValue(stat.day)
+                    row.createCell(2).setCellValue(stat.eventsCount.toDouble())
+                    row.createCell(3).setCellValue(stat.newsCount.toDouble())
+                }
+
+                // 3. Безопасная запись через буфер
+                val tempBuffer = ByteArrayOutputStream()
+                workbook.write(tempBuffer)
+                outputStream.write(tempBuffer.toByteArray())
+                outputStream.flush()
+
+                workbook.close()
+            } catch (e: Exception) {
+                Log.e("ExcelExport", "Ошибка при создании Excel статистики", e)
+            }
+        }
     }
 
     private data class ProfileData(
@@ -160,7 +206,8 @@ class ProfileViewModel @Inject constructor(
     data class DayStat(
         val day: String,
         val eventsCount: Int,
-        val newsCount: Int
+        val newsCount: Int,
+        val fullDate: String = ""
     )
 
     sealed interface ProfileCommand {

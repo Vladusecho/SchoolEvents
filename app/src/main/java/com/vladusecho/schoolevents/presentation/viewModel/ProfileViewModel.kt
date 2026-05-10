@@ -1,16 +1,19 @@
 package com.vladusecho.schoolevents.presentation.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vladusecho.schoolevents.domain.entity.Event
+import com.vladusecho.schoolevents.domain.entity.News
 import com.vladusecho.schoolevents.domain.entity.Profile
+import com.vladusecho.schoolevents.domain.repository.EventsRepository
+import com.vladusecho.schoolevents.domain.repository.NewsRepository
 import com.vladusecho.schoolevents.domain.usecase.auth.ChangeUserIsAuthUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.GetEventsByCreatorUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.GetSubscribedEventsUseCase
 import com.vladusecho.schoolevents.domain.usecase.events.SwitchEventFavouriteStatusUseCase
 import com.vladusecho.schoolevents.domain.usecase.profile.GetProfileUseCase
-import com.vladusecho.schoolevents.domain.repository.EventsRepository
-import com.vladusecho.schoolevents.presentation.screen.UserRole
+import com.vladusecho.schoolevents.presentation.util.UserRole
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -20,8 +23,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import java.io.ByteArrayOutputStream
+import java.io.OutputStream
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -32,7 +40,8 @@ class ProfileViewModel @Inject constructor(
     private val getEventsByCreatorUseCase: GetEventsByCreatorUseCase,
     private val changeUserIsAuthUseCase: ChangeUserIsAuthUseCase,
     private val switchEventFavouriteStatusUseCase: SwitchEventFavouriteStatusUseCase,
-    private val eventsRepository: EventsRepository
+    private val eventsRepository: EventsRepository,
+    private val newsRepository: NewsRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<ProfileState>(ProfileState.Initial)
@@ -58,25 +67,109 @@ class ProfileViewModel @Inject constructor(
                     flowOf(0 to 0)
                 }
 
-                val eventsFlow = if (profile.role == UserRole.STUDENT.label) {
-                    getSubscribedEventsUseCase()
-                } else {
-                    getEventsByCreatorUseCase(profile.email)
+                val eventsFlow = when (profile.role) {
+                    UserRole.STUDENT.label -> getSubscribedEventsUseCase()
+                    UserRole.ORGANIZER.label -> getEventsByCreatorUseCase(profile.email)
+                    else -> flowOf(emptyList())
                 }
 
-                combine(eventsFlow, statsFlow) { events, stats ->
-                    Triple(profile, events, stats)
+                val weeklyStatsFlow = if (profile.role == UserRole.DIRECTOR.label) {
+                    combine(
+                        eventsRepository.getEvents(),
+                        newsRepository.getNews()
+                    ) { events, news ->
+                        calculateWeeklyStats(events, news)
+                    }
+                } else {
+                    flowOf(emptyList())
                 }
-            }.collect { (profile, events, stats) ->
+
+                combine(eventsFlow, statsFlow, weeklyStatsFlow) { events, stats, weeklyStats ->
+                    ProfileData(profile, events.sortedByDescending { it.timestamp }, stats, weeklyStats)
+                }
+            }.collect { data ->
                 _state.value = ProfileState.Content(
-                    profile = profile,
-                    events = events,
-                    attendedCount = stats.first,
-                    absentCount = stats.second
+                    profile = data.profile,
+                    events = data.events,
+                    attendedCount = data.stats.first,
+                    absentCount = data.stats.second,
+                    weeklyStats = data.weeklyStats
                 )
             }
         }
     }
+
+    private fun calculateWeeklyStats(events: List<Event>, news: List<News>): List<DayStat> {
+        val dateFormat = SimpleDateFormat("d MMMM", Locale.forLanguageTag("ru"))
+        val dayFormat = SimpleDateFormat("EE", Locale.forLanguageTag("ru"))
+        
+        val stats = mutableListOf<DayStat>()
+        
+        for (i in 6 downTo 0) {
+            val calendar = Calendar.getInstance()
+            calendar.add(Calendar.DAY_OF_YEAR, -i)
+            val date = calendar.time
+            
+            val dateString = dateFormat.format(date)
+            val dayName = dayFormat.format(date).replaceFirstChar { it.uppercase() }
+            
+            val eventsCount = events.count { it.eventDate == dateString }
+            val newsCount = news.count { it.date == dateString }
+            
+            stats.add(DayStat(dayName, eventsCount, newsCount, dateString))
+        }
+        
+        return stats
+    }
+
+    fun exportWeeklyStatsToExcel(outputStream: OutputStream) {
+        val currentState = _state.value
+        if (currentState is ProfileState.Content && currentState.weeklyStats.isNotEmpty()) {
+            try {
+                val workbook = XSSFWorkbook()
+                val sheet = workbook.createSheet("Статистика активности")
+
+                // 1. Заголовки
+                val headerRow = sheet.createRow(0)
+                val headers = arrayOf("Дата", "День недели", "Создано ивентов", "Создано новостей")
+                
+                headers.forEachIndexed { index, title ->
+                    val cell = headerRow.createCell(index)
+                    cell.setCellValue(title)
+                    // Устанавливаем фиксированную ширину (примерно 20 символов)
+                    sheet.setColumnWidth(index, 20 * 256)
+                }
+
+                // 2. Данные
+                currentState.weeklyStats.forEachIndexed { index, stat ->
+                    val rowNum = index + 1
+                    val row = sheet.createRow(rowNum)
+                    
+                    row.createCell(0).setCellValue(stat.fullDate)
+                    row.createCell(1).setCellValue(stat.day)
+                    row.createCell(2).setCellValue(stat.eventsCount.toDouble())
+                    row.createCell(3).setCellValue(stat.newsCount.toDouble())
+                }
+
+                // 3. Безопасная запись через буфер
+                val tempBuffer = ByteArrayOutputStream()
+                workbook.write(tempBuffer)
+                outputStream.write(tempBuffer.toByteArray())
+                outputStream.flush()
+
+                workbook.close()
+            } catch (e: Exception) {
+                Log.e("ExcelExport", "Ошибка при создании Excel статистики", e)
+            }
+        }
+    }
+
+    private data class ProfileData(
+        val profile: Profile,
+        val events: List<Event>,
+        val stats: Pair<Int, Int>,
+        val weeklyStats: List<DayStat>
+    )
 
     fun processCommand(command: ProfileCommand) {
         when (command) {
@@ -105,9 +198,17 @@ class ProfileViewModel @Inject constructor(
             val profile: Profile,
             val events: List<Event>,
             val attendedCount: Int = 0,
-            val absentCount: Int = 0
+            val absentCount: Int = 0,
+            val weeklyStats: List<DayStat> = emptyList()
         ) : ProfileState
     }
+
+    data class DayStat(
+        val day: String,
+        val eventsCount: Int,
+        val newsCount: Int,
+        val fullDate: String = ""
+    )
 
     sealed interface ProfileCommand {
         object Exit : ProfileCommand

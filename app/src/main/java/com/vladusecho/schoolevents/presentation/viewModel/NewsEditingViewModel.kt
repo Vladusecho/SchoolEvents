@@ -32,8 +32,7 @@ class NewsEditingViewModel @AssistedInject constructor(
         viewModelScope.launch {
             _state.value = NewsEditingState.Loading
             try {
-                val newsList = newsRepository.getNews().first()
-                val news = newsList.find { it.id == newsId } ?: throw Exception("News not found")
+                val news = newsRepository.getNewsById(newsId)
                 val profile = getProfileUseCase().first()
                 _state.value = NewsEditingState.Content(
                     news = news,
@@ -58,8 +57,14 @@ class NewsEditingViewModel @AssistedInject constructor(
     }
 
     fun deleteNews() {
-        // Implement delete news if needed
-        _state.value = NewsEditingState.Saved
+        viewModelScope.launch {
+            try {
+                newsRepository.deleteNews(newsId)
+                _state.value = NewsEditingState.Saved
+            } catch (e: Exception) {
+                _state.value = NewsEditingState.Error(e.message ?: "Failed to delete news")
+            }
+        }
     }
 
     sealed interface NewsEditingState {

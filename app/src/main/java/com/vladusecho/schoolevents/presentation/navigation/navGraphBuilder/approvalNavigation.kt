@@ -6,8 +6,8 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.vladusecho.schoolevents.presentation.navigation.NavigationState
 import com.vladusecho.schoolevents.presentation.navigation.Screen
-import com.vladusecho.schoolevents.presentation.screen.ApprovalScreen
-import com.vladusecho.schoolevents.presentation.screen.EventDetailsScreen
+import com.vladusecho.schoolevents.presentation.screen.newScreen.ApprovalScreenNew
+import com.vladusecho.schoolevents.presentation.screen.newScreen.EventDetailsScreenNew
 
 fun NavGraphBuilder.approvalNavigation(
     navigationState: NavigationState
@@ -16,7 +16,7 @@ fun NavGraphBuilder.approvalNavigation(
         startDestination = Screen.Approval
     ) {
         composable<Screen.Approval> {
-            ApprovalScreen(
+            ApprovalScreenNew(
                 onEventClick = { eventId ->
                     navigationState.navigateToDetail(eventId)
                 }
@@ -24,7 +24,7 @@ fun NavGraphBuilder.approvalNavigation(
         }
         composable<Screen.EventDetails> { backStackEntry ->
             val args = backStackEntry.toRoute<Screen.EventDetails>()
-            EventDetailsScreen(
+            EventDetailsScreenNew(
                 eventId = args.id,
                 onBackClick = {
                     navigationState.navHostController.navigateUp()

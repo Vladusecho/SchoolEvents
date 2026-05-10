@@ -1,6 +1,6 @@
 package com.vladusecho.schoolevents.domain.repository
 
-import com.vladusecho.schoolevents.presentation.screen.UserRole
+import com.vladusecho.schoolevents.presentation.util.UserRole
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
@@ -16,4 +16,8 @@ interface AuthRepository {
     suspend fun setCurrentUserRole(role: UserRole)
 
     fun getCurrentUserRole(): Flow<UserRole>
+
+    suspend fun setDarkTheme(isDark: Boolean)
+
+    fun isDarkTheme(): Flow<Boolean?>
 }

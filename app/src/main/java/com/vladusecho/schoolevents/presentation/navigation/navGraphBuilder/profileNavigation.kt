@@ -10,12 +10,12 @@ import com.vladusecho.schoolevents.domain.entity.Profile
 import com.vladusecho.schoolevents.presentation.navigation.NavigationState
 import com.vladusecho.schoolevents.presentation.navigation.ProfileNavType
 import com.vladusecho.schoolevents.presentation.navigation.Screen
-import com.vladusecho.schoolevents.presentation.screen.EventDetailsScreen
-import com.vladusecho.schoolevents.presentation.screen.EventEditingScreen
-import com.vladusecho.schoolevents.presentation.screen.ParticipantsScreen
-import com.vladusecho.schoolevents.presentation.screen.ProfileEditingScreen
-import com.vladusecho.schoolevents.presentation.screen.ProfileScreen
-import com.vladusecho.schoolevents.presentation.screen.UserRole
+import com.vladusecho.schoolevents.presentation.screen.newScreen.EventDetailsScreenNew
+import com.vladusecho.schoolevents.presentation.screen.newScreen.EventEditingScreenNew
+import com.vladusecho.schoolevents.presentation.screen.newScreen.ParticipantsScreenNew
+import com.vladusecho.schoolevents.presentation.screen.newScreen.ProfileEditingScreenNew
+import com.vladusecho.schoolevents.presentation.screen.newScreen.ProfileScreenNew
+import com.vladusecho.schoolevents.presentation.util.UserRole
 import com.vladusecho.schoolevents.presentation.viewModel.AuthViewModel
 import kotlin.reflect.typeOf
 
@@ -30,7 +30,7 @@ fun NavGraphBuilder.profileNavigation(
             val authViewModel: AuthViewModel = hiltViewModel()
             val userRole = authViewModel.userRole.collectAsState().value
 
-            ProfileScreen(
+            ProfileScreenNew(
                 onEventClick = {
                     if (userRole == UserRole.STUDENT) {
                         navigationState.navigateToDetail(it)
@@ -47,12 +47,15 @@ fun NavGraphBuilder.profileNavigation(
                     navigationState.navHostController.navigate(Screen.AuthGraph) {
                         popUpTo(Screen.MainGraph) { inclusive = true }
                     }
+                },
+                onThemeToggle = {
+                    authViewModel.toggleTheme()
                 }
             )
         }
         composable<Screen.EventDetails> { backStackEntry ->
             val args = backStackEntry.toRoute<Screen.EventDetails>()
-            EventDetailsScreen(
+            EventDetailsScreenNew(
                 eventId = args.id,
                 onBackClick = {
                     navigationState.navHostController.navigateUp()
@@ -65,7 +68,7 @@ fun NavGraphBuilder.profileNavigation(
             )
         ) { backStackEntry ->
             val args = backStackEntry.toRoute<Screen.ProfileEditing>()
-            ProfileEditingScreen(
+            ProfileEditingScreenNew(
                 onBackClick = {
                     navigationState.navHostController.navigateUp()
                 },
@@ -74,14 +77,14 @@ fun NavGraphBuilder.profileNavigation(
         }
         composable<Screen.EventEditing> { backStackEntry ->
             val args = backStackEntry.toRoute<Screen.EventEditing>()
-            EventEditingScreen(
+            EventEditingScreenNew(
                 eventId = args.id,
                 onBackClick = { navigationState.navHostController.navigateUp() }
             )
         }
         composable<Screen.Participants> { backStackEntry ->
             val args = backStackEntry.toRoute<Screen.Participants>()
-            ParticipantsScreen(
+            ParticipantsScreenNew(
                 eventId = args.eventId,
                 onBackClick = {
                     navigationState.navHostController.navigateUp()

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vladusecho.schoolevents.domain.entity.Profile
+import com.vladusecho.schoolevents.domain.repository.AuthRepository
 import com.vladusecho.schoolevents.domain.usecase.auth.ChangeUserIsAuthUseCase
 import com.vladusecho.schoolevents.domain.usecase.auth.CheckUserExistsUseCase
 import com.vladusecho.schoolevents.domain.usecase.auth.CheckUserIsAuthUseCase
@@ -13,7 +14,7 @@ import com.vladusecho.schoolevents.domain.usecase.auth.SetCurrentUserRoleUseCase
 import com.vladusecho.schoolevents.domain.usecase.profile.GetProfileByEmailUseCase
 import com.vladusecho.schoolevents.domain.usecase.profile.SaveProfileUseCase
 import com.vladusecho.schoolevents.domain.usecase.profile.SetCurrentUserEmailUseCase
-import com.vladusecho.schoolevents.presentation.screen.UserRole
+import com.vladusecho.schoolevents.presentation.util.UserRole
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -35,7 +37,8 @@ class AuthViewModel @Inject constructor(
     private val setCurrentUserRoleUseCase: SetCurrentUserRoleUseCase,
     private val getCurrentUserRoleUseCase: GetCurrentUserRoleUseCase,
     private val setCurrentUserEmailUseCase: SetCurrentUserEmailUseCase,
-    private val getProfileByEmailUseCase: GetProfileByEmailUseCase
+    private val getProfileByEmailUseCase: GetProfileByEmailUseCase,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _isLoading = MutableStateFlow(false)
@@ -46,6 +49,12 @@ class AuthViewModel @Inject constructor(
 
     private val _authResult = MutableSharedFlow<Boolean>()
     val authResult = _authResult.asSharedFlow()
+
+    private val _emailError = MutableStateFlow<String?>(null)
+    val emailError = _emailError.asStateFlow()
+
+    private val _passwordError = MutableStateFlow<String?>(null)
+    val passwordError = _passwordError.asStateFlow()
 
     val isAuth: StateFlow<Boolean?> = checkUserIsAuthUseCase()
         .stateIn(
@@ -60,6 +69,60 @@ class AuthViewModel @Inject constructor(
             started = SharingStarted.Eagerly,
             initialValue = UserRole.STUDENT
         )
+
+    val isDarkTheme: StateFlow<Boolean?> = authRepository.isDarkTheme()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = null
+        )
+
+    fun toggleTheme() {
+        viewModelScope.launch {
+            val current = isDarkTheme.value ?: false
+            authRepository.setDarkTheme(!current)
+        }
+    }
+
+    fun login(email: String, password: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _emailError.value = null
+            _passwordError.value = null
+            try {
+                val exists = checkUserExistsUseCase(email)
+                if (!exists) {
+                    _emailError.value = "Пользователь не найден"
+                    _authResult.emit(false)
+                    return@launch
+                }
+
+                val result = checkUserPasswordUseCase(email, password)
+                if (result) {
+                    setCurrentUserEmailUseCase(email)
+                    val profile = getProfileByEmailUseCase(email)
+                    val role =
+                        UserRole.entries.find { it.label == profile.role } ?: UserRole.STUDENT
+                    setCurrentUserRoleUseCase(role)
+                    changeUserIsAuthUseCase()
+                    _authResult.emit(true)
+                } else {
+                    _passwordError.value = "Неверный пароль"
+                    _authResult.emit(false)
+                }
+            } catch (e: Exception) {
+                Log.e("tag", "login: ", e)
+                _authResult.emit(false)
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun clearErrors() {
+        _emailError.value = null
+        _passwordError.value = null
+    }
 
     fun checkPassword(email: String, password: String) {
         viewModelScope.launch {

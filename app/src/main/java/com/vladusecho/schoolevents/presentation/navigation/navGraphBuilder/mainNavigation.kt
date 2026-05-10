@@ -8,15 +8,15 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.vladusecho.schoolevents.presentation.navigation.NavigationState
 import com.vladusecho.schoolevents.presentation.navigation.Screen
-import com.vladusecho.schoolevents.presentation.screen.EventCreationScreen
-import com.vladusecho.schoolevents.presentation.screen.EventDetailsScreen
-import com.vladusecho.schoolevents.presentation.screen.EventEditingScreen
-import com.vladusecho.schoolevents.presentation.screen.MainScreen
-import com.vladusecho.schoolevents.presentation.screen.NewsCreationScreen
-import com.vladusecho.schoolevents.presentation.screen.NewsDetailsScreen
-import com.vladusecho.schoolevents.presentation.screen.NewsEditingScreen
-import com.vladusecho.schoolevents.presentation.screen.ParticipantsScreen
-import com.vladusecho.schoolevents.presentation.screen.UserRole
+import com.vladusecho.schoolevents.presentation.screen.newScreen.EventCreationScreenNew
+import com.vladusecho.schoolevents.presentation.screen.newScreen.EventDetailsScreenNew
+import com.vladusecho.schoolevents.presentation.screen.newScreen.EventEditingScreenNew
+import com.vladusecho.schoolevents.presentation.screen.newScreen.MainScreenNew
+import com.vladusecho.schoolevents.presentation.screen.newScreen.NewsCreationScreenNew
+import com.vladusecho.schoolevents.presentation.screen.newScreen.NewsDetailsScreenNew
+import com.vladusecho.schoolevents.presentation.screen.newScreen.NewsEditingScreenNew
+import com.vladusecho.schoolevents.presentation.screen.newScreen.ParticipantsScreenNew
+import com.vladusecho.schoolevents.presentation.util.UserRole
 import com.vladusecho.schoolevents.presentation.viewModel.AuthViewModel
 
 fun NavGraphBuilder.mainNavigation(
@@ -29,7 +29,7 @@ fun NavGraphBuilder.mainNavigation(
             val authViewModel: AuthViewModel = hiltViewModel()
             val userRole = authViewModel.userRole.collectAsState().value
 
-            MainScreen(
+            MainScreenNew(
                 onEventClick = { eventId: Int ->
                     if (userRole == UserRole.STUDENT || userRole == UserRole.DIRECTOR) {
                         navigationState.navigateToDetail(eventId)
@@ -57,7 +57,7 @@ fun NavGraphBuilder.mainNavigation(
         }
         composable<Screen.EventDetails> { backStackEntry ->
             val args = backStackEntry.toRoute<Screen.EventDetails>()
-            EventDetailsScreen(
+            EventDetailsScreenNew(
                 eventId = args.id,
                 onBackClick = {
                     navigationState.navHostController.navigateUp()
@@ -66,38 +66,38 @@ fun NavGraphBuilder.mainNavigation(
         }
         composable<Screen.EventEditing> { backStackEntry ->
             val args = backStackEntry.toRoute<Screen.EventEditing>()
-            EventEditingScreen(
+            EventEditingScreenNew(
                 eventId = args.id,
                 onBackClick = { navigationState.navHostController.navigateUp() }
             )
         }
         composable<Screen.EventCreation> {
-            EventCreationScreen(
+            EventCreationScreenNew(
                 onBackClick = { navigationState.navHostController.navigateUp() }
             )
         }
         composable<Screen.NewsCreation> {
-            NewsCreationScreen(
+            NewsCreationScreenNew(
                 onBackClick = { navigationState.navHostController.navigateUp() }
             )
         }
         composable<Screen.NewsDetails> { backStackEntry ->
             val args = backStackEntry.toRoute<Screen.NewsDetails>()
-            NewsDetailsScreen(
+            NewsDetailsScreenNew(
                 newsId = args.id,
                 onBackClick = { navigationState.navHostController.navigateUp() }
             )
         }
         composable<Screen.NewsEditing> { backStackEntry ->
             val args = backStackEntry.toRoute<Screen.NewsEditing>()
-            NewsEditingScreen(
+            NewsEditingScreenNew(
                 newsId = args.id,
                 onBackClick = { navigationState.navHostController.navigateUp() }
             )
         }
         composable<Screen.Participants> { backStackEntry ->
             val args = backStackEntry.toRoute<Screen.Participants>()
-            ParticipantsScreen(
+            ParticipantsScreenNew(
                 eventId = args.eventId,
                 onBackClick = {
                     navigationState.navHostController.navigateUp()

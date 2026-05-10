@@ -10,5 +10,6 @@ data class NewsModel(
     val description: String,
     val imageUrls: String, // Store as JSON or comma-separated string
     val date: String,
-    val creatorEmail: String
+    val creatorEmail: String,
+    val timestamp: Long = System.currentTimeMillis()
 )

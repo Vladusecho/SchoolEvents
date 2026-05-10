@@ -36,9 +36,9 @@ import com.vladusecho.schoolevents.R
 import com.vladusecho.schoolevents.domain.entity.Event
 import com.vladusecho.schoolevents.domain.entity.EventStatus
 import com.vladusecho.schoolevents.presentation.activity.LocalUserRole
-import com.vladusecho.schoolevents.presentation.screen.UserRole
 import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
+import com.vladusecho.schoolevents.presentation.util.UserRole
 
 @Composable
 fun StudentEventCard(
@@ -56,14 +56,13 @@ fun StudentEventCard(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(8.dp)
             .shadow(2.dp, RoundedCornerShape(20.dp)),
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(20.dp))
-                .background(MaterialTheme.colorScheme.onBackground)
+                .background(MaterialTheme.colorScheme.surface)
                 .clickable {
                     onEventClick(event.id)
                 },
@@ -78,16 +77,16 @@ fun StudentEventCard(
                         .height(150.dp)
                         .fillMaxWidth()
                 )
-                
+
                 // Отображение статуса для Организатора
                 if (isOrganizer) {
                     val (statusText, statusColor) = when {
                         event.isArchived -> "ЗАКОНЧЕНО" to Color.Red
                         event.status == EventStatus.REJECTED -> "ОТКЛОНЕНО" to Color.Red
-                        event.status == EventStatus.PENDING -> "НА ПРОВЕРКЕ" to MaterialTheme.colorScheme.background
+                        event.status == EventStatus.PENDING -> "НА ПРОВЕРКЕ" to Color.Red
                         else -> "" to Color.Transparent
                     }
-                    
+
                     if (statusText.isNotEmpty()) {
                         Box(
                             modifier = Modifier
@@ -119,7 +118,7 @@ fun StudentEventCard(
                         fontFamily = EventsFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 22.sp,
-                        color = MaterialTheme.colorScheme.secondary
+                        color = MaterialTheme.colorScheme.tertiary
                     )
                 }
                 Row {
@@ -131,7 +130,7 @@ fun StudentEventCard(
                         fontWeight = FontWeight.Light,
                         fontSize = 14.sp,
                         lineHeight = 16.sp,
-                        color = MaterialTheme.colorScheme.secondary
+                        color = MaterialTheme.colorScheme.tertiary
                     )
                 }
                 Row(
@@ -152,7 +151,7 @@ fun StudentEventCard(
                         fontFamily = EventsFontFamily,
                         fontWeight = FontWeight.Light,
                         fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
+                        color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.5f)
                     )
                 }
             }
@@ -174,7 +173,7 @@ fun StudentEventCard(
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.tertiary
                 )
             }
             Column(
@@ -195,7 +194,7 @@ fun StudentEventCard(
                                 )
                             }
                         }
-                        .background(MaterialTheme.colorScheme.onBackground)
+                        .background(MaterialTheme.colorScheme.background)
                         .size(42.dp)
                         .border(1.dp, MaterialTheme.colorScheme.surface, RoundedCornerShape(10.dp)),
                     contentAlignment = Alignment.Center
@@ -205,9 +204,9 @@ fun StudentEventCard(
                     } else {
                         ImageVector.vectorResource(R.drawable.ic_not_fav)
                     }
-                    
+
                     val tint = if (isNotStudent) {
-                        MaterialTheme.colorScheme.secondary
+                        MaterialTheme.colorScheme.tertiary
                     } else {
                         if (event.isFavourite) Color.Red else Color.Gray
                     }
@@ -224,7 +223,7 @@ fun StudentEventCard(
                         modifier = Modifier
                             .padding(top = 8.dp)
                             .clip(RoundedCornerShape(10.dp))
-                            .background(MaterialTheme.colorScheme.onBackground)
+                            .background(MaterialTheme.colorScheme.background)
                             .size(42.dp)
                             .border(
                                 1.dp,
@@ -236,7 +235,7 @@ fun StudentEventCard(
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.ic_calendar),
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.secondary,
+                            tint = MaterialTheme.colorScheme.tertiary,
                             modifier = Modifier.size(24.dp)
                         )
                     }
@@ -250,7 +249,7 @@ fun StudentEventCard(
 @Preview(showBackground = true)
 fun StudentEventCardPreview() {
     SchoolEventsTheme(
-        darkTheme = false
+        darkTheme = true
     ) {
         StudentEventCard(
             event = Event(

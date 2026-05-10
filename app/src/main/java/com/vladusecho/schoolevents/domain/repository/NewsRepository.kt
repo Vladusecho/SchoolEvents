@@ -1,6 +1,7 @@
 package com.vladusecho.schoolevents.domain.repository
 
 import com.vladusecho.schoolevents.domain.entity.News
+import com.vladusecho.schoolevents.domain.entity.Vote
 import kotlinx.coroutines.flow.Flow
 
 interface NewsRepository {
@@ -10,4 +11,6 @@ interface NewsRepository {
     suspend fun getNewsById(newsId: Int): News
     suspend fun saveImageToInternalStorage(uri: String): String
     suspend fun saveImagesToInternalStorage(uris: List<String>): List<String>
+    suspend fun deleteNews(newsId: Int)
+    suspend fun voteNews(newsId: Int, vote: Vote)
 }

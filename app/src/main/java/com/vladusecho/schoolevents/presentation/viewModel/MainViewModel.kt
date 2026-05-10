@@ -25,7 +25,7 @@ class MainViewModel @Inject constructor(
     private val _state = MutableStateFlow<MainState>(MainState.Initial)
     val state = _state.asStateFlow()
 
-    private val _selectedTab = MutableStateFlow(MainTab.EVENTS)
+    private val _selectedTab = MutableStateFlow(MainTab.DISCOVER)
     val selectedTab = _selectedTab.asStateFlow()
 
     fun selectTab(tab: MainTab) {
@@ -50,15 +50,20 @@ class MainViewModel @Inject constructor(
                 getEventsUseCase(),
                 newsRepository.getNews()
             ) { events, news ->
-                MainState.Content(events, news)
+                MainState.Content(
+                    events = events.sortedByDescending { it.timestamp },
+                    news = news.sortedByDescending { it.timestamp }
+                )
             }.collect {
                 _state.value = it
             }
         }
     }
 
-    enum class MainTab {
-        EVENTS, NEWS
+    enum class MainTab(val title: String) {
+        DISCOVER("Все"),
+        NEWS("Новости"),
+        EVENTS("Ивенты")
     }
 
     sealed interface MainState {

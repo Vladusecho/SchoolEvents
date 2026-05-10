@@ -26,7 +26,7 @@ class FavouriteViewModel @Inject constructor(
             _state.value = FavouriteState.Loading
             delay(1000)
             getFavouriteEventsUseCase().collect { events ->
-                _state.value = FavouriteState.Content(events)
+                _state.value = FavouriteState.Content(events.sortedByDescending { it.timestamp })
             }
         }
     }

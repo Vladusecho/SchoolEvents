@@ -6,8 +6,8 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.vladusecho.schoolevents.presentation.navigation.NavigationState
 import com.vladusecho.schoolevents.presentation.navigation.Screen
-import com.vladusecho.schoolevents.presentation.screen.EventDetailsScreen
-import com.vladusecho.schoolevents.presentation.screen.FavouriteScreen
+import com.vladusecho.schoolevents.presentation.screen.newScreen.EventDetailsScreenNew
+import com.vladusecho.schoolevents.presentation.screen.newScreen.FavouriteScreenNew
 
 fun NavGraphBuilder.favouriteNavigation(
     navigationState: NavigationState
@@ -16,7 +16,7 @@ fun NavGraphBuilder.favouriteNavigation(
         startDestination = Screen.Favourite
     ) {
         composable<Screen.Favourite> {
-            FavouriteScreen(
+            FavouriteScreenNew(
                 onEventClick = {
                     navigationState.navigateToDetail(it)
                 }
@@ -24,7 +24,7 @@ fun NavGraphBuilder.favouriteNavigation(
         }
         composable<Screen.EventDetails> { backStackEntry ->
             val args = backStackEntry.toRoute<Screen.EventDetails>()
-            EventDetailsScreen(
+            EventDetailsScreenNew(
                 eventId = args.id,
                 onBackClick = {
                     navigationState.navHostController.navigateUp()

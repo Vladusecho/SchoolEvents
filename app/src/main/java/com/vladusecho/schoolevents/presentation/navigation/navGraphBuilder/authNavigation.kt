@@ -3,12 +3,11 @@ package com.vladusecho.schoolevents.presentation.navigation.navGraphBuilder
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import androidx.navigation.toRoute
 import com.vladusecho.schoolevents.presentation.navigation.NavigationState
 import com.vladusecho.schoolevents.presentation.navigation.Screen
-import com.vladusecho.schoolevents.presentation.screen.LoginScreen
-import com.vladusecho.schoolevents.presentation.screen.RegistrationScreen
-import com.vladusecho.schoolevents.presentation.screen.StartAppScreen
+import com.vladusecho.schoolevents.presentation.screen.newScreen.LoginScreenNew
+import com.vladusecho.schoolevents.presentation.screen.newScreen.RegistrationScreenNew
+import com.vladusecho.schoolevents.presentation.screen.newScreen.StartAppScreenNew
 
 fun NavGraphBuilder.authNavigation(
     navigationState: NavigationState
@@ -17,22 +16,17 @@ fun NavGraphBuilder.authNavigation(
         startDestination = Screen.StartApp
     ) {
         composable<Screen.StartApp> {
-
-            StartAppScreen(
-                onNavigateToLogin = {
-                    navigationState.navigateToSecondary(Screen.Login(it))
+            StartAppScreenNew(
+                onLoginClick = {
+                    navigationState.navigateToSecondary(Screen.Login)
                 },
-                onNavigateToRegistration = {
-                    navigationState.navigateToSecondary(Screen.Registration(it))
+                onRegistrationClick = {
+                    navigationState.navigateToSecondary(Screen.Registration)
                 }
             )
         }
-        composable<Screen.Login> { backStackEntry ->
-
-            val args = backStackEntry.toRoute<Screen.Login>()
-
-            LoginScreen(
-                email = args.email,
+        composable<Screen.Login> {
+            LoginScreenNew(
                 onLoginClick = {
                     navigationState.navHostController.navigate(Screen.MainGraph) {
                         popUpTo(Screen.AuthGraph) { inclusive = true }
@@ -43,9 +37,8 @@ fun NavGraphBuilder.authNavigation(
                 }
             )
         }
-        composable<Screen.Registration> { backStackEntry ->
-            RegistrationScreen(
-                email = backStackEntry.toRoute<Screen.Registration>().email,
+        composable<Screen.Registration> {
+            RegistrationScreenNew(
                 onRegistrationClick = {
                     navigationState.navHostController.navigate(Screen.MainGraph) {
                         popUpTo(Screen.AuthGraph) { inclusive = true }

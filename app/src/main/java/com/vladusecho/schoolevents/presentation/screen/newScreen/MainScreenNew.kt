@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -24,6 +26,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -110,125 +113,152 @@ fun MainScreenContent(
     onFavouriteClick: (Boolean, Int) -> Unit,
     onAddEventClick: () -> Unit,
     onAddNewsClick: () -> Unit,
+) {
+    val tabs = MainViewModel.MainTab.entries
+    val pagerState = rememberPagerState(
+        initialPage = selectedTab.ordinal,
+        pageCount = { tabs.size }
+    )
 
-    ) {
-    LazyColumn(
+    // Sync selectedTab from VM to Pager
+    LaunchedEffect(selectedTab) {
+        if (pagerState.currentPage != selectedTab.ordinal) {
+            pagerState.animateScrollToPage(selectedTab.ordinal)
+        }
+    }
+
+    // Sync Pager state to VM
+    LaunchedEffect(pagerState.currentPage) {
+        onTabClick(tabs[pagerState.currentPage])
+    }
+
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        item {
-            MainTitle(
-                text = "Главная лента",
-                selectedTab = selectedTab,
-                onTabClick = onTabClick
-            )
-            Spacer(
-                modifier = Modifier
-                    .height(8.dp)
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surface)
-            )
-        }
+        // Pinned Header
+        MainTitle(
+            text = "Главная лента",
+            selectedTab = selectedTab,
+            onTabClick = onTabClick
+        )
+        Spacer(
+            modifier = Modifier
+                .height(8.dp)
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.surface)
+        )
 
-        when (selectedTab) {
-            MainViewModel.MainTab.DISCOVER -> {
-                item {
-                    MainEventsRow(
-                        events = events,
-                        onEventClick = onEventClick,
-                        onListClick = onListClick,
-                        onFavouriteClick = onFavouriteClick,
-                        onAddEventClick = onAddEventClick
-                    )
-                    Spacer(
-                        modifier = Modifier
-                            .height(8.dp)
-                            .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.surface)
-                    )
-                }
-                item {
-                    MainNewsHeader(
-                        onAddNewsClick = onAddNewsClick
-                    )
-                }
-                if (news.isEmpty()) {
-                    item {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(MaterialTheme.colorScheme.background)
-                                .padding(horizontal = 16.dp)
-                        ) {
-                            Text(
-                                text = "Здесь пока ничего нет...",
-                                fontFamily = EventsFontFamily,
-                                fontWeight = FontWeight.Normal,
-                                fontSize = 16.sp,
-                                color = MaterialTheme.colorScheme.tertiary
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.Top
+        ) { page ->
+            val tab = tabs[page]
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                when (tab) {
+                    MainViewModel.MainTab.DISCOVER -> {
+                        item {
+                            MainEventsRow(
+                                events = events,
+                                onEventClick = onEventClick,
+                                onListClick = onListClick,
+                                onFavouriteClick = onFavouriteClick,
+                                onAddEventClick = onAddEventClick
+                            )
+                            Spacer(
+                                modifier = Modifier
+                                    .height(8.dp)
+                                    .fillMaxWidth()
+                                    .background(MaterialTheme.colorScheme.surface)
                             )
                         }
+                        item {
+                            MainNewsHeader(
+                                onAddNewsClick = onAddNewsClick
+                            )
+                        }
+                        if (news.isEmpty()) {
+                            item {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(MaterialTheme.colorScheme.background)
+                                        .padding(horizontal = 16.dp)
+                                ) {
+                                    Text(
+                                        text = "Здесь пока ничего нет...",
+                                        fontFamily = EventsFontFamily,
+                                        fontWeight = FontWeight.Normal,
+                                        fontSize = 16.sp,
+                                        color = MaterialTheme.colorScheme.tertiary
+                                    )
+                                }
+                            }
+                        } else {
+                            items(news, key = { it.id }) { newsItem ->
+                                Box(
+                                    modifier = Modifier
+                                        .background(MaterialTheme.colorScheme.background)
+                                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                                ) {
+                                    NewsCard(news = newsItem, onNewsClick = onNewsClick)
+                                }
+                            }
+                        }
                     }
-                } else {
-                    items(news, key = { it.id }) { newsItem ->
-                        Box(
-                            modifier = Modifier
-                                .background(MaterialTheme.colorScheme.background)
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
-                        ) {
-                            NewsCard(news = newsItem, onNewsClick = onNewsClick)
+
+                    MainViewModel.MainTab.NEWS -> {
+                        item {
+                            MainNewsHeader(
+                                onAddNewsClick = onAddNewsClick
+                            )
+                        }
+                        items(news, key = { it.id }) { newsItem ->
+                            Box(
+                                modifier = Modifier
+                                    .background(MaterialTheme.colorScheme.background)
+                                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                            ) {
+                                NewsCard(news = newsItem, onNewsClick = onNewsClick)
+                            }
+                        }
+                    }
+
+                    MainViewModel.MainTab.EVENTS -> {
+                        item {
+                            MainEventsHeader(
+                                onAddEventClick = onAddEventClick
+                            )
+                        }
+                        items(events, key = { it.id }) { event ->
+                            Box(
+                                modifier = Modifier
+                                    .background(MaterialTheme.colorScheme.background)
+                                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                            ) {
+                                StudentEventCard(
+                                    event = event,
+                                    onEventClick = onEventClick,
+                                    onListClick = onListClick,
+                                    onFavouriteClick = onFavouriteClick
+                                )
+                            }
                         }
                     }
                 }
-            }
-
-            MainViewModel.MainTab.NEWS -> {
                 item {
-                    MainNewsHeader(
-                        onAddNewsClick = onAddNewsClick
-                    )
-                }
-                items(news, key = { it.id }) { newsItem ->
-                    Box(
+                    Spacer(
                         modifier = Modifier
                             .background(MaterialTheme.colorScheme.background)
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                    ) {
-                        NewsCard(news = newsItem, onNewsClick = onNewsClick)
-                    }
-                }
-            }
-
-            MainViewModel.MainTab.EVENTS -> {
-                item {
-                    MainEventsHeader(
-                        onAddEventClick = onAddEventClick
+                            .height(136.dp)
+                            .fillMaxWidth()
                     )
                 }
-                items(events, key = { it.id }) { event ->
-                    Box(
-                        modifier = Modifier
-                            .background(MaterialTheme.colorScheme.background)
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                    ) {
-                        StudentEventCard(
-                            event = event,
-                            onEventClick = onEventClick,
-                            onListClick = onListClick,
-                            onFavouriteClick = onFavouriteClick
-                        )
-                    }
-                }
             }
-        }
-        item {
-            Spacer(
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.background)
-                    .height(136.dp)
-                    .fillMaxWidth()
-            )
         }
     }
 }

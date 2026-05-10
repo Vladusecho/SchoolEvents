@@ -378,7 +378,8 @@ private fun EventDetailsContent(
                             "УДАЛИТЬ НАВСЕГДА",
                             fontFamily = EventsFontFamily,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp
+                            fontSize = 16.sp,
+                            color = MaterialTheme.colorScheme.tertiary
                         )
                     }
                 } else if (userRole == UserRole.DIRECTOR && event.status == EventStatus.PENDING) {
@@ -399,7 +400,8 @@ private fun EventDetailsContent(
                                 "Отклонить",
                                 fontFamily = EventsFontFamily,
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp
+                                fontSize = 16.sp,
+                                color = MaterialTheme.colorScheme.tertiary
                             )
                         }
                         Button(
@@ -415,7 +417,8 @@ private fun EventDetailsContent(
                                 "Утвердить",
                                 fontFamily = EventsFontFamily,
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp
+                                fontSize = 16.sp,
+                                color = MaterialTheme.colorScheme.tertiary
                             )
                         }
                     }

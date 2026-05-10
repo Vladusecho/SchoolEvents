@@ -26,7 +26,7 @@ class ArchiveViewModel @Inject constructor(
         viewModelScope.launch {
             _state.value = ArchiveState.Loading
             getArchivedEventsUseCase().collect { events ->
-                _state.value = ArchiveState.Content(events.sortedByDescending { it.id })
+                _state.value = ArchiveState.Content(events.sortedByDescending { it.timestamp })
             }
         }
     }

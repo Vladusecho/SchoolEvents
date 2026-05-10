@@ -55,7 +55,8 @@ fun Event.toEventModel(): EventModel {
         imageUrls = imageUrls.joinToString("|"),
         isArchived = isArchived,
         creatorEmail = creatorEmail,
-        status = status.name
+        status = status.name,
+        timestamp = timestamp
     )
 }
 
@@ -82,7 +83,8 @@ fun EventModel.toEventEntity(
         status = try { EventStatus.valueOf(status) } catch (e: Exception) { EventStatus.PENDING },
         likes = likes,
         dislikes = dislikes,
-        userVote = userVote
+        userVote = userVote,
+        timestamp = timestamp
     )
 }
 
@@ -115,7 +117,8 @@ fun News.toNewsModel(): NewsModel {
         description = description,
         imageUrls = imageUrls.joinToString("|"),
         date = date,
-        creatorEmail = creatorEmail
+        creatorEmail = creatorEmail,
+        timestamp = timestamp
     )
 }
 
@@ -133,7 +136,8 @@ fun NewsModel.toNewsEntity(
         creatorEmail = creatorEmail,
         likes = likes,
         dislikes = dislikes,
-        userVote = userVote
+        userVote = userVote,
+        timestamp = timestamp
     )
 }
 

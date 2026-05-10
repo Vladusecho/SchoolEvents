@@ -27,7 +27,7 @@ class ApprovalViewModel @Inject constructor(
             _state.value = ApprovalState.Loading
             try {
                 getPendingEventsUseCase().collect { events ->
-                    _state.value = ApprovalState.Content(events.sortedByDescending { it.id })
+                    _state.value = ApprovalState.Content(events.sortedByDescending { it.timestamp })
                 }
             } catch (e: Exception) {
                 _state.value = ApprovalState.Error(e.message ?: "Unknown error")

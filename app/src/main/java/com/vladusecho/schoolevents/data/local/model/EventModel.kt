@@ -15,5 +15,6 @@ data class EventModel(
     val imageUrls: String, // Store as JSON or pipe-separated string
     val isArchived: Boolean,
     val creatorEmail: String = "",
-    val status: String = "PENDING" // PENDING, APPROVED, REJECTED
+    val status: String = "PENDING", // PENDING, APPROVED, REJECTED
+    val timestamp: Long = System.currentTimeMillis()
 )

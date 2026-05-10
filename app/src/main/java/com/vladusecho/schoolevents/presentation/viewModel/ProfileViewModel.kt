@@ -85,7 +85,7 @@ class ProfileViewModel @Inject constructor(
                 }
 
                 combine(eventsFlow, statsFlow, weeklyStatsFlow) { events, stats, weeklyStats ->
-                    ProfileData(profile, events.sortedByDescending { it.id }, stats, weeklyStats)
+                    ProfileData(profile, events.sortedByDescending { it.timestamp }, stats, weeklyStats)
                 }
             }.collect { data ->
                 _state.value = ProfileState.Content(

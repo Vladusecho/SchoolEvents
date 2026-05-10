@@ -16,7 +16,8 @@ data class Event(
     val status: EventStatus = EventStatus.PENDING,
     val likes: Int = 0,
     val dislikes: Int = 0,
-    val userVote: Vote = Vote.NONE
+    val userVote: Vote = Vote.NONE,
+    val timestamp: Long = System.currentTimeMillis()
 ) {
     val imageUrl: String get() = imageUrls.firstOrNull() ?: ""
 }

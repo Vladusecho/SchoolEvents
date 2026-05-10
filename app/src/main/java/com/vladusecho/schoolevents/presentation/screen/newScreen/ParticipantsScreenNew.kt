@@ -4,7 +4,8 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,6 +28,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -36,9 +39,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -65,6 +70,7 @@ fun ParticipantsScreenNew(
     onBackClick: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
+    val searchQuery by viewModel.searchQuery.collectAsState()
     val context = LocalContext.current
 
     val launcher = rememberLauncherForActivityResult(
@@ -82,6 +88,8 @@ fun ParticipantsScreenNew(
         is ParticipantsViewModel.ParticipantsState.Content -> {
             ParticipantsScreenContent(
                 participants = currentState.participants,
+                searchQuery = searchQuery,
+                onSearchQueryChange = { viewModel.updateSearchQuery(it) },
                 onBackClick = onBackClick,
                 onExportClick = {
                     launcher.launch("Participants_Event_$eventId.xlsx")
@@ -111,10 +119,21 @@ fun ParticipantsScreenNew(
 fun ParticipantsScreenContent(
     modifier: Modifier = Modifier,
     participants: List<ParticipantWithAbsence> = emptyList(),
+    searchQuery: String = "",
+    onSearchQueryChange: (String) -> Unit = {},
     onBackClick: () -> Unit = {},
     onExportClick: () -> Unit = {},
     onAbsenceToggle: (String, Boolean) -> Unit = { _, _ -> }
 ) {
+    val filteredParticipants = if (searchQuery.isBlank()) {
+        participants
+    } else {
+        participants.filter {
+            it.profile.name.contains(searchQuery, ignoreCase = true) ||
+            it.profile.surname.contains(searchQuery, ignoreCase = true)
+        }
+    }
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -148,6 +167,39 @@ fun ParticipantsScreenContent(
                 }
                 Spacer(modifier = Modifier.height(16.dp))
 
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = onSearchQueryChange,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    placeholder = {
+                        Text(
+                            text = "Поиск по имени или фамилии",
+                            fontFamily = EventsFontFamily,
+                            color = Color.Gray
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_search),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.tertiary
+                        )
+                    },
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.secondary,
+                        cursorColor = MaterialTheme.colorScheme.primary,
+                        focusedTextColor = MaterialTheme.colorScheme.tertiary,
+                        unfocusedTextColor = MaterialTheme.colorScheme.tertiary
+                    ),
+                    singleLine = true
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
                 Button(
                     onClick = onExportClick,
                     modifier = Modifier
@@ -176,7 +228,7 @@ fun ParticipantsScreenContent(
             }
         }
 
-        if (participants.isEmpty()) {
+        if (filteredParticipants.isEmpty()) {
             item {
                 Box(
                     modifier = Modifier
@@ -185,7 +237,7 @@ fun ParticipantsScreenContent(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Список участников пуст",
+                        text = if (searchQuery.isEmpty()) "Список участников пуст" else "Ничего не найдено",
                         fontFamily = EventsFontFamily,
                         fontSize = 16.sp,
                         color = Color.Gray
@@ -193,7 +245,7 @@ fun ParticipantsScreenContent(
                 }
             }
         } else {
-            items(participants, key = { it.profile.email }) { participant ->
+            items(filteredParticipants, key = { it.profile.email }) { participant ->
                 Box(
                     modifier = Modifier
                         .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -317,28 +369,15 @@ fun ParticipantsPreview() {
                 ParticipantWithAbsence(
                     profile = ProfileModel(
                         id = 1,
+                        email = "test@mail.ru",
                         name = "Иван",
                         surname = "Иванов",
-                        email = "ivan@example.com",
-                        classNumber = "11А",
-                        password = "",
-                        role = "Ученик",
-                        imageUrl = ""
+                        classNumber = "10А",
+                        imageUrl = "",
+                        password = "123",
+                        role = "STUDENT"
                     ),
                     wasAbsent = false
-                ),
-                ParticipantWithAbsence(
-                    profile = ProfileModel(
-                        id = 2,
-                        name = "Мария",
-                        surname = "Петрова",
-                        email = "maria@example.com",
-                        classNumber = "10Б",
-                        password = "",
-                        role = "Ученик",
-                        imageUrl = ""
-                    ),
-                    wasAbsent = true
                 )
             )
         )

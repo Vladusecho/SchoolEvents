@@ -27,6 +27,9 @@ class ParticipantsViewModel @AssistedInject constructor(
     private val _state = MutableStateFlow<ParticipantsState>(ParticipantsState.Initial)
     val state = _state.asStateFlow()
 
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery = _searchQuery.asStateFlow()
+
     init {
         loadParticipants()
     }
@@ -42,6 +45,10 @@ class ParticipantsViewModel @AssistedInject constructor(
                 _state.value = ParticipantsState.Error(e.message ?: "Unknown error")
             }
         }
+    }
+
+    fun updateSearchQuery(query: String) {
+        _searchQuery.value = query
     }
 
     fun markAbsence(userEmail: String, wasAbsent: Boolean) {

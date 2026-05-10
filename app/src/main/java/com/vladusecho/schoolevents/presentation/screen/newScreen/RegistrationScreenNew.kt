@@ -143,7 +143,8 @@ fun RegistrationScreenContent(
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_back),
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.tertiary
                 )
             }
             Text(
@@ -151,6 +152,7 @@ fun RegistrationScreenContent(
                 fontFamily = EventsFontFamily,
                 fontWeight = FontWeight.Bold,
                 fontSize = 26.sp,
+                color = MaterialTheme.colorScheme.tertiary
             )
         }
         Text(
@@ -158,6 +160,7 @@ fun RegistrationScreenContent(
             fontFamily = EventsFontFamily,
             fontWeight = FontWeight.Normal,
             fontSize = 16.sp,
+            color = MaterialTheme.colorScheme.tertiary
         )
         Spacer(modifier = Modifier.height(20.dp))
         LazyColumn(
@@ -227,7 +230,7 @@ fun RegistrationScreenContent(
                     colors = OutlinedTextFieldDefaults.colors(
                         unfocusedBorderColor = Color(0xffEBEBEB),
                         focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
-                        unfocusedLeadingIconColor = Color.Black
+                        unfocusedLeadingIconColor = MaterialTheme.colorScheme.tertiary
                     )
                 )
                 OutlinedTextField(
@@ -297,9 +300,9 @@ fun RegistrationScreenContent(
                     colors = OutlinedTextFieldDefaults.colors(
                         unfocusedBorderColor = Color(0xffEBEBEB),
                         focusedTrailingIconColor = MaterialTheme.colorScheme.primary,
-                        unfocusedTrailingIconColor = Color.Black,
+                        unfocusedTrailingIconColor = MaterialTheme.colorScheme.tertiary,
                         focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
-                        unfocusedLeadingIconColor = Color.Black
+                        unfocusedLeadingIconColor = MaterialTheme.colorScheme.tertiary
                     )
                 )
                 OutlinedTextField(
@@ -362,9 +365,9 @@ fun RegistrationScreenContent(
                     colors = OutlinedTextFieldDefaults.colors(
                         unfocusedBorderColor = Color(0xffEBEBEB),
                         focusedTrailingIconColor = MaterialTheme.colorScheme.primary,
-                        unfocusedTrailingIconColor = Color.Black,
+                        unfocusedTrailingIconColor = MaterialTheme.colorScheme.tertiary,
                         focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
-                        unfocusedLeadingIconColor = Color.Black
+                        unfocusedLeadingIconColor = MaterialTheme.colorScheme.tertiary
                     )
                 )
                 OutlinedTextField(
@@ -428,7 +431,7 @@ fun RegistrationScreenContent(
                     colors = OutlinedTextFieldDefaults.colors(
                         unfocusedBorderColor = Color(0xffEBEBEB),
                         focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
-                        unfocusedLeadingIconColor = Color.Black
+                        unfocusedLeadingIconColor = MaterialTheme.colorScheme.tertiary
                     )
                 )
                 OutlinedTextField(
@@ -492,7 +495,7 @@ fun RegistrationScreenContent(
                     colors = OutlinedTextFieldDefaults.colors(
                         unfocusedBorderColor = Color(0xffEBEBEB),
                         focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
-                        unfocusedLeadingIconColor = Color.Black
+                        unfocusedLeadingIconColor = MaterialTheme.colorScheme.tertiary
                     )
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -501,7 +504,7 @@ fun RegistrationScreenContent(
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
-                    color = MaterialTheme.colorScheme.secondary,
+                    color = MaterialTheme.colorScheme.tertiary,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center
                 )
@@ -524,13 +527,12 @@ fun RegistrationScreenContent(
                                 .padding(horizontal = 32.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = if (isSelected)
-                                    MaterialTheme.colorScheme.primary
+                                    MaterialTheme.colorScheme.secondary
                                 else
                                     MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f),
-                                contentColor = if (isSelected)
+                                contentColor =
                                     Color.White
-                                else
-                                    MaterialTheme.colorScheme.secondary
+
                             ),
                             shape = MaterialTheme.shapes.medium
                         ) {
@@ -606,9 +608,9 @@ fun RegistrationScreenContent(
                         colors = OutlinedTextFieldDefaults.colors(
                             unfocusedBorderColor = Color(0xffEBEBEB),
                             focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
-                            unfocusedLeadingIconColor = Color.Black,
+                            unfocusedLeadingIconColor = MaterialTheme.colorScheme.tertiary,
                             focusedTrailingIconColor = MaterialTheme.colorScheme.primary,
-                            unfocusedTrailingIconColor = Color.Black
+                            unfocusedTrailingIconColor = MaterialTheme.colorScheme.tertiary
                         )
                     )
                 }
@@ -630,7 +632,8 @@ fun RegistrationScreenContent(
                         text = "Я согласен на обработку и хранение персональных данных",
                         fontFamily = EventsFontFamily,
                         fontSize = 14.sp,
-                        modifier = Modifier.padding(start = 8.dp)
+                        modifier = Modifier.padding(start = 8.dp),
+                        color = MaterialTheme.colorScheme.tertiary
                     )
                 }
                 Button(
@@ -652,9 +655,7 @@ fun RegistrationScreenContent(
                         .fillMaxWidth()
                         .padding(bottom = 64.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(
-                            0xff008A00
-                        )
+                        containerColor = MaterialTheme.colorScheme.secondary,
                     )
                 ) {
                     if (isLoading) {
@@ -668,7 +669,8 @@ fun RegistrationScreenContent(
                             "Создать аккаунт",
                             fontFamily = EventsFontFamily,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp
+                            fontSize = 20.sp,
+                            color = Color.White
                         )
                     }
                 }

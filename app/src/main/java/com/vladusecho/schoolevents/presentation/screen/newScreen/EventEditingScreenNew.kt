@@ -119,7 +119,7 @@ fun EventEditingScreenNew(
 
         EventEditingViewModel.EventEditingState.Initial,
         EventEditingViewModel.EventEditingState.Loading -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
         }
@@ -162,7 +162,7 @@ private fun EventEditingContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             LazyColumn(
@@ -186,7 +186,8 @@ private fun EventEditingContent(
                         }) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_back),
-                                contentDescription = null
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.tertiary
                             )
                         }
 
@@ -195,7 +196,7 @@ private fun EventEditingContent(
                                 onArchiveClick()
                             },
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.White,
+                                containerColor = MaterialTheme.colorScheme.background,
                                 contentColor = Color.Black
                             ),
                             border = BorderStroke(1.dp, Color(0xffEBEBEB))
@@ -203,7 +204,8 @@ private fun EventEditingContent(
                             Text(
                                 text = "Переместить в архив",
                                 fontFamily = EventsFontFamily,
-                                fontSize = 14.sp
+                                fontSize = 14.sp,
+                                color = MaterialTheme.colorScheme.tertiary
                             )
                         }
                     }
@@ -290,7 +292,7 @@ private fun EventEditingContent(
                 item {
                     Spacer(
                         modifier = Modifier
-                            .background(Color.White)
+                            .background(MaterialTheme.colorScheme.background)
                             .height(136.dp)
                             .fillMaxWidth()
                     )
@@ -316,13 +318,13 @@ private fun Step1EditingUI(
             fontFamily = EventsFontFamily,
             fontWeight = FontWeight.Bold,
             fontSize = 30.sp,
-            color = Color.Black
+            color = MaterialTheme.colorScheme.tertiary
         )
         Text(
             text = "Отредактируйте все необходимые поля",
             fontFamily = EventsFontFamily,
             fontSize = 16.sp,
-            color = Color.Gray,
+            color = MaterialTheme.colorScheme.tertiary,
             modifier = Modifier.padding(vertical = 8.dp)
         )
         Spacer(modifier = Modifier.height(24.dp))
@@ -453,7 +455,7 @@ private fun Step1EditingUI(
             text = "Рекомендуется загружать горизонтальные фотографии в высоком разрешении.",
             fontFamily = EventsFontFamily,
             fontSize = 12.sp,
-            color = Color.Gray,
+            color = MaterialTheme.colorScheme.tertiary,
             modifier = Modifier.padding(top = 8.dp)
         )
     }
@@ -545,13 +547,13 @@ private fun Step2EditingUI(
             fontFamily = EventsFontFamily,
             fontWeight = FontWeight.Bold,
             fontSize = 30.sp,
-            color = Color.Black
+            color = MaterialTheme.colorScheme.tertiary
         )
         Text(
             text = "Измените данные ниже чтобы отредактировать мероприятие",
             fontFamily = EventsFontFamily,
             fontSize = 16.sp,
-            color = Color.Gray,
+            color = MaterialTheme.colorScheme.tertiary,
             modifier = Modifier.padding(vertical = 8.dp)
         )
         Spacer(modifier = Modifier.height(24.dp))
@@ -580,7 +582,7 @@ private fun Step2EditingUI(
             onValueChange = onSchoolPlaceChange,
             label = {
                 Text(
-                    "Место в школе * (например, Актовый зал)",
+                    "Место * (например, Актовый зал)",
                     fontFamily = EventsFontFamily
                 )
             },
@@ -611,15 +613,15 @@ private fun Step2EditingUI(
                 IconButton(onClick = { showDatePicker = true }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_date),
-                        contentDescription = null
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.tertiary
                     )
                 }
             },
             colors = OutlinedTextFieldDefaults.colors(
                 disabledBorderColor = Color(0xffEBEBEB),
-                disabledLabelColor = Color.Gray,
-                disabledTextColor = Color.Black,
-                disabledTrailingIconColor = Color.Black
+                disabledLabelColor = MaterialTheme.colorScheme.tertiary,
+                disabledTextColor = MaterialTheme.colorScheme.tertiary,
             ),
             textStyle = TextStyle(
                 fontFamily = EventsFontFamily,
@@ -643,15 +645,15 @@ private fun Step2EditingUI(
                 IconButton(onClick = { showTimePickerStart = true }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_date),
-                        contentDescription = null
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.tertiary
                     )
                 }
             },
             colors = OutlinedTextFieldDefaults.colors(
                 disabledBorderColor = Color(0xffEBEBEB),
-                disabledLabelColor = Color.Gray,
-                disabledTextColor = Color.Black,
-                disabledTrailingIconColor = Color.Black
+                disabledLabelColor = MaterialTheme.colorScheme.tertiary,
+                disabledTextColor = MaterialTheme.colorScheme.tertiary,
             ),
             textStyle = TextStyle(
                 fontFamily = EventsFontFamily,
@@ -675,15 +677,15 @@ private fun Step2EditingUI(
                 IconButton(onClick = { showTimePickerEnd = true }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_date),
-                        contentDescription = null
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.tertiary
                     )
                 }
             },
             colors = OutlinedTextFieldDefaults.colors(
                 disabledBorderColor = Color(0xffEBEBEB),
-                disabledLabelColor = Color.Gray,
-                disabledTextColor = Color.Black,
-                disabledTrailingIconColor = Color.Black
+                disabledLabelColor = MaterialTheme.colorScheme.tertiary,
+                disabledTextColor = MaterialTheme.colorScheme.tertiary,
             ),
             textStyle = TextStyle(
                 fontFamily = EventsFontFamily,

@@ -104,7 +104,7 @@ fun EventCreationScreenNew(
         }
 
         EventCreationViewModel.EventCreationState.Initial -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
         }
@@ -143,7 +143,7 @@ private fun EventCreationContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             LazyColumn(
@@ -163,7 +163,8 @@ private fun EventCreationContent(
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.ic_back),
-                            contentDescription = null
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.tertiary
                         )
                     }
                     Spacer(modifier = Modifier.height(8.dp))
@@ -232,7 +233,7 @@ private fun EventCreationContent(
                             .padding(16.dp)
                             .height(56.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xff008A00),
+                            containerColor = MaterialTheme.colorScheme.secondary,
                             contentColor = Color.White
                         ),
                         shape = RoundedCornerShape(28.dp),
@@ -253,7 +254,7 @@ private fun EventCreationContent(
                 item {
                     Spacer(
                         modifier = Modifier
-                            .background(Color.White)
+                            .background(MaterialTheme.colorScheme.background)
                             .height(136.dp)
                             .fillMaxWidth()
                     )
@@ -279,13 +280,13 @@ private fun Step1UI(
             fontFamily = EventsFontFamily,
             fontWeight = FontWeight.Bold,
             fontSize = 30.sp,
-            color = Color.Black
+            color = MaterialTheme.colorScheme.tertiary
         )
         Text(
             text = "Введите название и описание мероприятия, а также загрузите фотогорафию, чтобы продолжить",
             fontFamily = EventsFontFamily,
             fontSize = 16.sp,
-            color = Color.Gray,
+            color = MaterialTheme.colorScheme.tertiary,
             modifier = Modifier.padding(vertical = 8.dp)
         )
         Spacer(modifier = Modifier.height(24.dp))
@@ -415,7 +416,7 @@ private fun Step1UI(
             text = "Рекомендуется загружать горизонтальные фотографии в высоком разрешении.",
             fontFamily = EventsFontFamily,
             fontSize = 12.sp,
-            color = Color.Gray,
+            color = MaterialTheme.colorScheme.tertiary,
             modifier = Modifier.padding(top = 8.dp)
         )
     }
@@ -507,13 +508,13 @@ private fun Step2UI(
             fontFamily = EventsFontFamily,
             fontWeight = FontWeight.Bold,
             fontSize = 30.sp,
-            color = Color.Black
+            color = MaterialTheme.colorScheme.tertiary
         )
         Text(
             text = "Укажите место проведения и время начала",
             fontFamily = EventsFontFamily,
             fontSize = 16.sp,
-            color = Color.Gray,
+            color = MaterialTheme.colorScheme.tertiary,
             modifier = Modifier.padding(vertical = 8.dp)
         )
         Spacer(modifier = Modifier.height(24.dp))
@@ -542,7 +543,7 @@ private fun Step2UI(
             onValueChange = onSchoolPlaceChange,
             label = {
                 Text(
-                    "Место в школе * (например, Актовый зал)",
+                    "Место * (например, Актовый зал)",
                     fontFamily = EventsFontFamily
                 )
             },
@@ -573,15 +574,15 @@ private fun Step2UI(
                 IconButton(onClick = { showDatePicker = true }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_date),
-                        contentDescription = null
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.tertiary
                     )
                 }
             },
             colors = OutlinedTextFieldDefaults.colors(
                 disabledBorderColor = Color(0xffEBEBEB),
-                disabledLabelColor = Color.Gray,
-                disabledTextColor = Color.Black,
-                disabledTrailingIconColor = Color.Black
+                disabledLabelColor = MaterialTheme.colorScheme.tertiary,
+                disabledTextColor = MaterialTheme.colorScheme.tertiary,
             ),
             textStyle = TextStyle(
                 fontFamily = EventsFontFamily,
@@ -604,15 +605,15 @@ private fun Step2UI(
                 IconButton(onClick = { showTimePickerStart = true }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_date),
-                        contentDescription = null
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.tertiary
                     )
                 }
             },
             colors = OutlinedTextFieldDefaults.colors(
                 disabledBorderColor = Color(0xffEBEBEB),
-                disabledLabelColor = Color.Gray,
-                disabledTextColor = Color.Black,
-                disabledTrailingIconColor = Color.Black
+                disabledLabelColor = MaterialTheme.colorScheme.tertiary,
+                disabledTextColor = MaterialTheme.colorScheme.tertiary,
             ),
             textStyle = TextStyle(
                 fontFamily = EventsFontFamily,
@@ -635,7 +636,8 @@ private fun Step2UI(
                 IconButton(onClick = { showTimePickerEnd = true }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_date),
-                        contentDescription = null
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.tertiary
                     )
                 }
             },
@@ -646,10 +648,9 @@ private fun Step2UI(
             ),
             colors = OutlinedTextFieldDefaults.colors(
                 disabledBorderColor = Color(0xffEBEBEB),
-                disabledLabelColor = Color.Gray,
-                disabledTextColor = Color.Black,
-                disabledTrailingIconColor = Color.Black
-            )
+                disabledLabelColor = MaterialTheme.colorScheme.tertiary,
+                disabledTextColor = MaterialTheme.colorScheme.tertiary,
+            ),
         )
     }
 }
@@ -688,7 +689,9 @@ private fun LocalTimePickerDialog(
 @Preview(showBackground = true)
 @Composable
 private fun PreviewEventCreation() {
-    SchoolEventsTheme {
+    SchoolEventsTheme(
+        darkTheme = true
+    ) {
         EventCreationContent(onBackClick = {}, onSaveClick = { _, _ -> })
     }
 }

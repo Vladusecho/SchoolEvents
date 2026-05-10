@@ -100,7 +100,7 @@ fun ParticipantsScreenNew(
 
         ParticipantsViewModel.ParticipantsState.Initial -> {}
         ParticipantsViewModel.ParticipantsState.Loading -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
         }
@@ -118,7 +118,7 @@ fun ParticipantsScreenContent(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         item {
             Column(modifier = Modifier.fillMaxWidth()) {
@@ -132,7 +132,8 @@ fun ParticipantsScreenContent(
                     IconButton(onClick = onBackClick) {
                         Icon(
                             painter = painterResource(R.drawable.ic_back),
-                            contentDescription = null
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.tertiary
                         )
                     }
                     Spacer(modifier = Modifier.width(8.dp))
@@ -141,7 +142,8 @@ fun ParticipantsScreenContent(
                         fontFamily = EventsFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 30.sp,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        color = MaterialTheme.colorScheme.tertiary
                     )
                 }
                 Spacer(modifier = Modifier.height(16.dp))
@@ -152,7 +154,7 @@ fun ParticipantsScreenContent(
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xff151B23),
+                        containerColor = MaterialTheme.colorScheme.secondary,
                         contentColor = Color.White
                     ),
                     shape = RoundedCornerShape(12.dp)
@@ -169,7 +171,7 @@ fun ParticipantsScreenContent(
                     modifier = Modifier
                         .height(8.dp)
                         .fillMaxWidth()
-                        .background(Color(0xffEBEBEB))
+                        .background(MaterialTheme.colorScheme.surface)
                 )
             }
         }
@@ -209,7 +211,7 @@ fun ParticipantsScreenContent(
         item {
             Spacer(
                 modifier = Modifier
-                    .background(Color.White)
+                    .background(MaterialTheme.colorScheme.background)
                     .height(136.dp)
                     .fillMaxWidth()
             )
@@ -229,7 +231,7 @@ fun ParticipantCard(
             .fillMaxWidth()
             .shadow(2.dp, RoundedCornerShape(20.dp))
             .clip(RoundedCornerShape(20.dp))
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.surface)
             .padding(16.dp)
     ) {
         Row(
@@ -241,8 +243,7 @@ fun ParticipantCard(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(56.dp)
-                    .clip(CircleShape)
-                    .background(Color(0xffF8F8F9)),
+                    .clip(CircleShape),
                 error = painterResource(id = R.drawable.ic_avatar),
                 placeholder = painterResource(id = R.drawable.ic_avatar)
             )
@@ -255,7 +256,7 @@ fun ParticipantCard(
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.tertiary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -265,7 +266,7 @@ fun ParticipantCard(
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Normal,
                     fontSize = 14.sp,
-                    color = Color.Gray,
+                    color = MaterialTheme.colorScheme.tertiary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -275,7 +276,7 @@ fun ParticipantCard(
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Light,
                     fontSize = 12.sp,
-                    color = Color.Gray,
+                    color = MaterialTheme.colorScheme.tertiary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -290,14 +291,14 @@ fun ParticipantCard(
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Medium,
                     fontSize = 10.sp,
-                    color = if (participant.wasAbsent) Color.Red else Color.Gray
+                    color = if (participant.wasAbsent) Color.Red else MaterialTheme.colorScheme.tertiary
                 )
                 Checkbox(
                     checked = participant.wasAbsent,
                     onCheckedChange = onAbsenceToggle,
                     colors = CheckboxDefaults.colors(
                         checkedColor = Color.Red,
-                        uncheckedColor = Color(0xffEBEBEB)
+                        uncheckedColor = MaterialTheme.colorScheme.tertiary
                     )
                 )
             }
@@ -308,7 +309,9 @@ fun ParticipantCard(
 @Composable
 @Preview
 fun ParticipantsPreview() {
-    SchoolEventsTheme {
+    SchoolEventsTheme(
+        darkTheme = true
+    ) {
         ParticipantsScreenContent(
             participants = listOf(
                 ParticipantWithAbsence(

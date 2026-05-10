@@ -42,7 +42,7 @@ fun NewsCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(20.dp))
-                .background(MaterialTheme.colorScheme.onBackground)
+                .background(MaterialTheme.colorScheme.surface)
                 .clickable {
                     onNewsClick(news.id)
                 },
@@ -71,7 +71,7 @@ fun NewsCard(
                         .padding(8.dp)
                         .clip(RoundedCornerShape(10.dp))
                         .border(1.dp, MaterialTheme.colorScheme.surface, RoundedCornerShape(10.dp))
-                        .background(MaterialTheme.colorScheme.onBackground)
+                        .background(MaterialTheme.colorScheme.background)
                         .padding(horizontal = 12.dp, vertical = 6.dp)
                 ) {
                     Text(
@@ -79,7 +79,7 @@ fun NewsCard(
                         fontFamily = EventsFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.secondary
+                        color = MaterialTheme.colorScheme.tertiary
                     )
                 }
             }
@@ -93,7 +93,7 @@ fun NewsCard(
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp,
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.tertiary
                 )
 
                 Text(
@@ -104,7 +104,7 @@ fun NewsCard(
                     fontWeight = FontWeight.Light,
                     fontSize = 14.sp,
                     lineHeight = 18.sp,
-                    color = MaterialTheme.colorScheme.secondary,
+                    color = MaterialTheme.colorScheme.tertiary,
                     modifier = Modifier.padding(top = 4.dp)
                 )
             }

@@ -90,7 +90,7 @@ fun LoginScreenContent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -103,7 +103,8 @@ fun LoginScreenContent(
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_back),
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.tertiary
                 )
             }
             Text(
@@ -111,6 +112,7 @@ fun LoginScreenContent(
                 fontFamily = EventsFontFamily,
                 fontWeight = FontWeight.Bold,
                 fontSize = 26.sp,
+                color = MaterialTheme.colorScheme.tertiary
             )
         }
         Text(
@@ -118,6 +120,8 @@ fun LoginScreenContent(
             fontFamily = EventsFontFamily,
             fontWeight = FontWeight.Normal,
             fontSize = 16.sp,
+            color = MaterialTheme.colorScheme.tertiary
+
         )
         Spacer(modifier = Modifier.height(40.dp))
         OutlinedTextField(
@@ -168,7 +172,7 @@ fun LoginScreenContent(
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedBorderColor = Color(0xffEBEBEB),
                 focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
-                unfocusedLeadingIconColor = Color.Black
+                unfocusedLeadingIconColor = MaterialTheme.colorScheme.tertiary
             )
         )
         OutlinedTextField(
@@ -232,9 +236,9 @@ fun LoginScreenContent(
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedBorderColor = Color(0xffEBEBEB),
                 focusedTrailingIconColor = MaterialTheme.colorScheme.primary,
-                unfocusedTrailingIconColor = Color.Black,
+                unfocusedTrailingIconColor = MaterialTheme.colorScheme.tertiary,
                 focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
-                unfocusedLeadingIconColor = Color.Black
+                unfocusedLeadingIconColor = MaterialTheme.colorScheme.tertiary
             )
         )
         Spacer(modifier = Modifier.weight(1f))
@@ -243,9 +247,7 @@ fun LoginScreenContent(
             onClick = { viewModel.login(email.value.trim().lowercase(), password.value) },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(
-                    0xff008A00
-                )
+                containerColor = MaterialTheme.colorScheme.secondary,
             )
         ) {
             if (isLoading) {
@@ -259,7 +261,8 @@ fun LoginScreenContent(
                     "Войти",
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
+                    fontSize = 20.sp,
+                    color = Color.White
                 )
             }
         }

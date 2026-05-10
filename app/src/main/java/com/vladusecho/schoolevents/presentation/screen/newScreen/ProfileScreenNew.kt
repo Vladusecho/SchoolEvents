@@ -105,7 +105,7 @@ fun ProfileScreenNew(
 
         ProfileViewModel.ProfileState.Initial -> {}
         ProfileViewModel.ProfileState.Loading -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
         }
@@ -131,7 +131,7 @@ fun ProfileContent(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         item {
             Column() {
@@ -148,13 +148,14 @@ fun ProfileContent(
                         fontFamily = EventsFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 30.sp,
+                        color = MaterialTheme.colorScheme.tertiary
                     )
                     Button(
                         onClick = {
                             onEditingClick(profile)
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.White,
+                            containerColor = MaterialTheme.colorScheme.background,
                             contentColor = Color.Black
                         ),
                         border = BorderStroke(1.dp, Color(0xffEBEBEB))
@@ -162,7 +163,8 @@ fun ProfileContent(
                         Text(
                             text = "Редактировать",
                             fontFamily = EventsFontFamily,
-                            fontSize = 14.sp
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.tertiary
                         )
                     }
                 }
@@ -171,7 +173,7 @@ fun ProfileContent(
                     modifier = Modifier
                         .height(8.dp)
                         .fillMaxWidth()
-                        .background(Color(0xffEBEBEB))
+                        .background(MaterialTheme.colorScheme.surface)
                 )
             }
         }
@@ -196,7 +198,8 @@ fun ProfileContent(
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp,
-                    modifier = Modifier.padding(horizontal = 16.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    color = MaterialTheme.colorScheme.tertiary
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
@@ -212,7 +215,7 @@ fun ProfileContent(
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_sadface),
                         "",
-                        tint = Color.Black,
+                        tint = MaterialTheme.colorScheme.tertiary,
                         modifier = Modifier.size(32.dp)
                     )
                 }
@@ -221,7 +224,7 @@ fun ProfileContent(
             items(events, key = { it.id }) { event ->
                 Box(
                     modifier = Modifier
-                        .background(Color.White)
+                        .background(MaterialTheme.colorScheme.background)
                         .padding(horizontal = 16.dp, vertical = 8.dp)
                 ) {
                     StudentEventCard(
@@ -236,7 +239,7 @@ fun ProfileContent(
         item {
             Spacer(
                 modifier = Modifier
-                    .background(Color.White)
+                    .background(MaterialTheme.colorScheme.background)
                     .height(136.dp)
                     .fillMaxWidth()
             )
@@ -282,12 +285,14 @@ fun UserProfile(
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp,
+                    color = MaterialTheme.colorScheme.tertiary
                 )
                 Text(
                     text = profile.email,
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Normal,
                     fontSize = 18.sp,
+                    color = MaterialTheme.colorScheme.tertiary
                 )
             }
         }
@@ -317,7 +322,7 @@ fun UserProfile(
                     onExitClick()
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White,
+                    containerColor = MaterialTheme.colorScheme.background,
                     contentColor = Color.Black
                 ),
                 border = BorderStroke(1.dp, Color(0xffEBEBEB))
@@ -325,7 +330,8 @@ fun UserProfile(
                 Text(
                     text = "Выйти из аккаунта",
                     fontFamily = EventsFontFamily,
-                    fontSize = 14.sp
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.tertiary
                 )
             }
         }
@@ -334,7 +340,7 @@ fun UserProfile(
             modifier = Modifier
                 .height(8.dp)
                 .fillMaxWidth()
-                .background(Color(0xffEBEBEB))
+                .background(MaterialTheme.colorScheme.surface)
         )
     }
 }
@@ -347,7 +353,7 @@ fun UserAttendance(
 ) {
     Box(
         modifier = modifier
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.surface)
             .clip(RoundedCornerShape(20))
             .border(1.dp, Color(0xffEBEBEB), RoundedCornerShape(20))
             .padding(horizontal = 16.dp, vertical = 8.dp),
@@ -361,6 +367,7 @@ fun UserAttendance(
                 fontFamily = EventsFontFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize = 18.sp,
+                color = MaterialTheme.colorScheme.tertiary
             )
             Spacer(modifier = Modifier.width(16.dp))
             Text(
@@ -368,6 +375,7 @@ fun UserAttendance(
                 fontFamily = EventsFontFamily,
                 fontWeight = FontWeight.Bold,
                 fontSize = 24.sp,
+                color = MaterialTheme.colorScheme.tertiary
             )
         }
     }
@@ -376,7 +384,9 @@ fun UserAttendance(
 @Preview(showBackground = true)
 @Composable
 fun ProfPrev() {
-    SchoolEventsTheme() {
+    SchoolEventsTheme(
+        darkTheme = true
+    ) {
         ProfileContent(
             profile = Profile(
                 id = 100,

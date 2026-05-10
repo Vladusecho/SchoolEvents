@@ -64,7 +64,7 @@ fun FavouriteScreenNew(
 
         FavouriteViewModel.FavouriteState.Initial -> {}
         FavouriteViewModel.FavouriteState.Loading -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
         }
@@ -82,7 +82,7 @@ fun FavouriteScreenContent(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         item {
             Column(modifier = Modifier) {
@@ -92,14 +92,15 @@ fun FavouriteScreenContent(
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Bold,
                     fontSize = 30.sp,
-                    modifier = Modifier.padding(horizontal = 16.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    color = MaterialTheme.colorScheme.tertiary
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Spacer(
                     modifier = Modifier
                         .height(8.dp)
                         .fillMaxWidth()
-                        .background(Color(0xffEBEBEB))
+                        .background(MaterialTheme.colorScheme.surface)
                 )
             }
         }
@@ -124,7 +125,7 @@ fun FavouriteScreenContent(
             items(events, key = { it.id }) { event ->
                 Box(
                     modifier = Modifier
-                        .background(Color.White)
+                        .background(MaterialTheme.colorScheme.background)
                         .padding(horizontal = 16.dp, vertical = 8.dp)
                 ) {
                     StudentEventCard(
@@ -140,7 +141,7 @@ fun FavouriteScreenContent(
         item {
             Spacer(
                 modifier = Modifier
-                    .background(Color.White)
+                    .background(MaterialTheme.colorScheme.background)
                     .height(136.dp)
                     .fillMaxWidth()
             )
@@ -151,7 +152,9 @@ fun FavouriteScreenContent(
 @Composable
 @Preview
 fun FavPreview() {
-    SchoolEventsTheme {
+    SchoolEventsTheme(
+        darkTheme = true
+    ) {
         FavouriteScreenContent()
     }
 }

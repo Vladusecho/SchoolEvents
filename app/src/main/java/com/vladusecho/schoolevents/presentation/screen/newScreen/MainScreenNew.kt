@@ -90,7 +90,8 @@ fun MainScreenNew(
 
         MainViewModel.MainState.Initial -> {}
         MainViewModel.MainState.Loading -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(modifier = Modifier.fillMaxSize()
+                .background(MaterialTheme.colorScheme.background), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
         }
@@ -114,7 +115,7 @@ fun MainScreenContent(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         item {
             MainTitle(
@@ -126,7 +127,7 @@ fun MainScreenContent(
                 modifier = Modifier
                     .height(8.dp)
                     .fillMaxWidth()
-                    .background(Color(0xffEBEBEB))
+                    .background(MaterialTheme.colorScheme.surface)
             )
         }
 
@@ -144,7 +145,7 @@ fun MainScreenContent(
                         modifier = Modifier
                             .height(8.dp)
                             .fillMaxWidth()
-                            .background(Color(0xffEBEBEB))
+                            .background(MaterialTheme.colorScheme.surface)
                     )
                 }
                 item {
@@ -157,7 +158,7 @@ fun MainScreenContent(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .background(Color.White)
+                                .background(MaterialTheme.colorScheme.background)
                                 .padding(horizontal = 16.dp)
                         ) {
                             Text(
@@ -165,6 +166,7 @@ fun MainScreenContent(
                                 fontFamily = EventsFontFamily,
                                 fontWeight = FontWeight.Normal,
                                 fontSize = 16.sp,
+                                color = MaterialTheme.colorScheme.tertiary
                             )
                         }
                     }
@@ -172,7 +174,7 @@ fun MainScreenContent(
                     items(news, key = { it.id }) { newsItem ->
                         Box(
                             modifier = Modifier
-                                .background(Color.White)
+                                .background(MaterialTheme.colorScheme.background)
                                 .padding(horizontal = 16.dp, vertical = 8.dp)
                         ) {
                             NewsCard(news = newsItem, onNewsClick = onNewsClick)
@@ -190,7 +192,7 @@ fun MainScreenContent(
                 items(news, key = { it.id }) { newsItem ->
                     Box(
                         modifier = Modifier
-                            .background(Color.White)
+                            .background(MaterialTheme.colorScheme.background)
                             .padding(horizontal = 16.dp, vertical = 8.dp)
                     ) {
                         NewsCard(news = newsItem, onNewsClick = onNewsClick)
@@ -207,7 +209,7 @@ fun MainScreenContent(
                 items(events, key = { it.id }) { event ->
                     Box(
                         modifier = Modifier
-                            .background(Color.White)
+                            .background(MaterialTheme.colorScheme.background)
                             .padding(horizontal = 16.dp, vertical = 8.dp)
                     ) {
                         StudentEventCard(
@@ -223,7 +225,7 @@ fun MainScreenContent(
         item {
             Spacer(
                 modifier = Modifier
-                    .background(Color.White)
+                    .background(MaterialTheme.colorScheme.background)
                     .height(136.dp)
                     .fillMaxWidth()
             )
@@ -240,7 +242,7 @@ fun MainNewsHeader(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 16.dp),
     ) {
         Spacer(modifier = Modifier.height(24.dp))
@@ -252,12 +254,14 @@ fun MainNewsHeader(
                 fontFamily = EventsFontFamily,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
+                color = MaterialTheme.colorScheme.tertiary
             )
             if (userRole == UserRole.ORGANIZER) {
                 IconButton(onAddNewsClick) {
                     Icon(
                         painter = painterResource(R.drawable.ic_plus_circle),
                         contentDescription = null,
+                        tint = MaterialTheme.colorScheme.tertiary
                     )
                 }
             }
@@ -275,7 +279,7 @@ fun MainEventsHeader(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 16.dp),
     ) {
         Spacer(modifier = Modifier.height(24.dp))
@@ -288,12 +292,14 @@ fun MainEventsHeader(
                 fontFamily = EventsFontFamily,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
+                color = MaterialTheme.colorScheme.tertiary
             )
             if (userRole == UserRole.ORGANIZER) {
                 IconButton(onAddEventClick) {
                     Icon(
                         painter = painterResource(R.drawable.ic_plus_circle),
                         contentDescription = null,
+                        tint = MaterialTheme.colorScheme.tertiary
                     )
                 }
             }
@@ -315,7 +321,7 @@ fun MainEventsRow(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Spacer(modifier = Modifier.height(24.dp))
         Row(
@@ -327,13 +333,15 @@ fun MainEventsRow(
                 fontFamily = EventsFontFamily,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier.padding(horizontal = 16.dp),
+                color = MaterialTheme.colorScheme.tertiary
             )
             if (userRole == UserRole.ORGANIZER) {
                 IconButton(onAddEventClick) {
                     Icon(
                         painter = painterResource(R.drawable.ic_plus_circle),
                         contentDescription = null,
+                        tint = MaterialTheme.colorScheme.tertiary
                     )
                 }
             }
@@ -350,6 +358,7 @@ fun MainEventsRow(
                         fontFamily = EventsFontFamily,
                         fontWeight = FontWeight.Normal,
                         fontSize = 16.sp,
+                        color = MaterialTheme.colorScheme.tertiary
                     )
                 }
             } else {
@@ -380,7 +389,7 @@ fun MainTitle(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 16.dp)
     ) {
         Spacer(modifier = Modifier.height(64.dp))
@@ -389,6 +398,7 @@ fun MainTitle(
             fontFamily = EventsFontFamily,
             fontWeight = FontWeight.Bold,
             fontSize = 30.sp,
+            color = MaterialTheme.colorScheme.tertiary
         )
         Spacer(modifier = Modifier.height(16.dp))
         LazyRow(
@@ -422,7 +432,7 @@ fun MainTab(
                 onTabClick()
             }
             .border(1.dp, Color(0xffEBEBEB), RoundedCornerShape(50))
-            .background(if (isSelected) Color(0xff151B23) else Color(0xffF8F8F9))
+            .background(if (isSelected) Color(0xff151B23) else MaterialTheme.colorScheme.surface)
             .padding(horizontal = 24.dp, vertical = 8.dp)
     ) {
         Text(
@@ -430,7 +440,7 @@ fun MainTab(
             fontFamily = EventsFontFamily,
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
             fontSize = 16.sp,
-            color = if (isSelected) Color.White else Color.Black
+            color = if (isSelected) Color.White else MaterialTheme.colorScheme.tertiary
         )
     }
 }
@@ -438,7 +448,9 @@ fun MainTab(
 @Composable
 @Preview
 fun MainPreview() {
-    SchoolEventsTheme() {
+    SchoolEventsTheme(
+        darkTheme = true
+    ) {
         MainScreenContent(
             events = emptyList(),
             news = emptyList(),

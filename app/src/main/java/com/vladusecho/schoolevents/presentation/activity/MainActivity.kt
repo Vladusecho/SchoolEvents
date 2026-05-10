@@ -180,7 +180,7 @@ fun EventsNavigationBottom(
                         .fillMaxHeight()
                         .clip(RoundedCornerShape(50))
                         .weight(1f)
-                        .background(if (isSelected) Color(0xffF0F5F9) else MaterialTheme.colorScheme.background)
+                        .background(if (isSelected) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.background)
                         .clickable {
                             navState.navigateToTab(tab.screen)
                         },
@@ -193,7 +193,7 @@ fun EventsNavigationBottom(
                         Icon(
                             imageVector = ImageVector.vectorResource(tab.iconId),
                             contentDescription = "tab",
-                            tint = MaterialTheme.colorScheme.secondary,
+                            tint = MaterialTheme.colorScheme.tertiary,
                             modifier = Modifier.size(22.dp)
                         )
                         Text(
@@ -201,6 +201,7 @@ fun EventsNavigationBottom(
                             fontFamily = EventsFontFamily,
                             fontWeight = FontWeight.Bold,
                             fontSize = 11.sp,
+                            color = MaterialTheme.colorScheme.tertiary,
                         )
                     }
                 }

@@ -126,7 +126,7 @@ fun ProfileEditingContent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.White),
+            .background(MaterialTheme.colorScheme.background),
     ) {
         Spacer(modifier = Modifier.height(64.dp))
         Text(
@@ -135,14 +135,15 @@ fun ProfileEditingContent(
             fontWeight = FontWeight.Bold,
             fontSize = 30.sp,
             modifier = Modifier
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 16.dp),
+            color = MaterialTheme.colorScheme.tertiary
         )
         Spacer(modifier = Modifier.height(16.dp))
         Spacer(
             modifier = Modifier
                 .height(8.dp)
                 .fillMaxWidth()
-                .background(Color(0xffEBEBEB))
+                .background(MaterialTheme.colorScheme.surface)
         )
         Spacer(modifier = Modifier.height(16.dp))
         Box(
@@ -214,7 +215,7 @@ fun ProfileEditingContent(
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedBorderColor = Color(0xffEBEBEB),
                     focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
-                    unfocusedLeadingIconColor = Color.Black
+                    unfocusedLeadingIconColor = MaterialTheme.colorScheme.tertiary
                 ),
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Next
@@ -273,7 +274,7 @@ fun ProfileEditingContent(
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedBorderColor = Color(0xffEBEBEB),
                 focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
-                unfocusedLeadingIconColor = Color.Black
+                unfocusedLeadingIconColor = MaterialTheme.colorScheme.tertiary
             ),
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Next
@@ -338,7 +339,7 @@ fun ProfileEditingContent(
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedBorderColor = Color(0xffEBEBEB),
                 focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
-                unfocusedLeadingIconColor = Color.Black
+                unfocusedLeadingIconColor = MaterialTheme.colorScheme.tertiary
             ),
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Next
@@ -396,7 +397,7 @@ fun ProfileEditingContent(
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedBorderColor = Color(0xffEBEBEB),
                 focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
-                unfocusedLeadingIconColor = Color.Black
+                unfocusedLeadingIconColor = MaterialTheme.colorScheme.tertiary
             ),
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done
@@ -427,7 +428,7 @@ fun ProfileEditingContent(
                     onBackClick()
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White,
+                    containerColor = MaterialTheme.colorScheme.background,
                     contentColor = Color.Black
                 ),
                 border = BorderStroke(1.dp, Color(0xffEBEBEB))
@@ -435,7 +436,8 @@ fun ProfileEditingContent(
                 Text(
                     text = "Вернуться",
                     fontFamily = EventsFontFamily,
-                    fontSize = 14.sp
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.tertiary
                 )
             }
             Spacer(modifier = Modifier.size(8.dp))
@@ -458,7 +460,6 @@ fun ProfileEditingContent(
                     containerColor = if (isFormValid) Color(0xff008A00) else Color.White.copy(alpha = 0.5f),
                     contentColor = if (isFormValid) Color.White else Color.Black.copy(alpha = 0.5f)
                 ),
-                border = BorderStroke(1.dp, Color(0xffEBEBEB))
             ) {
                 Text(
                     text = "Сохранить",
@@ -476,7 +477,7 @@ fun ProfileEditingContent(
 @Composable
 private fun ProfileEditingScreenPreview() {
     SchoolEventsTheme(
-        darkTheme = false
+        darkTheme = true
     ) {
         ProfileEditingContent(
             profile = Profile(

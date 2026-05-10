@@ -93,7 +93,7 @@ fun NewsCreationScreenNew(
         }
 
         NewsCreationViewModel.NewsCreationState.Initial -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
         }
@@ -126,7 +126,7 @@ private fun NewsCreationContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             LazyColumn(
@@ -140,7 +140,8 @@ private fun NewsCreationContent(
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.ic_back),
-                            contentDescription = null
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.tertiary
                         )
                     }
                     Spacer(modifier = Modifier.height(8.dp))
@@ -153,13 +154,13 @@ private fun NewsCreationContent(
                             fontFamily = EventsFontFamily,
                             fontWeight = FontWeight.Bold,
                             fontSize = 30.sp,
-                            color = Color.Black
+                            color = MaterialTheme.colorScheme.tertiary
                         )
                         Text(
                             text = "Опубликуйте свою новость, указав детали ниже",
                             fontFamily = EventsFontFamily,
                             fontSize = 16.sp,
-                            color = Color.Gray,
+                            color = MaterialTheme.colorScheme.tertiary,
                             modifier = Modifier.padding(vertical = 8.dp)
                         )
                         Spacer(modifier = Modifier.height(24.dp))
@@ -309,7 +310,7 @@ private fun NewsCreationContent(
                             text = "Рекомендуется загружать горизонтальные фотографии в высоком разрешении.",
                             fontFamily = EventsFontFamily,
                             fontSize = 12.sp,
-                            color = Color.Gray,
+                            color = MaterialTheme.colorScheme.tertiary,
                             modifier = Modifier.padding(top = 8.dp)
                         )
                     }
@@ -353,7 +354,7 @@ private fun NewsCreationContent(
                 item {
                     Spacer(
                         modifier = Modifier
-                            .background(Color.White)
+                            .background(MaterialTheme.colorScheme.background)
                             .height(136.dp)
                             .fillMaxWidth()
                     )
@@ -366,7 +367,9 @@ private fun NewsCreationContent(
 @Preview(showBackground = true)
 @Composable
 private fun PreviewNewsCreation() {
-    SchoolEventsTheme {
+    SchoolEventsTheme(
+        darkTheme = true
+    ) {
         NewsCreationContent(onBackClick = {}, onSaveClick = { _, _ -> })
     }
 }

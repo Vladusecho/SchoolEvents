@@ -67,7 +67,7 @@ fun NewsDetailsScreenNew(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         when (val currentState = state) {
             is NewsDetailsViewModel.NewsDetailsState.Content -> {
@@ -114,7 +114,7 @@ private fun NewsDetailsContent(
 
     Column(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f).background(MaterialTheme.colorScheme.background)
         ) {
             item {
                 Box(
@@ -182,14 +182,14 @@ private fun NewsDetailsContent(
                     ) {
                         Surface(
                             shape = CircleShape,
-                            color = Color.White.copy(alpha = 0.9f),
+                            color = MaterialTheme.colorScheme.background.copy(alpha = 0.9f),
                             modifier = Modifier.size(40.dp)
                         ) {
                             IconButton(onClick = onBackClick) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_back),
                                     contentDescription = "Back",
-                                    tint = Color.Black,
+                                    tint = MaterialTheme.colorScheme.tertiary,
                                     modifier = Modifier.size(20.dp)
                                 )
                             }
@@ -209,7 +209,7 @@ private fun NewsDetailsContent(
                         fontFamily = EventsFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 26.sp,
-                        color = Color.Black
+                        color = MaterialTheme.colorScheme.tertiary
                     )
                     
                     Spacer(modifier = Modifier.height(12.dp))
@@ -219,7 +219,7 @@ private fun NewsDetailsContent(
                             text = news.description,
                             fontFamily = EventsFontFamily,
                             fontSize = 16.sp,
-                            color = Color(0xff666666),
+                            color = MaterialTheme.colorScheme.tertiary,
                             maxLines = if (isDescriptionExpanded) Int.MAX_VALUE else 5,
                             overflow = TextOverflow.Ellipsis,
                             lineHeight = 22.sp
@@ -229,7 +229,7 @@ private fun NewsDetailsContent(
                                 text = if (isDescriptionExpanded) "Скрыть" else "Читать больше...",
                                 fontFamily = EventsFontFamily,
                                 fontWeight = FontWeight.SemiBold,
-                                color = Color.Black,
+                                color = MaterialTheme.colorScheme.secondary,
                                 modifier = Modifier
                                     .padding(top = 4.dp)
                                     .clickable { isDescriptionExpanded = !isDescriptionExpanded }
@@ -248,13 +248,13 @@ private fun NewsDetailsContent(
                             modifier = Modifier
                                 .size(48.dp)
                                 .clip(RoundedCornerShape(12.dp))
-                                .background(Color(0xffF2F2F2)),
+                                .background(MaterialTheme.colorScheme.secondary),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_user),
                                 contentDescription = null,
-                                tint = Color.Black,
+                                tint = MaterialTheme.colorScheme.tertiary,
                                 modifier = Modifier.size(24.dp)
                             )
                         }
@@ -264,14 +264,14 @@ private fun NewsDetailsContent(
                                 text = "Автор",
                                 fontFamily = EventsFontFamily,
                                 fontSize = 12.sp,
-                                color = Color.Gray
+                                color = MaterialTheme.colorScheme.tertiary
                             )
                             Text(
                                 text = organizerName,
                                 fontFamily = EventsFontFamily,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp,
-                                color = Color.Black
+                                color = MaterialTheme.colorScheme.tertiary
                             )
                         }
                     }
@@ -282,14 +282,14 @@ private fun NewsDetailsContent(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Surface(
                             shape = CircleShape,
-                            color = Color(0xffF2F2F2),
+                            color = MaterialTheme.colorScheme.secondary,
                             modifier = Modifier.size(36.dp)
                         ) {
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_calendar),
                                     contentDescription = null,
-                                    tint = Color(0xff008A00),
+                                    tint = MaterialTheme.colorScheme.tertiary,
                                     modifier = Modifier.size(18.dp)
                                 )
                             }
@@ -300,7 +300,7 @@ private fun NewsDetailsContent(
                             fontFamily = EventsFontFamily,
                             fontWeight = FontWeight.Medium,
                             fontSize = 16.sp,
-                            color = Color.Black
+                            color = MaterialTheme.colorScheme.tertiary
                         )
                     }
                 }

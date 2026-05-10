@@ -95,14 +95,14 @@ fun NewsEditingScreenNew(
         }
 
         is NewsEditingViewModel.NewsEditingState.Error -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background), contentAlignment = Alignment.Center) {
                 Text(text = currentState.message, color = Color.Red, fontFamily = EventsFontFamily)
             }
         }
 
         NewsEditingViewModel.NewsEditingState.Initial,
         NewsEditingViewModel.NewsEditingState.Loading -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
         }
@@ -137,7 +137,7 @@ private fun NewsEditingContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             LazyColumn(
@@ -155,14 +155,15 @@ private fun NewsEditingContent(
                         IconButton(onClick = onBackClick) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_back),
-                                contentDescription = null
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.tertiary
                             )
                         }
 
                         Button(
                             onClick = onDeleteClick,
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.White,
+                                containerColor = MaterialTheme.colorScheme.background,
                                 contentColor = Color.Red
                             ),
                             border = BorderStroke(1.dp, Color(0xffEBEBEB))
@@ -184,13 +185,13 @@ private fun NewsEditingContent(
                             fontFamily = EventsFontFamily,
                             fontWeight = FontWeight.Bold,
                             fontSize = 30.sp,
-                            color = Color.Black
+                            color = MaterialTheme.colorScheme.tertiary
                         )
                         Text(
                             text = "Отредактируйте все необходимые поля",
                             fontFamily = EventsFontFamily,
                             fontSize = 16.sp,
-                            color = Color.Gray,
+                            color = MaterialTheme.colorScheme.tertiary,
                             modifier = Modifier.padding(vertical = 8.dp)
                         )
                         Spacer(modifier = Modifier.height(24.dp))
@@ -340,7 +341,7 @@ private fun NewsEditingContent(
                             text = "Рекомендуется загружать горизонтальные фотографии в высоком разрешении.",
                             fontFamily = EventsFontFamily,
                             fontSize = 12.sp,
-                            color = Color.Gray,
+                            color = MaterialTheme.colorScheme.tertiary,
                             modifier = Modifier.padding(top = 8.dp)
                         )
                     }
@@ -381,7 +382,7 @@ private fun NewsEditingContent(
                 item {
                     Spacer(
                         modifier = Modifier
-                            .background(Color.White)
+                            .background(MaterialTheme.colorScheme.background)
                             .height(136.dp)
                             .fillMaxWidth()
                     )
@@ -394,7 +395,9 @@ private fun NewsEditingContent(
 @Preview(showBackground = true)
 @Composable
 private fun PreviewNewsEditing() {
-    SchoolEventsTheme {
+    SchoolEventsTheme(
+        darkTheme = true
+    ) {
         val mockNews = News(
             id = 1,
             title = "Mock News",

@@ -56,7 +56,7 @@ fun ArchiveScreenNew(
 
         ArchiveViewModel.ArchiveState.Initial -> {}
         ArchiveViewModel.ArchiveState.Loading -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
         }
@@ -73,7 +73,7 @@ fun ArchiveScreenContent(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         item {
             Column(modifier = Modifier) {
@@ -83,14 +83,15 @@ fun ArchiveScreenContent(
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Bold,
                     fontSize = 30.sp,
-                    modifier = Modifier.padding(horizontal = 16.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    color = MaterialTheme.colorScheme.tertiary
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Spacer(
                     modifier = Modifier
                         .height(8.dp)
                         .fillMaxWidth()
-                        .background(Color(0xffEBEBEB))
+                        .background(MaterialTheme.colorScheme.surface)
                 )
             }
         }
@@ -130,7 +131,7 @@ fun ArchiveScreenContent(
         item {
             Spacer(
                 modifier = Modifier
-                    .background(Color.White)
+                    .background(MaterialTheme.colorScheme.background)
                     .height(136.dp)
                     .fillMaxWidth()
             )
@@ -141,7 +142,9 @@ fun ArchiveScreenContent(
 @Composable
 @Preview
 fun ArchivePreview() {
-    SchoolEventsTheme {
+    SchoolEventsTheme(
+        darkTheme = true
+    ) {
         ArchiveScreenContent()
     }
 }

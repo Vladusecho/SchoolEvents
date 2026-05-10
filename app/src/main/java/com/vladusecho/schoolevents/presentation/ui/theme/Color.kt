@@ -4,12 +4,17 @@ import androidx.compose.ui.graphics.Color
 
 // White Theme
 
-val Gray = Color(0xffBDBDBD)
 val White = Color(0xFFFFFFFF)
-val Teal = Color(0xff0DCDAA)
+
+val PaleBlue = Color(0xffF0F5F9)
 
 // Black Theme
 
 val Black = Color(0xFF000000)
-val DarkSlateGray = Color(0xff3C474B)
-val DarkSlate = Color(0xff162521)
+val DarkGray = Color(0xff252525)
+
+val LightDarkGray = Color(0xFF414141)
+
+// All theme
+
+val Green = Color(0xff008A00)

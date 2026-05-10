@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -53,7 +54,7 @@ fun StartAppContent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -64,7 +65,8 @@ fun StartAppContent(
             fontWeight = FontWeight.Bold,
             fontSize = 46.sp,
             textAlign = TextAlign.Center,
-            lineHeight = 36.sp
+            lineHeight = 36.sp,
+            color = MaterialTheme.colorScheme.tertiary
         )
         Spacer(modifier = Modifier.height(16.dp))
         Image(
@@ -80,7 +82,8 @@ fun StartAppContent(
             fontWeight = FontWeight.Normal,
             textAlign = TextAlign.Center,
             fontSize = 16.sp,
-            lineHeight = 20.sp
+            lineHeight = 20.sp,
+            color = MaterialTheme.colorScheme.tertiary
         )
         Spacer(modifier = Modifier.weight(1f))
         Button(
@@ -94,13 +97,14 @@ fun StartAppContent(
                 "Создать аккаунт",
                 fontFamily = EventsFontFamily,
                 fontWeight = FontWeight.Bold,
-                fontSize = 20.sp
+                fontSize = 20.sp,
+                color = Color.White
             )
         }
         Button(
             onClick = onLoginClick,
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.White,
+                containerColor = MaterialTheme.colorScheme.background,
                 contentColor = Color.Black
             )
         ) {
@@ -111,12 +115,16 @@ fun StartAppContent(
                     "Есть аккаунт?",
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Normal,
+                    color = MaterialTheme.colorScheme.tertiary
+
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     "Войти",
                     fontFamily = EventsFontFamily,
                     fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.tertiary
+
                 )
             }
         }
@@ -130,7 +138,7 @@ fun StartAppContent(
 @Composable
 fun StartPreviewNew() {
     SchoolEventsTheme(
-        darkTheme = false
+        darkTheme = true
     ) {
         StartAppScreenNew(
             onLoginClick = {},

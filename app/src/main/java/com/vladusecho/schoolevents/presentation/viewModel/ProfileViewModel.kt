@@ -64,7 +64,7 @@ class ProfileViewModel @Inject constructor(
                 }
 
                 combine(eventsFlow, statsFlow) { events, stats ->
-                    Triple(profile, events, stats)
+                    Triple(profile, events.sortedByDescending { it.id }, stats)
                 }
             }.collect { (profile, events, stats) ->
                 _state.value = ProfileState.Content(

@@ -50,7 +50,10 @@ class MainViewModel @Inject constructor(
                 getEventsUseCase(),
                 newsRepository.getNews()
             ) { events, news ->
-                MainState.Content(events, news)
+                MainState.Content(
+                    events = events.sortedByDescending { it.id },
+                    news = news.sortedByDescending { it.id }
+                )
             }.collect {
                 _state.value = it
             }

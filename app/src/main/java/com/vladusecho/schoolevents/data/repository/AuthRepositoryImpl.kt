@@ -23,6 +23,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     private val currentUserAuthKey = booleanPreferencesKey("current_user_auth")
     private val currentUserRoleKey = stringPreferencesKey("current_user_role")
+    private val isDarkThemeKey = booleanPreferencesKey("is_dark_theme")
 
     override suspend fun checkUserExists(email: String): Boolean {
         return dao.checkUserExists(email)
@@ -59,6 +60,18 @@ class AuthRepositoryImpl @Inject constructor(
             val roleName = preferences[currentUserRoleKey] ?: UserRole.STUDENT.name
             Log.d("tag", "getCurrentUserRole: $roleName")
             UserRole.valueOf(roleName)
+        }
+    }
+
+    override suspend fun setDarkTheme(isDark: Boolean) {
+        context.dataStoreAuth.edit { preferences ->
+            preferences[isDarkThemeKey] = isDark
+        }
+    }
+
+    override fun isDarkTheme(): Flow<Boolean?> {
+        return context.dataStoreAuth.data.map { preferences ->
+            preferences[isDarkThemeKey]
         }
     }
 }

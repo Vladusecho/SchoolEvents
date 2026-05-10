@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,7 +21,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -31,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -63,46 +62,44 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            SchoolEventsTheme {
+            val authViewModel: AuthViewModel = hiltViewModel()
+            val isAuth by authViewModel.isAuth.collectAsState()
+            val userRole by authViewModel.userRole.collectAsState()
+            val isDarkThemePref by authViewModel.isDarkTheme.collectAsState()
 
-                val authViewModel: AuthViewModel = hiltViewModel()
-                val isAuth by authViewModel.isAuth.collectAsState()
-                val userRole by authViewModel.userRole.collectAsState()
+            val darkTheme = isDarkThemePref ?: isSystemInDarkTheme()
+
+            SchoolEventsTheme(darkTheme = darkTheme) {
 
                 val navState = rememberNavigationState()
                 val navBackStackEntry by navState.navHostController.currentBackStackEntryAsState()
                 val currentDestination = navBackStackEntry?.destination
 
                 if (isAuth != null) {
-                    Scaffold(
-                        containerColor = Color.Transparent,
-
-                        bottomBar = {
-                            val showBottomBar = currentDestination?.hierarchy?.any {
-                                it.hasRoute(Screen.AuthGraph::class)
-                            } == false
-
-                            if (showBottomBar) {
-                                EventsNavigationBottom(
-                                    navState = navState, userRole = userRole
-                                )
-                            }
-
-                        }
-                    ) { paddingValues ->
-                        val padding = paddingValues.calculateBottomPadding()
-                        Box(
-                            modifier = Modifier
-                                .padding(),
+                    Box(
+                        modifier = Modifier,
+                    ) {
+                        CompositionLocalProvider(
+                            LocalUserRole provides userRole
                         ) {
-                            CompositionLocalProvider(
-                                LocalUserRole provides userRole
-                            ) {
-                                AppNavGraph(
-                                    navigationState = navState,
-                                    startDestination = if (isAuth == true) Screen.MainGraph else Screen.AuthGraph
-                                )
-                            }
+                            AppNavGraph(
+                                navigationState = navState,
+                                startDestination = if (isAuth == true) Screen.MainGraph else Screen.AuthGraph
+                            )
+                        }
+                    }
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.BottomCenter,
+                    ) {
+                        val showBottomBar = currentDestination?.hierarchy?.any {
+                            it.hasRoute(Screen.AuthGraph::class)
+                        } == false
+
+                        if (showBottomBar) {
+                            EventsNavigationBottom(
+                                navState = navState, userRole = userRole
+                            )
                         }
                     }
                 } else {

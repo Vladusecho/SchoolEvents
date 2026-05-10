@@ -16,4 +16,8 @@ interface AuthRepository {
     suspend fun setCurrentUserRole(role: UserRole)
 
     fun getCurrentUserRole(): Flow<UserRole>
+
+    suspend fun setDarkTheme(isDark: Boolean)
+
+    fun isDarkTheme(): Flow<Boolean?>
 }

@@ -47,6 +47,9 @@ fun NavGraphBuilder.profileNavigation(
                     navigationState.navHostController.navigate(Screen.AuthGraph) {
                         popUpTo(Screen.MainGraph) { inclusive = true }
                     }
+                },
+                onThemeToggle = {
+                    authViewModel.toggleTheme()
                 }
             )
         }

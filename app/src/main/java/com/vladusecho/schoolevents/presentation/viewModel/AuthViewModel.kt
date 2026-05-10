@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vladusecho.schoolevents.domain.entity.Profile
+import com.vladusecho.schoolevents.domain.repository.AuthRepository
 import com.vladusecho.schoolevents.domain.usecase.auth.ChangeUserIsAuthUseCase
 import com.vladusecho.schoolevents.domain.usecase.auth.CheckUserExistsUseCase
 import com.vladusecho.schoolevents.domain.usecase.auth.CheckUserIsAuthUseCase
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -35,7 +37,8 @@ class AuthViewModel @Inject constructor(
     private val setCurrentUserRoleUseCase: SetCurrentUserRoleUseCase,
     private val getCurrentUserRoleUseCase: GetCurrentUserRoleUseCase,
     private val setCurrentUserEmailUseCase: SetCurrentUserEmailUseCase,
-    private val getProfileByEmailUseCase: GetProfileByEmailUseCase
+    private val getProfileByEmailUseCase: GetProfileByEmailUseCase,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _isLoading = MutableStateFlow(false)
@@ -66,6 +69,20 @@ class AuthViewModel @Inject constructor(
             started = SharingStarted.Eagerly,
             initialValue = UserRole.STUDENT
         )
+
+    val isDarkTheme: StateFlow<Boolean?> = authRepository.isDarkTheme()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = null
+        )
+
+    fun toggleTheme() {
+        viewModelScope.launch {
+            val current = isDarkTheme.value ?: false
+            authRepository.setDarkTheme(!current)
+        }
+    }
 
     fun login(email: String, password: String) {
         viewModelScope.launch {

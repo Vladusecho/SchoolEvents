@@ -59,6 +59,7 @@ fun ProfileScreenNew(
     onEventClick: (eventId: Int) -> Unit,
     onListClick: (eventId: Int) -> Unit = {},
     onEditingClick: (profile: Profile) -> Unit,
+    onThemeToggle: () -> Unit,
     onExitClick: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
@@ -81,6 +82,7 @@ fun ProfileScreenNew(
                 onExitClick = {
                     viewModel.processCommand(ProfileViewModel.ProfileCommand.Exit)
                 },
+                onThemeToggle = onThemeToggle,
                 onEditingClick = {
                     onEditingClick(currentState.profile)
                 },
@@ -120,6 +122,7 @@ fun ProfileContent(
     attendedCount: Int,
     absentCount: Int,
     onEditingClick: (profile: Profile) -> Unit,
+    onThemeToggle: () -> Unit,
     onExitClick: () -> Unit,
     onEventClick: (Int) -> Unit,
     onListClick: (Int) -> Unit,
@@ -182,6 +185,7 @@ fun ProfileContent(
                 profile = profile,
                 attendedCount = attendedCount,
                 absentCount = absentCount,
+                onThemeToggle = onThemeToggle,
                 onExitClick = onExitClick
             )
         }
@@ -253,6 +257,7 @@ fun UserProfile(
     attendedCount: Int,
     absentCount: Int,
     profile: Profile,
+    onThemeToggle: () -> Unit,
     onExitClick: () -> Unit
 ) {
     Column(
@@ -313,10 +318,25 @@ fun UserProfile(
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
+            Button(
+                onClick = onThemeToggle,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                    contentColor = Color.Black
+                ),
+                border = BorderStroke(1.dp, Color(0xffEBEBEB))
+            ) {
+                Text(
+                    text = "Переключить тему",
+                    fontFamily = EventsFontFamily,
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.tertiary
+                )
+            }
             Button(
                 onClick = {
                     onExitClick()
@@ -334,6 +354,7 @@ fun UserProfile(
                     color = MaterialTheme.colorScheme.tertiary
                 )
             }
+
         }
         Spacer(modifier = Modifier.height(16.dp))
         Spacer(
@@ -402,6 +423,7 @@ fun ProfPrev() {
             attendedCount = 5,
             absentCount = 2,
             onEditingClick = {},
+            onThemeToggle = {},
             onExitClick = {},
             onEventClick = {},
             onListClick = {},

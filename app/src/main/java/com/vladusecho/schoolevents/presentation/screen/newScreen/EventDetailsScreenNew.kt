@@ -445,7 +445,7 @@ private fun EventDetailsContent(
                     val isSubscribed = event.isSubscribed
                     val isStudent = userRole == UserRole.STUDENT
 
-                    if (isStudent || event.status == EventStatus.APPROVED) {
+                    if (isStudent && event.status == EventStatus.APPROVED) {
                         Button(
                             onClick = { onSubscribeClick(isSubscribed, event.id) },
                             modifier = Modifier

@@ -116,7 +116,7 @@ fun ArchiveScreenContent(
             items(events, key = { it.id }) { event ->
                 Box(
                     modifier = Modifier
-                        .background(Color.White)
+                        .background(MaterialTheme.colorScheme.background)
                         .padding(horizontal = 16.dp, vertical = 8.dp)
                 ) {
                     StudentEventCard(

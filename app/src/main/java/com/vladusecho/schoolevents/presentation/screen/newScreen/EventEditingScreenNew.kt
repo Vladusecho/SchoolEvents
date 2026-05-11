@@ -35,6 +35,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TimePicker
@@ -67,8 +68,10 @@ import com.vladusecho.schoolevents.presentation.ui.theme.EventsFontFamily
 import com.vladusecho.schoolevents.presentation.ui.theme.SchoolEventsTheme
 import com.vladusecho.schoolevents.presentation.viewModel.EventEditingViewModel
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 private enum class EventEditingStep {
     BASIC_DETAILS,
@@ -479,7 +482,28 @@ private fun Step2EditingUI(
     var showTimePickerStart by remember { mutableStateOf(false) }
     var showTimePickerEnd by remember { mutableStateOf(false) }
 
-    val datePickerState = rememberDatePickerState()
+    val selectableDates = remember {
+        object : SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+                calendar.set(Calendar.HOUR_OF_DAY, 0)
+                calendar.set(Calendar.MINUTE, 0)
+                calendar.set(Calendar.SECOND, 0)
+                calendar.set(Calendar.MILLISECOND, 0)
+
+                return utcTimeMillis >= calendar.timeInMillis
+            }
+
+            override fun isSelectableYear(year: Int): Boolean {
+                return year >= Calendar.getInstance().get(Calendar.YEAR)
+            }
+        }
+    }
+
+    val datePickerState = rememberDatePickerState(
+        selectableDates = selectableDates
+    )
+
     val timePickerStateStart = rememberTimePickerState()
     val timePickerStateEnd = rememberTimePickerState()
 
